@@ -43,10 +43,10 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white">
-              مطالعہ قرآن
+              الوحيين
             </span>
             <span className="text-[10px] text-slate-400 font-sans hidden md:inline">
-              Quran Study Station
+              Al-Wahyain Study Station
             </span>
           </div>
         </div>

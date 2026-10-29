@@ -1,7 +1,7 @@
 {
-  "name": "tafsir-reader",
+  "name": "al-wahyain",
   "version": "1.0.0",
-  "description": "",
+  "description": "Al-Wahyain (الوحيين) — Quran & Islamic Study Station",
   "main": "index.js",
   "type": "module",
   "scripts": {
