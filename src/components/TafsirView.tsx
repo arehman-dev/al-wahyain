@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   ChevronDown, 
   ChevronUp, 
@@ -16,9 +16,14 @@ import {
   LayoutGrid,
   List,
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  Highlighter
 } from 'lucide-react';
-import { Ayah, TafsirEntry, ScriptMode } from '../types/quran';
+import { Ayah, TafsirEntry, ScriptMode, TafsirHighlight, HighlightColor } from '../types/quran';
+import { InteractiveWord } from './WordTooltip';
+import { TextHighlighterBar } from './TextHighlighterBar';
+import { enhanceTafsirHtml } from '../utils/tafsirCrossReference';
+import { applyHighlightsToHtml } from '../utils/highlighterHelper';
 
 interface TafsirViewProps {
   currentAyah: Ayah;
@@ -40,6 +45,11 @@ interface TafsirViewProps {
   onFontSizeChange?: (size: number) => void;
   layoutMode?: 'stacked' | 'grid';
   onToggleLayoutMode?: () => void;
+  highlights?: TafsirHighlight[];
+  onAddHighlight?: (text: string, color: HighlightColor, tafsirSlug?: string) => void;
+  onDeleteHighlight?: (id: string) => void;
+  onNavigateToVerse?: (surahId: number, ayahNumber: number) => void;
+  onSelectWordRoot?: (root: string) => void;
 }
 
 export const TafsirView: React.FC<TafsirViewProps> = ({
@@ -61,8 +71,14 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   fontSize: propFontSize,
   onFontSizeChange,
   layoutMode: propLayoutMode,
-  onToggleLayoutMode
+  onToggleLayoutMode,
+  highlights = [],
+  onAddHighlight,
+  onDeleteHighlight,
+  onNavigateToVerse,
+  onSelectWordRoot
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [useIbmFont, setUseIbmFont] = useState<boolean>(true);
   const [localFontSize, setLocalFontSize] = useState<number>(17);
@@ -76,6 +92,33 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
     : setLocalLayoutMode;
 
   const urduTranslation = currentAyah.translations?.find(t => t.author_id === 'taqi_usmani') || currentAyah.translations?.[0];
+
+  // Intercept clicks inside commentary for cross-reference jumps and highlight deletion
+  const handleContainerClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+
+    // 1. Cross reference jump
+    const refBtn = target.closest('[data-quran-ref]') as HTMLElement;
+    if (refBtn && refBtn.dataset.quranRef && onNavigateToVerse) {
+      e.preventDefault();
+      const parts = refBtn.dataset.quranRef.split(':').map(Number);
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        onNavigateToVerse(parts[0], parts[1]);
+        return;
+      }
+    }
+
+    // 2. Click existing highlight to delete
+    const mark = target.closest('[data-highlight-id]') as HTMLElement;
+    if (mark && mark.dataset.highlightId && onDeleteHighlight) {
+      e.preventDefault();
+      const hlId = mark.dataset.highlightId;
+      if (window.confirm('کیا آپ اس تفسیری ہائی لائٹ کو حذف کرنا چاہتے ہیں؟')) {
+        onDeleteHighlight(hlId);
+      }
+      return;
+    }
+  };
 
   // Global arrow keys listener for Ayah navigation
   useEffect(() => {
@@ -101,7 +144,19 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   const progressPercent = Math.min(100, Math.round((currentAyah.ayah_number / Math.max(1, totalVersesInSurah)) * 100));
 
   return (
-    <div dir="rtl" className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <div 
+      ref={containerRef}
+      onClick={handleContainerClick}
+      dir="rtl" 
+      className="max-w-6xl mx-auto px-4 py-6 space-y-6 relative"
+    >
+      {/* Floating Text Highlighter Bar */}
+      {onAddHighlight && (
+        <TextHighlighterBar
+          containerRef={containerRef}
+          onAddHighlight={onAddHighlight}
+        />
+      )}
       
       {/* 1. TOP PINNED CARD: AYAH & TRANSLATION */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm transition-colors relative overflow-hidden">
@@ -185,9 +240,18 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
           </div>
         </div>
 
-        {/* Arabic Ayah */}
+        {/* Arabic Ayah with Interactive Word Tooltips */}
         <div className="tajweed-text text-right text-3xl sm:text-4xl leading-[2.7] font-arabic my-4 text-slate-900 dark:text-white">
-          {scriptMode === 'indopak' ? (
+          {currentAyah.words && currentAyah.words.length > 0 ? (
+            currentAyah.words.map((w) => (
+              <InteractiveWord
+                key={w.id}
+                word={w}
+                scriptMode={scriptMode}
+                onSelectRoot={onSelectWordRoot}
+              />
+            ))
+          ) : scriptMode === 'indopak' ? (
             <span className="font-indopak">{currentAyah.text_indopak}</span>
           ) : (
             <span>{currentAyah.text_uthmani}</span>
@@ -197,13 +261,20 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
 
         {/* Primary Urdu Translation */}
         {urduTranslation && (
-          <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/80 text-right">
+          <div 
+            data-tafsir-slug="translation"
+            className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/80 text-right select-text"
+          >
             <p 
               style={{ fontSize: `${fontSize + 1}px` }}
               className={`${useIbmFont ? 'font-ibm leading-[2.1]' : 'urdu-nastaliq leading-[2.3]'} text-slate-800 dark:text-slate-200 font-medium`}
-            >
-              {urduTranslation.text}
-            </p>
+              dangerouslySetInnerHTML={{
+                __html: applyHighlightsToHtml(
+                  urduTranslation.text, 
+                  highlights.filter(h => h.surah_id === currentAyah.surah_id && h.ayah_number === currentAyah.ayah_number && h.tafsir_slug === 'translation')
+                )
+              }}
+            />
             <span className="text-xs text-slate-400 dark:text-slate-500 font-ibm font-medium mt-2 block">
               — ترجمہ: {urduTranslation.author_name}
             </span>
@@ -390,60 +461,71 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                 </div>
 
                 {/* Expanded Content Section */}
-                {isExpanded && (
-                  <div className="px-6 sm:px-8 pb-7 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-right">
-                    
-                    {/* Commentary Body with dynamic font size */}
-                    <div 
-                      style={{ fontSize: `${fontSize}px` }}
-                      className={`tafsir-prose ${
-                        useIbmFont 
-                          ? 'font-ibm leading-[2.2] tracking-normal font-normal' 
-                          : 'urdu-nastaliq leading-[2.4] font-medium'
-                      } text-slate-800 dark:text-slate-100 max-w-none`}
-                      dangerouslySetInnerHTML={{ __html: entry.content_html }}
-                    />
+                {isExpanded && (() => {
+                  const entryHighlights = highlights.filter(
+                    h => h.surah_id === currentAyah.surah_id &&
+                         h.ayah_number === currentAyah.ayah_number &&
+                         (h.tafsir_slug === entry.tafsir_slug || h.tafsir_slug === 'general')
+                  );
+                  const withHighlights = applyHighlightsToHtml(entry.content_html, entryHighlights);
+                  const enhancedHtml = enhanceTafsirHtml(withHighlights);
 
-                    {/* Footer Attribution & Copy Button */}
-                    <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-ibm">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `tafsir-${entry.id}`)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors font-medium"
-                        >
-                          {copiedId === `tafsir-${entry.id}` ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-emerald-600" />
-                              <span className="text-emerald-600 font-semibold">کاپی ہو گیا!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3.5 h-3.5" />
-                              <span>متن کاپی کریں</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
+                  return (
+                    <div className="px-6 sm:px-8 pb-7 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-right">
+                      
+                      {/* Commentary Body with dynamic font size */}
+                      <div 
+                        data-tafsir-slug={entry.tafsir_slug}
+                        style={{ fontSize: `${fontSize}px` }}
+                        className={`tafsir-prose ${
+                          useIbmFont 
+                            ? 'font-ibm leading-[2.2] tracking-normal font-normal' 
+                            : 'urdu-nastaliq leading-[2.4] font-medium'
+                        } text-slate-800 dark:text-slate-100 max-w-none select-text`}
+                        dangerouslySetInnerHTML={{ __html: enhancedHtml }}
+                      />
 
-                      {/* Official Source Linkback */}
-                      <div className="flex items-center gap-1.5 font-sans">
-                        <span>ماخذ: {entry.source_attribution}</span>
-                        {entry.source_url && (
-                          <a
-                            href={entry.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-0.5 text-emerald-600 hover:underline"
-                            title="Open Official Source"
+                      {/* Footer Attribution & Copy Button */}
+                      <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-ibm">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `tafsir-${entry.id}`)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors font-medium"
                           >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                            {copiedId === `tafsir-${entry.id}` ? (
+                              <>
+                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                <span className="text-emerald-600 font-semibold">کاپی ہو گیا!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3.5 h-3.5" />
+                                <span>متن کاپی کریں</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
 
-                  </div>
-                )}
+                        {/* Official Source Linkback */}
+                        <div className="flex items-center gap-1.5 font-sans">
+                          <span>ماخذ: {entry.source_attribution}</span>
+                          {entry.source_url && (
+                            <a
+                              href={entry.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-0.5 text-emerald-600 hover:underline"
+                              title="Open Official Source"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                    </div>
+                  );
+                })()}
 
               </div>
             );

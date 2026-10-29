@@ -50,6 +50,54 @@ A desktop-first, offline-capable study station designed for comparative reading 
 
 ---
 
+## 🗺️ Project Roadmap & Version Milestones
+
+Our development is strictly purpose-built for deep, distraction-free Quranic study, adhering to the core philosophy: **personal study utility first, open-source community asset second, zero bloat**.
+
+```
+v0.5 (Base Live) ──► v0.6 (Study Tooling & Deep UX) ──► v0.7 (15-Line Mushaf Precision) ──► v0.8 (PWA / Standalone) ──► v0.9 (All 114 Surahs) ──► v1.0 (Stable Release) ──► v2.0 (Hadith Library Expansion)
+```
+
+### ✅ v0.5 — Core Foundation (Completed)
+- [x] Multi-Tafsir Reader with 4 classical Urdu commentaries (Tafheem, Maarif, Ibn Kathir, Tayseer).
+- [x] Dual Layouts: Stacked 1-Column and Comparative 2-Column Desktop Grid.
+- [x] Word-by-Word Morphology engine with Arabic roots concordance explorer.
+- [x] Edge-to-edge full-width layout with unified Top Bar, Sub-Header Toolbar, and Bottom Dock.
+- [x] Full-text search across Quran verses and 3,488 Tafasir records.
+- [x] Local SQLite persistence for Bookmarks, Notes, and Study Notebook.
+
+### 🟡 v0.6 — Study Tooling & Deep UX (Current In-Progress)
+- [x] **Bundled Offline Typography**: Self-hosted local Arabic & Urdu fonts (`Amiri`, `IBM Plex Sans Arabic`, `Noto Nastaliq Urdu`, `Scheherazade New`) for 100% offline readability.
+- [x] **Interactive Word Hover & Tap Inspection**: Immediate word-by-word meaning, grammatical category (اسم / فعل / حرف), and root popup in Tafsir & Mushaf view without having to leave the page.
+- [x] **Tafsir Cross-Reference Auto-linking**: Smart regex parser detecting Quran citations (e.g. `[البقرۃ: 255]`, `(2:255)`, `سورہ ۲ آیت ۱۰`) and turning them into 1-click jump links.
+- [x] **Tafsir Study Highlighter Pen**: Interactive multi-color highlighter (Yellow, Green, Sky Blue, Lavender) for commentary passages, persisted locally and cataloged in the Study Notebook.
+- [x] **Intelligent Session Resume & History**: Instant "Continue where you left off" indicator and recent verse navigation history.
+
+### ⏳ v0.7 — 15-Line Mushaf Precision & Alignment (Upcoming)
+- [ ] Authentic Pakistani 15-line layout with line-by-line justification.
+- [ ] Margin ornaments (Para / Juz header banners, Ruku `ع` count markers, Rub' al-Hizb `۞`, and Sajdah `۩` ribbons).
+- [ ] Keyboard page navigation (`PageUp`, `PageDown`, `[`, `]`).
+- [ ] Dedicated Tafsir accordion hotkeys (`1` to `4` for direct commentary toggle).
+
+### ⏳ v0.8 — Offline Standalone & Desktop Polish
+- [ ] Progressive Web App (PWA) manifest with service worker caching for 100% offline desktop experience.
+- [ ] Comprehensive Study Notebook export (PDF generation, formatted Markdown journal bundle).
+- [ ] Auto-backup and restore of personal study data (bookmarks, notes, highlights).
+
+### ⏳ v0.9 — Full Quran Data Ingestion
+- [ ] Systematic ingestion of all remaining Surahs (Surah 5 to Surah 54, Surah 58 to 114) to reach complete 114 Surahs and 6,236 Ayahs.
+- [ ] Full ingestion of all ~25,000 commentary chapters for Maududi, Maarif-ul-Quran, Ibn Kathir, and Tayseer.
+- [ ] SQLite FTS5 (Full-Text Search 5) index optimization for sub-millisecond search across the entire scripture and library.
+
+### ⏳ v1.0 — Stable Production Release
+- [ ] Polished UI/UX, cross-platform verified keyboard ergonomics, and final community release.
+
+### ⏳ v2.0 — Hadith Library Expansion (*Al-Wahyain* — The Two Divine Revelations)
+- [ ] Secondary expansion phase integrating the Sunnah: Sahih al-Bukhari and Sahih Muslim with Urdu translations.
+- [ ] Cross-referencing Hadith narrations with corresponding Quranic Ayahs in the Tafsir study view.
+
+---
+
 ## ⌨️ Power-User Keyboard Shortcuts
 
 | Shortcut | Description |

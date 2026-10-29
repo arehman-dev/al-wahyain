@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Ayah, Surah, ScriptMode, MushafDisplayMode } from '../types/quran';
 import { JUZ_NAMES_AR, getJuzForPage, toArabicDigits } from '../utils/juzMapping';
+import { InteractiveWord } from './WordTooltip';
 
 interface MushafViewProps {
   ayahs: Ayah[];
@@ -29,6 +30,7 @@ interface MushafViewProps {
   activePlayingWordIndex: number | null;
   onPlayAyah: (ayah: Ayah) => void;
   onPauseAyah: () => void;
+  onSelectWordRoot?: (root: string) => void;
 }
 
 export const MushafView: React.FC<MushafViewProps> = ({
@@ -48,7 +50,8 @@ export const MushafView: React.FC<MushafViewProps> = ({
   activePlayingAyah,
   activePlayingWordIndex,
   onPlayAyah,
-  onPauseAyah
+  onPauseAyah,
+  onSelectWordRoot
 }) => {
   // Extract all distinct page numbers present in the current Surah's loaded ayahs
   const availablePages = Array.from(
@@ -286,22 +289,19 @@ export const MushafView: React.FC<MushafViewProps> = ({
                   </div>
                 </div>
 
-                {/* Arabic Text with Real-Time Word Highlighting */}
+                {/* Arabic Text with Real-Time Word Highlighting and Hover Inspection */}
                 <div className="tajweed-text text-right text-2xl sm:text-3xl leading-[2.6] font-arabic my-3 text-slate-900 dark:text-white">
                   {ayah.words && ayah.words.length > 0 ? (
                     ayah.words.map((w, wIdx) => {
                       const isWordActive = isAyahPlaying && activePlayingWordIndex === wIdx;
                       return (
-                        <span
+                        <InteractiveWord
                           key={w.id}
-                          className={`inline-block mx-0.5 px-1 rounded transition-all duration-150 ${
-                            isWordActive
-                              ? 'bg-amber-300 dark:bg-amber-600 text-slate-950 dark:text-white scale-105 shadow-sm'
-                              : ''
-                          }`}
-                        >
-                          {scriptMode === 'indopak' ? w.text_indopak : w.text_uthmani}
-                        </span>
+                          word={w}
+                          scriptMode={scriptMode}
+                          onSelectRoot={onSelectWordRoot}
+                          isActive={isWordActive}
+                        />
                       );
                     })
                   ) : showTajweed ? (

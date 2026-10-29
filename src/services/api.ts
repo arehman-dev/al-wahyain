@@ -6,7 +6,8 @@ import {
   SearchResultQuran, 
   SearchResultTafsir, 
   Bookmark, 
-  AyahNote 
+  AyahNote,
+  TafsirHighlight 
 } from '../types/quran';
 
 const BASE_URL = '/api';
@@ -100,4 +101,27 @@ export async function deleteNote(surah_id: number, ayah_number: number): Promise
     method: 'DELETE'
   });
   if (!res.ok) throw new Error('Failed to delete note');
+}
+
+// Highlights APIs
+export async function fetchHighlights(): Promise<TafsirHighlight[]> {
+  const res = await fetch(`${BASE_URL}/highlights`);
+  if (!res.ok) throw new Error('Failed to fetch highlights');
+  return res.json();
+}
+
+export async function saveHighlight(highlight: Omit<TafsirHighlight, 'created_at'>): Promise<void> {
+  const res = await fetch(`${BASE_URL}/highlights`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(highlight)
+  });
+  if (!res.ok) throw new Error('Failed to save highlight');
+}
+
+export async function deleteHighlight(id: string): Promise<void> {
+  const res = await fetch(`${BASE_URL}/highlights/${encodeURIComponent(id)}`, {
+    method: 'DELETE'
+  });
+  if (!res.ok) throw new Error('Failed to delete highlight');
 }

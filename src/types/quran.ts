@@ -132,6 +132,28 @@ export interface AyahNote {
   text_uthmani?: string;
 }
 
+export type HighlightColor = 'yellow' | 'green' | 'blue' | 'purple';
+
+export interface TafsirHighlight {
+  id: string;
+  surah_id: number;
+  surah_name_urdu?: string;
+  ayah_number: number;
+  verse_key: string;
+  tafsir_slug: string;
+  text: string;
+  color: HighlightColor;
+  created_at: string;
+}
+
+export interface ReadingHistoryEntry {
+  surah_id: number;
+  ayah_number: number;
+  verse_key: string;
+  surah_name_urdu: string;
+  timestamp: number;
+}
+
 export interface StudyState {
   currentSurahId: number;
   currentAyahNumber: number;

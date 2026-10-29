@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Bookmark as BookmarkIcon, FileText, Trash2, ExternalLink, X, BookOpen, Clock } from 'lucide-react';
-import { Bookmark, AyahNote } from '../types/quran';
-import { fetchBookmarks, removeBookmark, fetchNotes, deleteNote } from '../services/api';
+import { Bookmark as BookmarkIcon, FileText, Trash2, ExternalLink, X, BookOpen, Clock, Highlighter } from 'lucide-react';
+import { Bookmark, AyahNote, TafsirHighlight } from '../types/quran';
+import { fetchBookmarks, removeBookmark, fetchNotes, deleteNote, fetchHighlights, deleteHighlight } from '../services/api';
+import { HIGHLIGHT_STYLES } from '../utils/highlighterHelper';
 
 interface StudySuiteModalProps {
   isOpen: boolean;
@@ -14,17 +15,19 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
   onClose,
   onJumpToAyah
 }) => {
-  const [activeTab, setActiveTab] = useState<'bookmarks' | 'notes'>('bookmarks');
+  const [activeTab, setActiveTab] = useState<'bookmarks' | 'notes' | 'highlights'>('bookmarks');
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [notes, setNotes] = useState<AyahNote[]>([]);
+  const [highlights, setHighlights] = useState<TafsirHighlight[]>([]);
   const [loading, setLoading] = useState(false);
 
   const loadData = () => {
     setLoading(true);
-    Promise.all([fetchBookmarks(), fetchNotes()])
-      .then(([bm, nt]) => {
+    Promise.all([fetchBookmarks(), fetchNotes(), fetchHighlights()])
+      .then(([bm, nt, hl]) => {
         setBookmarks(bm);
         setNotes(nt);
+        setHighlights(hl);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -52,6 +55,17 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
     try {
       await deleteNote(surahId, ayahNumber);
       setNotes(prev => prev.filter(n => !(n.surah_id === surahId && n.ayah_number === ayahNumber)));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteHighlight = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!window.confirm('کیا آپ واقعی یہ ہائی لائٹ حذف کرنا چاہتے ہیں؟')) return;
+    try {
+      await deleteHighlight(id);
+      setHighlights(prev => prev.filter(h => h.id !== id));
     } catch (err) {
       console.error(err);
     }
@@ -108,6 +122,17 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
             <FileText className="w-4 h-4" />
             <span>ذاتی نوٹس ({notes.length})</span>
           </button>
+          <button
+            onClick={() => setActiveTab('highlights')}
+            className={`pb-3 px-3 border-b-2 flex items-center gap-1.5 transition-all ${
+              activeTab === 'highlights'
+                ? 'border-purple-600 text-purple-600 dark:text-purple-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <Highlighter className="w-4 h-4" />
+            <span>تفسیری ہائی لائٹس ({highlights.length})</span>
+          </button>
         </div>
 
         {/* Content */}
@@ -159,7 +184,7 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
                 </div>
               ))
             )
-          ) : (
+          ) : activeTab === 'notes' ? (
             notes.length === 0 ? (
               <div className="py-16 text-center text-slate-400 space-y-2">
                 <FileText className="w-8 h-8 mx-auto text-emerald-500/40" />
@@ -202,6 +227,56 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
                   </button>
                 </div>
               ))
+            )
+          ) : (
+            highlights.length === 0 ? (
+              <div className="py-16 text-center text-slate-400 space-y-2">
+                <Highlighter className="w-8 h-8 mx-auto text-purple-500/40" />
+                <p className="text-sm">ابھی تک کوئی تفسیری اقتباس ہائی لائٹ نہیں کیا گیا</p>
+                <p className="text-xs text-slate-500">تفسیر کے دوران کسی بھی عبارت کو منتخب کر کے ہائی لائٹ مارکر کا استعمال کریں</p>
+              </div>
+            ) : (
+              highlights.map((hl) => {
+                const style = HIGHLIGHT_STYLES[hl.color] || HIGHLIGHT_STYLES.yellow;
+                return (
+                  <div
+                    key={hl.id}
+                    onClick={() => {
+                      onJumpToAyah(hl.surah_id, hl.ayah_number);
+                      onClose();
+                    }}
+                    className="p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all flex items-start justify-between gap-4 group"
+                  >
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs text-emerald-700 dark:text-emerald-400">
+                          {hl.surah_name_urdu || `سورہ ${hl.surah_id}`}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                          {hl.verse_key}
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${style.badge}`}>
+                          {style.label}
+                        </span>
+                        <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {new Date(hl.created_at).toLocaleDateString('ur-PK')}
+                        </span>
+                      </div>
+                      <p className={`text-sm leading-relaxed p-3 rounded-xl border border-slate-100 dark:border-slate-800/70 ${style.mark}`}>
+                        "{hl.text}"
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => handleDeleteHighlight(e, hl.id)}
+                      title="ہائی لائٹ حذف کریں"
+                      className="p-2 text-slate-400 hover:text-red-500 dark:hover:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                );
+              })
             )
           )}
         </div>

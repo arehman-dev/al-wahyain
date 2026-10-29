@@ -14,7 +14,7 @@ import { StudySuiteModal } from './components/StudySuiteModal';
 import { NoteEditorDrawer } from './components/NoteEditorDrawer';
 import { ExportShareModal } from './components/ExportShareModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
-import { Maximize2 } from 'lucide-react';
+import { Maximize2, X } from 'lucide-react';
 import { 
   Surah, 
   Ayah, 
@@ -23,7 +23,10 @@ import {
   ScriptMode, 
   MushafDisplayMode,
   Bookmark,
-  AyahNote
+  AyahNote,
+  TafsirHighlight,
+  HighlightColor,
+  ReadingHistoryEntry
 } from './types/quran';
 import { 
   fetchSurahs, 
@@ -32,7 +35,10 @@ import {
   fetchBookmarks,
   addBookmark,
   removeBookmark,
-  fetchNotes
+  fetchNotes,
+  fetchHighlights,
+  saveHighlight,
+  deleteHighlight
 } from './services/api';
 
 export const App: React.FC = () => {
@@ -100,9 +106,25 @@ export const App: React.FC = () => {
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [showShortcutsModal, setShowShortcutsModal] = useState<boolean>(false);
 
-  // 5. Bookmarks & Notes State
+  // 5. Bookmarks, Notes & Highlights State
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [notes, setNotes] = useState<AyahNote[]>([]);
+  const [highlights, setHighlights] = useState<TafsirHighlight[]>([]);
+
+  // 6. Intelligent Session Resume & Reading History
+  const [readingHistory, setReadingHistory] = useState<ReadingHistoryEntry[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('qs_reading_history') || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const [resumePrompt, setResumePrompt] = useState<{
+    surahId: number;
+    ayahNumber: number;
+    verseKey: string;
+    surahName: string;
+  } | null>(null);
 
   // Sync dark mode class
   useEffect(() => {
@@ -126,10 +148,11 @@ export const App: React.FC = () => {
     localStorage.setItem('qs_tafsir_layout', tafsirLayout);
   }, [currentSurahId, currentAyahNumber, activeMode, scriptMode, mushafDisplayMode, showTajweed, fontSize, tafsirLayout]);
 
-  // Load bookmarks & notes
+  // Load bookmarks, notes & highlights
   const reloadStudyData = useCallback(() => {
     fetchBookmarks().then(setBookmarks).catch(console.error);
     fetchNotes().then(setNotes).catch(console.error);
+    fetchHighlights().then(setHighlights).catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -193,6 +216,96 @@ export const App: React.FC = () => {
       console.error(err);
     }
   };
+
+  // Highlight Handlers
+  const handleAddHighlight = async (text: string, color: HighlightColor, tafsirSlug: string = 'general') => {
+    if (!currentAyah) return;
+    const newHl: Omit<TafsirHighlight, 'created_at'> = {
+      id: `hl_${Date.now()}`,
+      surah_id: currentSurahId,
+      ayah_number: currentAyahNumber,
+      verse_key: currentAyah.verse_key,
+      tafsir_slug: tafsirSlug,
+      text: text.trim(),
+      color
+    };
+    try {
+      await saveHighlight(newHl);
+      reloadStudyData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteHighlight = async (id: string) => {
+    try {
+      await deleteHighlight(id);
+      setHighlights(prev => prev.filter(h => h.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Cross-reference jump handler
+  const handleNavigateToVerse = (surahId: number, ayahNumber: number) => {
+    const isSeeded = surahs.some(s => s.id === surahId);
+    if (isSeeded) {
+      setCurrentSurahId(surahId);
+      setCurrentAyahNumber(ayahNumber);
+    } else {
+      alert(`سورہ ${surahId} اگلی اپڈیٹ (v0.9) کے مکمل ڈیٹا میں شامل ہوگی۔ فی الحال سورتیں 1 تا 4 اور 55 تا 57 مکمل دستیاب ہیں۔`);
+    }
+  };
+
+  // Track Reading History
+  useEffect(() => {
+    if (!currentAyah || !currentSurah) return;
+    setReadingHistory(prev => {
+      const filtered = prev.filter(item => !(item.surah_id === currentSurahId && item.ayah_number === currentAyahNumber));
+      const updated = [
+        {
+          surah_id: currentSurahId,
+          ayah_number: currentAyahNumber,
+          verse_key: currentAyah.verse_key,
+          surah_name_urdu: currentSurah.name_urdu,
+          timestamp: Date.now()
+        },
+        ...filtered
+      ].slice(0, 15);
+      localStorage.setItem('qs_reading_history', JSON.stringify(updated));
+      return updated;
+    });
+  }, [currentSurahId, currentAyahNumber, currentAyah, currentSurah]);
+
+  // Session Resume Prompt check on initial mount
+  useEffect(() => {
+    const lastRaw = localStorage.getItem('qs_last_session');
+    if (lastRaw) {
+      try {
+        const last = JSON.parse(lastRaw);
+        if (last.surahId && last.ayahNumber) {
+          const savedSurah = Number(localStorage.getItem('qs_surah_id'));
+          const savedAyah = Number(localStorage.getItem('qs_ayah_number'));
+          if (savedSurah === 1 && savedAyah === 1 && (last.surahId !== 1 || last.ayahNumber !== 1)) {
+            setResumePrompt(last);
+          }
+        }
+      } catch {}
+    }
+  }, []);
+
+  // Persist last session info
+  useEffect(() => {
+    if (currentSurah && currentAyah) {
+      localStorage.setItem('qs_last_session', JSON.stringify({
+        surahId: currentSurahId,
+        ayahNumber: currentAyahNumber,
+        verseKey: currentAyah.verse_key,
+        surahName: currentSurah.name_urdu,
+        timestamp: Date.now()
+      }));
+    }
+  }, [currentSurahId, currentAyahNumber, currentSurah, currentAyah]);
 
   // Navigation handlers
   const handleSelectSurah = (id: number) => {
@@ -382,6 +495,11 @@ export const App: React.FC = () => {
           showInlineTranslation={showInlineTranslation}
           onToggleTranslation={() => setShowInlineTranslation(prev => !prev)}
           onOpenTajweedLegend={() => setShowTajweedLegend(true)}
+          history={readingHistory}
+          onSelectHistoryItem={(sId, aNum) => {
+            setCurrentSurahId(sId);
+            setCurrentAyahNumber(aNum);
+          }}
         />
       )}
 
@@ -401,6 +519,42 @@ export const App: React.FC = () => {
       {/* MAIN WORKSPACE CONTENT AREA                              */}
       {/* ======================================================== */}
       <main className={`flex-1 ${isZenMode ? 'pt-4' : 'pt-2'} pb-16`}>
+        {/* Intelligent Session Resume Prompt Banner */}
+        {resumePrompt && (
+          <div dir="rtl" className="max-w-5xl mx-auto px-4 pt-1 pb-3 font-ibm">
+            <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700/60 text-slate-800 dark:text-emerald-200 text-xs shadow-sm transition-all animate-in fade-in">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                <span className="font-semibold text-emerald-800 dark:text-emerald-300">
+                  آخری نشست کا مطالعہ:
+                </span>
+                <span>
+                  <strong>{resumePrompt.surahName}</strong> (آیت {resumePrompt.ayahNumber})
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setCurrentSurahId(resumePrompt.surahId);
+                    setCurrentAyahNumber(resumePrompt.ayahNumber);
+                    setResumePrompt(null);
+                  }}
+                  className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-xs transition-colors"
+                >
+                  مطالعہ جاری رکھیں ↵
+                </button>
+                <button
+                  onClick={() => setResumePrompt(null)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  title="بند کریں"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-3 font-ibm">
@@ -467,6 +621,7 @@ export const App: React.FC = () => {
                 activePlayingWordIndex={activePlayingWordIndex}
                 onPlayAyah={handlePlayAyah}
                 onPauseAyah={handlePauseAyah}
+                onSelectWordRoot={(root) => setSelectedRoot(root)}
               />
             )}
 
@@ -511,6 +666,11 @@ export const App: React.FC = () => {
                 onFontSizeChange={setFontSize}
                 layoutMode={tafsirLayout}
                 onToggleLayoutMode={() => setTafsirLayout(prev => prev === 'stacked' ? 'grid' : 'stacked')}
+                highlights={highlights}
+                onAddHighlight={handleAddHighlight}
+                onDeleteHighlight={handleDeleteHighlight}
+                onNavigateToVerse={handleNavigateToVerse}
+                onSelectWordRoot={(root) => setSelectedRoot(root)}
               />
             )}
           </>

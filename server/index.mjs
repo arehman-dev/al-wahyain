@@ -31,6 +31,17 @@ db.exec(`
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(surah_id, ayah_number)
   );
+
+  CREATE TABLE IF NOT EXISTS highlights (
+    id TEXT PRIMARY KEY,
+    surah_id INTEGER NOT NULL,
+    ayah_number INTEGER NOT NULL,
+    verse_key TEXT NOT NULL,
+    tafsir_slug TEXT NOT NULL,
+    text TEXT NOT NULL,
+    color TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 function jsonResponse(res, data, statusCode = 200) {
@@ -356,6 +367,50 @@ const server = http.createServer(async (req, res) => {
       const sId = parseInt(delNoteMatch[1], 10);
       const aNum = parseInt(delNoteMatch[2], 10);
       db.prepare('DELETE FROM notes WHERE surah_id = ? AND ayah_number = ?').run(sId, aNum);
+      return jsonResponse(res, { success: true });
+    }
+
+    // 11. HIGHLIGHTS API
+    // GET /api/highlights
+    if (req.method === 'GET' && pathname === '/api/highlights') {
+      const highlights = db.prepare(`
+        SELECT 
+          h.id, 
+          h.surah_id, 
+          s.name_urdu as surah_name_urdu, 
+          h.ayah_number, 
+          h.verse_key, 
+          h.tafsir_slug, 
+          h.text, 
+          h.color, 
+          h.created_at
+        FROM highlights h
+        JOIN surahs s ON h.surah_id = s.id
+        ORDER BY h.created_at DESC
+      `).all();
+      return jsonResponse(res, highlights);
+    }
+
+    // POST /api/highlights
+    if (req.method === 'POST' && pathname === '/api/highlights') {
+      const body = await parseBody(req);
+      const { id, surah_id, ayah_number, verse_key, tafsir_slug, text, color } = body;
+      if (!id || !surah_id || !ayah_number || !text) {
+        return jsonResponse(res, { error: 'id, surah_id, ayah_number, and text required' }, 400);
+      }
+      const vk = verse_key || `${surah_id}:${ayah_number}`;
+      db.prepare(`
+        INSERT OR REPLACE INTO highlights (id, surah_id, ayah_number, verse_key, tafsir_slug, text, color, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      `).run(id, surah_id, ayah_number, vk, tafsir_slug || 'general', text, color || 'yellow');
+      return jsonResponse(res, { success: true, id });
+    }
+
+    // DELETE /api/highlights/:id
+    const delHlMatch = pathname.match(/^\/api\/highlights\/(.+)$/);
+    if (req.method === 'DELETE' && delHlMatch) {
+      const hlId = decodeURIComponent(delHlMatch[1]);
+      db.prepare('DELETE FROM highlights WHERE id = ?').run(hlId);
       return jsonResponse(res, { success: true });
     }
 
