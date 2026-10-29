@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Sparkles, Library, Info, Moon, Sun, Search, Bookmark, Keyboard, Maximize2, Minimize2 } from 'lucide-react';
+import { BookOpen, Sparkles, Library, Info, Moon, Sun, Search, Bookmark, Keyboard, Maximize2, Minimize2, Languages } from 'lucide-react';
 import { AppMode } from '../types/quran';
 
 interface HeaderProps {
@@ -51,42 +51,58 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center: Primary Workspace Mode Switcher */}
+        {/* Center: Primary Workspace 4-Mode Switcher */}
         <nav className="flex items-center bg-slate-100 dark:bg-slate-800/90 p-0.5 rounded-lg border border-slate-200/70 dark:border-slate-700/70">
           <button
-            onClick={() => onChangeMode('tafsir')}
+            onClick={() => onChangeMode('quran')}
+            title="خالص تلاوت و مصحف (1)"
             className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-all ${
-              activeMode === 'tafsir'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
-            }`}
-          >
-            <Library className="w-3.5 h-3.5" />
-            <span>تقابلی تفاسیر</span>
-          </button>
-
-          <button
-            onClick={() => onChangeMode('mushaf')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-all ${
-              activeMode === 'mushaf'
+              activeMode === 'quran' || activeMode === 'mushaf'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>مصحف</span>
+            <span>قرآن</span>
           </button>
 
           <button
-            onClick={() => onChangeMode('morphology')}
+            onClick={() => onChangeMode('translation')}
+            title="بامحاورہ و لفظی ترجمہ (2)"
             className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-all ${
-              activeMode === 'morphology'
+              activeMode === 'translation'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+            }`}
+          >
+            <Languages className="w-3.5 h-3.5" />
+            <span>ترجمہ</span>
+          </button>
+
+          <button
+            onClick={() => onChangeMode('sarf')}
+            title="صرف، نحو و لغت (3)"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-all ${
+              activeMode === 'sarf' || activeMode === 'morphology'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>صرف و لغت</span>
+            <span>صرف</span>
+          </button>
+
+          <button
+            onClick={() => onChangeMode('tafseer')}
+            title="تقابلی تفاسیر (4)"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-all ${
+              activeMode === 'tafseer' || activeMode === 'tafsir'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+            }`}
+          >
+            <Library className="w-3.5 h-3.5" />
+            <span>تفسیر</span>
           </button>
         </nav>
 

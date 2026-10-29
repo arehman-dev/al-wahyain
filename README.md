@@ -55,7 +55,7 @@ A desktop-first, offline-capable study station designed for comparative reading 
 Our development is strictly purpose-built for deep, distraction-free Quranic study, adhering to the core philosophy: **personal study utility first, open-source community asset second, zero bloat**.
 
 ```
-v0.5 (Base Live) ──► v0.6 (Study Tooling & Deep UX) ──► v0.7 (15-Line Mushaf Precision) ──► v0.8 (PWA / Standalone) ──► v0.9 (All 114 Surahs) ──► v1.0 (Stable Release) ──► v2.0 (Hadith Library Expansion)
+v0.5 (Foundation) ──► v0.6 (Deep UX) ──► v0.7 (15-Line Mushaf) ──► v0.8 (PWA) ──► v0.9 (114 Surahs) ──► v1.0 (Stable) ──► v2.0 (Hadith Library) ──► v3.0 (Personal Maktabah: PDF & MD)
 ```
 
 ### ✅ v0.5 — Core Foundation (Completed)
@@ -96,6 +96,12 @@ v0.5 (Base Live) ──► v0.6 (Study Tooling & Deep UX) ──► v0.7 (15-Lin
 ### ⏳ v2.0 — Hadith Library Expansion (*Al-Wahyain* — The Two Divine Revelations)
 - [ ] Secondary expansion phase integrating the Sunnah: Sahih al-Bukhari and Sahih Muslim with Urdu translations.
 - [ ] Cross-referencing Hadith narrations with corresponding Quranic Ayahs in the Tafsir study view.
+
+### ⏳ v3.0 — Personal Digital Maktabah (مکتبہ ذاتیہ) — Islamic PDF & Markdown Scholar Station
+- [ ] Built-in offline PDF reader for classical Islamic books, treatises, and personal study libraries.
+- [ ] Scholarly Markdown (.md) reader and journal manager with auto-detection of Quranic references.
+- [ ] Split-view study: Read personal PDF books and research notes side-by-side with the Quran & Tafsir workspace.
+- [ ] Direct citation clipper: Clip excerpts from personal books into Ayah notes with automatic academic attribution.
 
 ---
 

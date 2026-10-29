@@ -1,6 +1,6 @@
 export type ScriptMode = 'madani' | 'indopak';
 export type MushafDisplayMode = 'page' | 'continuous';
-export type AppMode = 'mushaf' | 'morphology' | 'tafsir';
+export type AppMode = 'quran' | 'translation' | 'sarf' | 'tafseer' | 'mushaf' | 'morphology' | 'tafsir';
 
 export interface Surah {
   id: number;

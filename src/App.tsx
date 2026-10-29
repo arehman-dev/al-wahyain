@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { SubHeaderToolbar } from './components/SubHeaderToolbar';
 import { BottomDock } from './components/BottomDock';
 import { MushafView } from './components/MushafView';
+import { TranslationView } from './components/TranslationView';
 import { MorphologyView } from './components/MorphologyView';
 import { TafsirView } from './components/TafsirView';
 import { QuickPeekDrawer } from './components/QuickPeekDrawer';
@@ -51,7 +52,12 @@ export const App: React.FC = () => {
     return Number(localStorage.getItem('qs_ayah_number')) || 1;
   });
   const [activeMode, setActiveMode] = useState<AppMode>(() => {
-    return (localStorage.getItem('qs_active_mode') as AppMode) || 'tafsir';
+    const saved = localStorage.getItem('qs_active_mode');
+    if (saved === 'mushaf' || saved === 'quran') return 'quran';
+    if (saved === 'translation') return 'translation';
+    if (saved === 'morphology' || saved === 'sarf') return 'sarf';
+    if (saved === 'tafsir' || saved === 'tafseer') return 'tafseer';
+    return 'quran';
   });
   const [scriptMode, setScriptMode] = useState<ScriptMode>(() => {
     return (localStorage.getItem('qs_script_mode') as ScriptMode) || 'indopak';
@@ -79,6 +85,7 @@ export const App: React.FC = () => {
 
   // Stacked Tafsir Collapsible State
   const [expandedTafasir, setExpandedTafasir] = useState<Record<string, boolean>>({
+    bayan_ul_quran: true,
     tafheem: true,
     maarif: true,
     ibn_kathir: true,
@@ -407,35 +414,39 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Numbers 1, 2, 3, 4: Context-aware hotkeys
-      // If in Tafsir mode: 1-4 toggle individual commentaries
-      if (activeMode === 'tafsir' && !e.shiftKey) {
-        if (e.key === '1') {
+      // Numbers 1, 2, 3, 4: 4 Primary Workspace Tabs
+      if (['1', '2', '3', '4'].includes(e.key) && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        if (e.key === '1') setActiveMode('quran');
+        if (e.key === '2') setActiveMode('translation');
+        if (e.key === '3') setActiveMode('sarf');
+        if (e.key === '4') setActiveMode('tafseer');
+        return;
+      }
+
+      // Shift + 1..5 in Tafsir mode: toggle individual commentary accordions
+      if ((activeMode === 'tafseer' || activeMode === 'tafsir') && e.shiftKey) {
+        if (e.key === '!' || e.key === '1') {
+          e.preventDefault();
+          handleToggleTafsir('bayan_ul_quran');
+          return;
+        } else if (e.key === '@' || e.key === '2') {
           e.preventDefault();
           handleToggleTafsir('tafheem');
           return;
-        } else if (e.key === '2') {
+        } else if (e.key === '#' || e.key === '3') {
           e.preventDefault();
           handleToggleTafsir('maarif');
           return;
-        } else if (e.key === '3') {
+        } else if (e.key === '$' || e.key === '4') {
           e.preventDefault();
           handleToggleTafsir('ibn_kathir');
           return;
-        } else if (e.key === '4') {
+        } else if (e.key === '%' || e.key === '5') {
           e.preventDefault();
           handleToggleTafsir('tayseer');
           return;
         }
-      }
-
-      // Mode switching (1, 2, 3 or Shift + 1, 2, 3)
-      if (e.key === '1' || (e.shiftKey && e.key === '!')) {
-        setActiveMode('tafsir');
-      } else if (e.key === '2' || (e.shiftKey && e.key === '@')) {
-        setActiveMode('mushaf');
-      } else if (e.key === '3' || (e.shiftKey && e.key === '#')) {
-        setActiveMode('morphology');
       }
     };
 
@@ -453,6 +464,7 @@ export const App: React.FC = () => {
 
   const handleExpandAll = () => {
     setExpandedTafasir({
+      bayan_ul_quran: true,
       tafheem: true,
       maarif: true,
       ibn_kathir: true,
@@ -462,6 +474,7 @@ export const App: React.FC = () => {
 
   const handleCollapseAll = () => {
     setExpandedTafasir({
+      bayan_ul_quran: false,
       tafheem: false,
       maarif: false,
       ibn_kathir: false,
@@ -617,8 +630,8 @@ export const App: React.FC = () => {
           </div>
         ) : (
           <>
-            {/* Mode 1: Mushaf View */}
-            {activeMode === 'mushaf' && (
+            {/* Mode 1: Pure Mushaf View (خالص تلاوت و مصحف) */}
+            {(activeMode === 'quran' || activeMode === 'mushaf') && (
               <MushafView
                 ayahs={ayahs}
                 currentSurah={currentSurah}
@@ -626,16 +639,16 @@ export const App: React.FC = () => {
                 scriptMode={scriptMode}
                 mushafDisplayMode={mushafDisplayMode}
                 showTajweed={showTajweed}
-                showInlineTranslation={showInlineTranslation}
+                showInlineTranslation={false}
                 selectedTranslationAuthor={selectedTranslationAuthor}
                 onSelectAyah={handleSelectAyah}
                 onOpenMorphology={(num) => {
                   setCurrentAyahNumber(num);
-                  setActiveMode('morphology');
+                  setActiveMode('sarf');
                 }}
                 onOpenTafsir={(num) => {
                   setCurrentAyahNumber(num);
-                  setActiveMode('tafsir');
+                  setActiveMode('tafseer');
                 }}
                 onQuickPeek={(ayah) => setQuickPeekAyah(ayah)}
                 isPlaying={isPlaying}
@@ -647,8 +660,45 @@ export const App: React.FC = () => {
               />
             )}
 
-            {/* Mode 2: Word-by-Word & Deep Morphology View */}
-            {activeMode === 'morphology' && currentAyah && (
+            {/* Mode 2: Dedicated Translation View (بامحاورہ و لفظی اردو ترجمہ) */}
+            {activeMode === 'translation' && (
+              <TranslationView
+                ayahs={ayahs}
+                currentSurah={currentSurah}
+                currentAyahNumber={currentAyahNumber}
+                scriptMode={scriptMode}
+                selectedTranslationAuthor={selectedTranslationAuthor}
+                onSelectAyah={handleSelectAyah}
+                onOpenMorphology={(num) => {
+                  setCurrentAyahNumber(num);
+                  setActiveMode('sarf');
+                }}
+                onOpenTafsir={(num) => {
+                  setCurrentAyahNumber(num);
+                  setActiveMode('tafseer');
+                }}
+                isPlaying={isPlaying}
+                activePlayingAyah={activePlayingAyah}
+                activePlayingWordIndex={activePlayingWordIndex}
+                onPlayAyah={handlePlayAyah}
+                onPauseAyah={handlePauseAyah}
+                isAyahBookmarked={(num) => !!bookmarks.find(b => b.surah_id === currentSurahId && b.ayah_number === num)}
+                onToggleBookmark={async (ayah) => {
+                  const isBm = !!bookmarks.find(b => b.surah_id === currentSurahId && b.ayah_number === ayah.ayah_number);
+                  if (isBm) {
+                    await removeBookmark(currentSurahId, ayah.ayah_number);
+                    setBookmarks(prev => prev.filter(b => !(b.surah_id === currentSurahId && b.ayah_number === ayah.ayah_number)));
+                  } else {
+                    await addBookmark(currentSurahId, ayah.ayah_number, ayah.verse_key);
+                    reloadStudyData();
+                  }
+                }}
+                onSelectWordRoot={(root) => setSelectedRoot(root)}
+              />
+            )}
+
+            {/* Mode 3: Word-by-Word & Deep Morphology View (صرف، نحو و لغت) */}
+            {(activeMode === 'sarf' || activeMode === 'morphology') && currentAyah && (
               <MorphologyView
                 currentAyah={currentAyah}
                 scriptMode={scriptMode}
@@ -661,13 +711,13 @@ export const App: React.FC = () => {
                 onPauseAyah={handlePauseAyah}
                 onOpenTafsir={(num) => {
                   setCurrentAyahNumber(num);
-                  setActiveMode('tafsir');
+                  setActiveMode('tafseer');
                 }}
               />
             )}
 
-            {/* Mode 3: Stacked & Comparative Multi-Tafsir View */}
-            {activeMode === 'tafsir' && currentAyah && (
+            {/* Mode 4: Stacked & Comparative Multi-Tafsir View (تقابلی تفاسیر) */}
+            {(activeMode === 'tafseer' || activeMode === 'tafsir') && currentAyah && (
               <TafsirView
                 currentAyah={currentAyah}
                 tafasir={tafasir}

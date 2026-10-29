@@ -134,12 +134,28 @@ tajweed.qalqalah {
   font-size: 0.85em;
   color: #059669;
   margin: 0 0.35rem;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+/* Authentic Quranic & Indo-Pak Nastaliq Typography */
+.font-indopak {
+  font-family: 'Noto Nastaliq Urdu', 'Scheherazade New', 'Amiri', serif;
+  line-height: 2.5;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv01", "cv02", "calt", "liga";
+}
+
+.font-arabic {
+  font-family: 'Amiri', 'Scheherazade New', serif;
+  text-rendering: optimizeLegibility;
 }
 
 /* Urdu Nastaliq line heights and flow */
 .urdu-nastaliq {
-  font-family: 'Noto Nastaliq Urdu', 'Gulzar', serif;
+  font-family: 'Noto Nastaliq Urdu', serif;
   line-height: 2.2;
+  text-rendering: optimizeLegibility;
 }
 
 /* IBM Plex Sans Arabic styling */

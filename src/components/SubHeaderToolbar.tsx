@@ -233,8 +233,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
       </div>
 
-      {/* Center: Mushaf Controls (Only visible in Mushaf Mode) */}
-      {activeMode === 'mushaf' && (
+      {/* Center: Mode Specific Controls */}
+      {(activeMode === 'quran' || activeMode === 'mushaf') ? (
         <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           
           {/* Display Mode: Page vs Continuous */}
@@ -301,23 +301,20 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             </button>
           )}
 
-          {/* Inline Translation Toggle */}
-          {onToggleTranslation && (
-            <button
-              onClick={onToggleTranslation}
-              title="آیات کے نیچے ترجمہ دکھائیں / چھپائیں"
-              className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-semibold transition-all ${
-                showInlineTranslation
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'
-                  : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <BookOpen className="w-3 h-3" />
-              <span>ترجمہ</span>
-            </button>
-          )}
-
         </div>
+      ) : (
+        /* Script Mode switch for Translation, Sarf, and Tafsir modes */
+        onToggleScript && (
+          <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+            <button
+              onClick={onToggleScript}
+              title="رسم الخط تبدیل کریں"
+              className="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-[11px] rounded-md transition-colors"
+            >
+              رسم الخط: {scriptMode === 'indopak' ? 'پاکستانی / انڈو پاک' : 'عثمانی / مدنی'}
+            </button>
+          </div>
+        )
       )}
 
       {/* Left Side: Scrubber Progress Track + Quick Action Icons */}

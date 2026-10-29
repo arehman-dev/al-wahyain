@@ -4,26 +4,49 @@ import {
   ChevronUp, 
   ArrowLeft, 
   ArrowRight, 
+  ArrowUp,
+  ArrowDown,
   ExternalLink, 
   Maximize2, 
   Minimize2,
-  Copy,
-  Check,
-  Type,
-  Bookmark,
-  FileText,
-  Share2,
-  LayoutGrid,
-  List,
-  ZoomIn,
+  Copy, 
+  Check, 
+  Type, 
+  Bookmark, 
+  FileText, 
+  Share2, 
+  LayoutGrid, 
+  List, 
+  ZoomIn, 
   ZoomOut,
-  Highlighter
+  Highlighter,
+  SlidersHorizontal,
+  RotateCcw,
+  Eye,
+  EyeOff,
+  X
 } from 'lucide-react';
 import { Ayah, TafsirEntry, ScriptMode, TafsirHighlight, HighlightColor } from '../types/quran';
 import { InteractiveWord } from './WordTooltip';
 import { TextHighlighterBar } from './TextHighlighterBar';
 import { enhanceTafsirHtml } from '../utils/tafsirCrossReference';
 import { applyHighlightsToHtml } from '../utils/highlighterHelper';
+
+interface TafsirMetadata {
+  slug: string;
+  name: string;
+  author: string;
+}
+
+const ALL_KNOWN_TAFASEER: TafsirMetadata[] = [
+  { slug: 'bayan_ul_quran', name: 'بیان القرآن', author: 'ڈاکٹر اسرار احمد' },
+  { slug: 'tafheem', name: 'تفہیم القرآن', author: 'سید ابوالاعلیٰ مودودی' },
+  { slug: 'maarif', name: 'معارف القرآن', author: 'مفتی محمد شفیع' },
+  { slug: 'ibn_kathir', name: 'تفسیر ابن کثیر', author: 'علامہ ابن کثیر' },
+  { slug: 'tayseer', name: 'تیسیر القرآن', author: 'مولانا عبد الرحمن کیلانی' },
+];
+
+const DEFAULT_TAFSIR_ORDER = ['bayan_ul_quran', 'tafheem', 'maarif', 'ibn_kathir', 'tayseer'];
 
 interface TafsirViewProps {
   currentAyah: Ayah;
@@ -83,6 +106,72 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   const [useIbmFont, setUseIbmFont] = useState<boolean>(true);
   const [localFontSize, setLocalFontSize] = useState<number>(17);
   const [localLayoutMode, setLocalLayoutMode] = useState<'stacked' | 'grid'>('stacked');
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+
+  // Tafsir Order & Visibility preferences persisted to localStorage
+  const [tafsirOrder, setTafsirOrder] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('qs_tafsir_order');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return DEFAULT_TAFSIR_ORDER;
+  });
+
+  const [visibleTafasir, setVisibleTafasir] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('qs_tafsir_visibility');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {}
+    return {
+      bayan_ul_quran: true,
+      tafheem: true,
+      maarif: true,
+      ibn_kathir: true,
+      tayseer: true
+    };
+  });
+
+  const updateTafsirOrder = (newOrder: string[]) => {
+    setTafsirOrder(newOrder);
+    localStorage.setItem('qs_tafsir_order', JSON.stringify(newOrder));
+  };
+
+  const toggleTafsirVisibility = (slug: string) => {
+    setVisibleTafasir(prev => {
+      const updated = { ...prev, [slug]: !prev[slug] };
+      localStorage.setItem('qs_tafsir_visibility', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleMoveTafsir = (index: number, direction: 'up' | 'down') => {
+    const newOrder = [...tafsirOrder];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newOrder.length) return;
+    const temp = newOrder[index];
+    newOrder[index] = newOrder[targetIndex];
+    newOrder[targetIndex] = temp;
+    updateTafsirOrder(newOrder);
+  };
+
+  const handleResetSettings = () => {
+    setTafsirOrder(DEFAULT_TAFSIR_ORDER);
+    localStorage.setItem('qs_tafsir_order', JSON.stringify(DEFAULT_TAFSIR_ORDER));
+    const allVisible = {
+      bayan_ul_quran: true,
+      tafheem: true,
+      maarif: true,
+      ibn_kathir: true,
+      tayseer: true
+    };
+    setVisibleTafasir(allVisible);
+    localStorage.setItem('qs_tafsir_visibility', JSON.stringify(allVisible));
+  };
 
   const fontSize = propFontSize !== undefined ? propFontSize : localFontSize;
   const setFontSize = onFontSizeChange || setLocalFontSize;
@@ -123,7 +212,6 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   // Global arrow keys listener for Ayah navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept if user is typing in an input or textarea
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
       if (e.key === 'ArrowLeft') {
         onNextAyah();
@@ -142,6 +230,51 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   };
 
   const progressPercent = Math.min(100, Math.round((currentAyah.ayah_number / Math.max(1, totalVersesInSurah)) * 100));
+
+  // Sort and filter entries based on user's order and visibility preferences
+  const displayTafasir = [...tafasir]
+    .filter(entry => visibleTafasir[entry.tafsir_slug] !== false)
+    .sort((a, b) => {
+      const idxA = tafsirOrder.indexOf(a.tafsir_slug);
+      const idxB = tafsirOrder.indexOf(b.tafsir_slug);
+      const posA = idxA === -1 ? 999 : idxA;
+      const posB = idxB === -1 ? 999 : idxB;
+      return posA - posB;
+    });
+
+  // Distinct theme badges for all 5 tafasir authors including Dr. Israr Ahmed
+  const badgeStyles: Record<string, { bg: string; text: string; border: string; accent: string }> = {
+    bayan_ul_quran: {
+      bg: 'bg-purple-50 dark:bg-purple-950/60',
+      text: 'text-purple-800 dark:text-purple-300',
+      border: 'border-purple-200 dark:border-purple-800/80',
+      accent: 'border-r-purple-600'
+    },
+    tafheem: {
+      bg: 'bg-indigo-50 dark:bg-indigo-950/50',
+      text: 'text-indigo-800 dark:text-indigo-300',
+      border: 'border-indigo-200 dark:border-indigo-800/80',
+      accent: 'border-r-indigo-500'
+    },
+    maarif: {
+      bg: 'bg-emerald-50 dark:bg-emerald-950/50',
+      text: 'text-emerald-800 dark:text-emerald-300',
+      border: 'border-emerald-200 dark:border-emerald-800/80',
+      accent: 'border-r-emerald-500'
+    },
+    ibn_kathir: {
+      bg: 'bg-amber-50 dark:bg-amber-950/50',
+      text: 'text-amber-800 dark:text-amber-300',
+      border: 'border-amber-200 dark:border-amber-800/80',
+      accent: 'border-r-amber-500'
+    },
+    tayseer: {
+      bg: 'bg-cyan-50 dark:bg-cyan-950/50',
+      text: 'text-cyan-800 dark:text-cyan-300',
+      border: 'border-cyan-200 dark:border-cyan-800/80',
+      accent: 'border-r-cyan-500'
+    }
+  };
 
   return (
     <div 
@@ -259,46 +392,49 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
           <span className="ayah-end-num">﴿{currentAyah.ayah_number}﴾</span>
         </div>
 
-        {/* Primary Urdu Translation */}
+        {/* Taqi Usmani Urdu Translation */}
         {urduTranslation && (
-          <div 
-            data-tafsir-slug="translation"
-            className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/80 text-right select-text"
-          >
-            <p 
-              style={{ fontSize: `${fontSize + 1}px` }}
-              className={`${useIbmFont ? 'font-ibm leading-[2.1]' : 'urdu-nastaliq leading-[2.3]'} text-slate-800 dark:text-slate-200 font-medium`}
-              dangerouslySetInnerHTML={{
-                __html: applyHighlightsToHtml(
-                  urduTranslation.text, 
-                  highlights.filter(h => h.surah_id === currentAyah.surah_id && h.ayah_number === currentAyah.ayah_number && h.tafsir_slug === 'translation')
-                )
-              }}
-            />
-            <span className="text-xs text-slate-400 dark:text-slate-500 font-ibm font-medium mt-2 block">
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-right">
+            <p className="font-ibm text-base sm:text-lg text-slate-800 dark:text-slate-200 leading-[2.1] font-medium">
+              {urduTranslation.text}
+            </p>
+            <span className="text-xs text-slate-400 dark:text-slate-500 font-ibm mt-2 block">
               — ترجمہ: {urduTranslation.author_name}
             </span>
           </div>
         )}
-
       </div>
 
-      {/* 2. ACTIONS BAR: EXPAND/COLLAPSE ALL + FONT SIZE + FONT SWITCHER + LAYOUT SWITCHER */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-2 font-ibm">
+      {/* 2. TAFSEER CONTROLS TOOLBAR */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-xs font-ibm text-xs">
+        {/* Left Side Controls: Expand/Collapse, Reorder/Filter, Layout Toggle */}
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={onExpandAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors"
+            title="تمام تفاسیر کے کارڈز کھولیں"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold transition-colors"
           >
             <Maximize2 className="w-3.5 h-3.5" />
             <span>تمام کھولیں</span>
           </button>
           <button
             onClick={onCollapseAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors"
+            title="تمام تفاسیر کے کارڈز سمیٹیں"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold transition-colors"
           >
             <Minimize2 className="w-3.5 h-3.5" />
             <span>تمام سمیٹیں</span>
+          </button>
+
+          {/* Tafsir Order & Selection Dialog Button */}
+          <button
+            onClick={() => setShowSettingsModal(true)}
+            title="تفاسیر کی ترتیب اور انتخاب تبدیل کریں"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 font-semibold transition-colors"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>ترتیب و انتخابِ تفاسیر</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
           </button>
 
           {/* Desktop 2-Column Grid vs 1-Column Stack Toggle */}
@@ -378,42 +514,18 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
 
       {/* 3. TAFASIR CARDS (Stacked or 2-Column Grid) */}
       <div className={layoutMode === 'grid' ? 'grid grid-cols-1 lg:grid-cols-2 gap-5 items-start' : 'space-y-5'}>
-        {tafasir.length === 0 ? (
+        {displayTafasir.length === 0 ? (
           <div className="col-span-full p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-400 font-ibm">
-            اس آیت کے لیے فی الحال تفاسیر درج نہیں ہیں۔
+            <p className="font-semibold text-slate-600 dark:text-slate-300 mb-2">
+              کوئی تفسیر منتخب نہیں یا اس آیت کے لیے دستیاب نہیں ہے۔
+            </p>
+            <p className="text-xs">
+              اوپر &quot;ترتیب و انتخابِ تفاسیر&quot; بٹن پر کلک کر کے تفاسیر کو فعال کریں۔
+            </p>
           </div>
         ) : (
-          tafasir.map((entry) => {
+          displayTafasir.map((entry) => {
             const isExpanded = expandedTafasir[entry.tafsir_slug] !== false; // Default true
-
-            // Distinct theme badges for the 4 authors
-            const badgeStyles: Record<string, { bg: string; text: string; border: string; accent: string }> = {
-              tafheem: {
-                bg: 'bg-indigo-50 dark:bg-indigo-950/50',
-                text: 'text-indigo-800 dark:text-indigo-300',
-                border: 'border-indigo-200 dark:border-indigo-800/80',
-                accent: 'border-r-indigo-500'
-              },
-              maarif: {
-                bg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                text: 'text-emerald-800 dark:text-emerald-300',
-                border: 'border-emerald-200 dark:border-emerald-800/80',
-                accent: 'border-r-emerald-500'
-              },
-              ibn_kathir: {
-                bg: 'bg-amber-50 dark:bg-amber-950/50',
-                text: 'text-amber-800 dark:text-amber-300',
-                border: 'border-amber-200 dark:border-amber-800/80',
-                accent: 'border-r-amber-500'
-              },
-              tayseer: {
-                bg: 'bg-cyan-50 dark:bg-cyan-950/50',
-                text: 'text-cyan-800 dark:text-cyan-300',
-                border: 'border-cyan-200 dark:border-cyan-800/80',
-                accent: 'border-r-cyan-500'
-              }
-            };
-
             const theme = badgeStyles[entry.tafsir_slug] || badgeStyles.maarif;
 
             return (
@@ -532,6 +644,115 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
           })
         )}
       </div>
+
+      {/* 4. TAFSIR ORDERING & VISIBILITY MODAL */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs font-ibm">
+          <div 
+            dir="rtl"
+            className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in-95"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                  ترتیب اور انتخابِ تفاسیر
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="p-1 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 leading-relaxed">
+              تفاسیر کے کارڈز کی ترتیب تبدیل کرنے کے لیے تیر کے نشانات استعمال کریں اور جن تفاسیر کو چھپانا ہو ان کا چیک باکس غیر فعال کریں۔
+            </p>
+
+            {/* Reorderable List */}
+            <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
+              {tafsirOrder.map((slug, idx) => {
+                const meta = ALL_KNOWN_TAFASEER.find(t => t.slug === slug) || { slug, name: slug, author: '' };
+                const isVisible = visibleTafasir[slug] !== false;
+                const theme = badgeStyles[slug] || badgeStyles.maarif;
+
+                return (
+                  <div
+                    key={slug}
+                    className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
+                      isVisible
+                        ? 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 shadow-2xs'
+                        : 'border-slate-100 dark:border-slate-800/40 bg-slate-50 dark:bg-slate-950/40 opacity-60'
+                    }`}
+                  >
+                    {/* Right: Checkbox & Name */}
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isVisible}
+                        onChange={() => toggleTafsirVisibility(slug)}
+                        className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700 cursor-pointer"
+                        id={`check-${slug}`}
+                      />
+                      <label htmlFor={`check-${slug}`} className="cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-slate-900 dark:text-white">
+                            {meta.name}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${theme.bg} ${theme.text} ${theme.border}`}>
+                            {meta.author}
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+
+                    {/* Left: Move Up / Down Buttons */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleMoveTafsir(idx, 'up')}
+                        disabled={idx === 0}
+                        title="اوپر کریں"
+                        className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleMoveTafsir(idx, 'down')}
+                        disabled={idx === tafsirOrder.length - 1}
+                        title="نیچے کریں"
+                        className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Footer Actions */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+              <button
+                onClick={handleResetSettings}
+                className="flex items-center gap-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>ڈیفالٹ ترتیب پر لائیں</span>
+              </button>
+
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-xs transition-colors"
+              >
+                مکمل ہو گیا
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

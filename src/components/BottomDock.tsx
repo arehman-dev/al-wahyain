@@ -249,7 +249,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         </button>
 
         {/* Mode-Specific Quick Toggles */}
-        {activeMode === 'tafsir' && (
+        {(activeMode === 'tafsir' || activeMode === 'tafseer') && (
           <button
             onClick={onToggleTafsirLayout}
             title={tafsirLayout === 'grid' ? "عمودی اسٹیکڈ منظر (1 Column)" : "تقابلی ۲-کالم منظر (Side-by-Side Grid)"}
@@ -263,7 +263,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           </button>
         )}
 
-        {activeMode === 'mushaf' && (
+        {(activeMode === 'mushaf' || activeMode === 'quran') && (
           <button
             onClick={onToggleMushafDisplayMode}
             title={mushafDisplayMode === 'page' ? "مسلسل منظر (Continuous Reading)" : "صفحہ وار مصحف منظر (15-line Page)"}

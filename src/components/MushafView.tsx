@@ -398,18 +398,6 @@ export const MushafView: React.FC<MushafViewProps> = ({
                   <span className="ayah-end-num">﴿{ayah.ayah_number}﴾</span>
                 </div>
 
-                {/* Inline Translation */}
-                {showInlineTranslation && activeTr && (
-                  <div className="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-right">
-                    <p className="font-ibm text-base sm:text-lg text-slate-800 dark:text-slate-200 leading-[2.1] font-medium">
-                      {activeTr.text}
-                    </p>
-                    <span className="text-xs text-slate-400 dark:text-slate-500 font-ibm mt-1.5 block">
-                      — ترجمہ: {activeTr.author_name}
-                    </span>
-                  </div>
-                )}
-
               </div>
             );
           })}

@@ -159,7 +159,9 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
 
         {/* 15-Line Body Text with Authentic Justification */}
         <div 
-          className="tajweed-text text-justify text-2xl sm:text-[27px] leading-[3.1] sm:leading-[3.4] font-arabic space-x-reverse space-x-1 select-text text-slate-900 dark:text-slate-100"
+          className={`tajweed-text text-justify text-2xl sm:text-[27px] leading-[3.1] sm:leading-[3.5] select-text text-slate-900 dark:text-slate-100 ${
+            scriptMode === 'indopak' ? 'font-indopak' : 'font-arabic'
+          }`}
           style={{ textJustify: 'inter-word' }}
         >
           {pageVerses.map((ayah) => {

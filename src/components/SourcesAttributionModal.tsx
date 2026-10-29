@@ -43,6 +43,13 @@ export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = (
       license: 'Digital Islamic Archive'
     },
     {
+      title: 'بیان القرآن — ڈاکٹر اسرار احمد',
+      organization: 'مرکزی انجمن خدام القرآن لاہور / قرآن اکیڈمی',
+      purpose: 'ڈاکٹر اسرار احمدؒ کی منتخب بصیرت افروز تفسیر "بیان القرآن" کا علمی ذخیرہ',
+      url: 'https://quranacademy.com',
+      license: 'Public Islamic Dawah Resource'
+    },
+    {
       title: 'Quran.com API & EveryAyah',
       organization: 'Quran.com Community & EveryAyah',
       purpose: 'قاری مشاری راشد العفاسی کی صوتی تلاوت، الفاظ کی سیکنڈ وار ٹائمنگ اور تفسیر ابن کثیر',

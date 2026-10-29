@@ -9,8 +9,8 @@ export default {
     extend: {
       fontFamily: {
         arabic: ['"Amiri"', '"Scheherazade New"', 'serif'],
-        indopak: ['"Gulzar"', '"Noto Naskh Arabic"', 'serif'],
-        urdu: ['"Noto Nastaliq Urdu"', '"Jameel Noori Nastaleeq"', '"Gulzar"', 'serif'],
+        indopak: ['"Noto Nastaliq Urdu"', '"Scheherazade New"', '"Amiri"', 'serif'],
+        urdu: ['"Noto Nastaliq Urdu"', 'serif'],
         ibm: ['"IBM Plex Sans Arabic"', 'sans-serif'],
       },
       colors: {
