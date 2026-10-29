@@ -407,19 +407,41 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Numbers 1, 2, 3: Switch Workspace Mode
-      if (e.key === '1') {
+      // Numbers 1, 2, 3, 4: Context-aware hotkeys
+      // If in Tafsir mode: 1-4 toggle individual commentaries
+      if (activeMode === 'tafsir' && !e.shiftKey) {
+        if (e.key === '1') {
+          e.preventDefault();
+          handleToggleTafsir('tafheem');
+          return;
+        } else if (e.key === '2') {
+          e.preventDefault();
+          handleToggleTafsir('maarif');
+          return;
+        } else if (e.key === '3') {
+          e.preventDefault();
+          handleToggleTafsir('ibn_kathir');
+          return;
+        } else if (e.key === '4') {
+          e.preventDefault();
+          handleToggleTafsir('tayseer');
+          return;
+        }
+      }
+
+      // Mode switching (1, 2, 3 or Shift + 1, 2, 3)
+      if (e.key === '1' || (e.shiftKey && e.key === '!')) {
         setActiveMode('tafsir');
-      } else if (e.key === '2') {
+      } else if (e.key === '2' || (e.shiftKey && e.key === '@')) {
         setActiveMode('mushaf');
-      } else if (e.key === '3') {
+      } else if (e.key === '3' || (e.shiftKey && e.key === '#')) {
         setActiveMode('morphology');
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNextAyah, handlePrevAyah, handleToggleBookmark]);
+  }, [handleNextAyah, handlePrevAyah, handleToggleBookmark, activeMode]);
 
   // Stacked Tafsir Handlers
   const handleToggleTafsir = (slug: string) => {

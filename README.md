@@ -66,20 +66,21 @@ v0.5 (Base Live) ──► v0.6 (Study Tooling & Deep UX) ──► v0.7 (15-Lin
 - [x] Full-text search across Quran verses and 3,488 Tafasir records.
 - [x] Local SQLite persistence for Bookmarks, Notes, and Study Notebook.
 
-### 🟡 v0.6 — Study Tooling & Deep UX (Current In-Progress)
+### ✅ v0.6 — Study Tooling & Deep UX (Completed)
 - [x] **Bundled Offline Typography**: Self-hosted local Arabic & Urdu fonts (`Amiri`, `IBM Plex Sans Arabic`, `Noto Nastaliq Urdu`, `Scheherazade New`) for 100% offline readability.
 - [x] **Interactive Word Hover & Tap Inspection**: Immediate word-by-word meaning, grammatical category (اسم / فعل / حرف), and root popup in Tafsir & Mushaf view without having to leave the page.
 - [x] **Tafsir Cross-Reference Auto-linking**: Smart regex parser detecting Quran citations (e.g. `[البقرۃ: 255]`, `(2:255)`, `سورہ ۲ آیت ۱۰`) and turning them into 1-click jump links.
 - [x] **Tafsir Study Highlighter Pen**: Interactive multi-color highlighter (Yellow, Green, Sky Blue, Lavender) for commentary passages, persisted locally and cataloged in the Study Notebook.
 - [x] **Intelligent Session Resume & History**: Instant "Continue where you left off" indicator and recent verse navigation history.
 
-### ⏳ v0.7 — 15-Line Mushaf Precision & Alignment (Upcoming)
-- [ ] Authentic Pakistani 15-line layout with line-by-line justification.
-- [ ] Margin ornaments (Para / Juz header banners, Ruku `ع` count markers, Rub' al-Hizb `۞`, and Sajdah `۩` ribbons).
-- [ ] Keyboard page navigation (`PageUp`, `PageDown`, `[`, `]`).
-- [ ] Dedicated Tafsir accordion hotkeys (`1` to `4` for direct commentary toggle).
+### ✅ v0.7 — 15-Line Mushaf Precision & Alignment (Completed)
+- [x] **Authentic Pakistani 15-Line Page View**: Double ornamental Islamic border frame, authentic line balancing, and traditional corner brackets.
+- [x] **Full Margin Ornaments (حواشی و علامات)**: Side margin indicators with calligraphic Ruku medallions (`ع`), Rub' al-Hizb seals (`۞`), and Sajdah ribbons (`۩ سجدہ تلاوت`).
+- [x] **Dual-Page Open Book Spread (دو طرفہ مصحف)**: Desktop toggle allowing readers to view facing pages side-by-side like a physical printed Quran.
+- [x] **Fast Page Steppers & Jump**: Keyboard navigation (`PageUp`, `PageDown`, `[`, `]`) and direct page number jumper input.
+- [x] **Tafsir Accordion Hotkeys (`1` to `4`)**: Direct keyboard toggles for all 4 Urdu commentaries (1: Tafheem, 2: Maarif, 3: Ibn Kathir, 4: Tayseer).
 
-### ⏳ v0.8 — Offline Standalone & Desktop Polish
+### ⏳ v0.8 — Offline Standalone & Desktop Polish (Next Milestone)
 - [ ] Progressive Web App (PWA) manifest with service worker caching for 100% offline desktop experience.
 - [ ] Comprehensive Study Notebook export (PDF generation, formatted Markdown journal bundle).
 - [ ] Auto-backup and restore of personal study data (bookmarks, notes, highlights).
@@ -105,10 +106,12 @@ v0.5 (Base Live) ──► v0.6 (Study Tooling & Deep UX) ──► v0.7 (15-Lin
 | **`Space`** | Play / Pause recitation audio |
 | **`Ctrl + K`** / **`⌘ + K`** | Open global search (Quran verses & 4 Tafasir) |
 | **`←` / `→`** (or **`J` / `K`**) | Step to next / previous Ayah |
+| **`PageUp` / `PageDown`** (or **`[` / `]`**) | Step to previous / next Mushaf page |
+| **`1` / `2` / `3` / `4`** | Toggle individual commentary in Tafsir view (1: Tafheem, 2: Maarif, 3: Ibn Kathir, 4: Tayseer) |
+| **`Shift + 1 / 2 / 3`** | Switch study workspace mode (1: Tafsir, 2: Mushaf, 3: Morphology) |
 | **`B`** | Toggle bookmark on active Ayah |
 | **`N`** | Open personal study note drawer |
 | **`Z`** | Toggle Zen / Focus mode (collapses toolbars for distraction-free reading) |
-| **`1` / `2` / `3`** | Switch mode (1: Tafsir, 2: Mushaf, 3: Morphology) |
 | **`?`** | Open interactive shortcuts cheat sheet modal |
 | **`Esc`** | Close any open drawer or modal |
 

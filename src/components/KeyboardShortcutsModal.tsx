@@ -16,10 +16,12 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
     { key: 'Ctrl + K / ⌘ + K', desc: 'قرآن و تفاسیر میں تلاش (Global Search)' },
     { key: 'Space', desc: 'تلاوت شروع / موقوف کریں (Play / Pause Audio)' },
     { key: '← / → (یا J / K)', desc: 'اگلی / پچھلی آیت پر جائیں (Next / Prev Ayah)' },
+    { key: 'PageUp / PageDown (یا [ / ])', desc: 'مصحف کا پچھلا / اگلا صفحہ (Prev / Next Page)' },
+    { key: '1 / 2 / 3 / 4', desc: 'تفسیر موڈ میں تفاسیر کھولیں/بند کریں (1: تفہیم، 2: معارف، 3: ابن کثیر، 4: تیسیر)' },
+    { key: 'Shift + 1 / 2 / 3', desc: 'مطالعہ موڈز تبدیل کریں (1: تفسیر، 2: مصحف، 3: صرف)' },
     { key: 'B', desc: 'آیت کو محفوظ کریں (Toggle Bookmark)' },
     { key: 'N', desc: 'ذاتی تفسیری نوٹ لکھیں (Add / Edit Note)' },
     { key: 'Z', desc: 'زین موڈ (Toggle Focus / Zen Mode)' },
-    { key: '1 / 2 / 3', desc: 'مطالعہ موڈز تبدیل کریں (1: تفسیر، 2: مصحف، 3: صرف)' },
     { key: '?', desc: 'کی بورڈ شارٹ کٹس کا یہ جدول کھولیں' },
     { key: 'Esc', desc: 'کھلی ہوئی ونڈو یا تلاش بند کریں' },
   ];
