@@ -8,10 +8,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        arabic: ['"Amiri"', '"Scheherazade New"', 'serif'],
-        indopak: ['"Noto Nastaliq Urdu"', '"Scheherazade New"', '"Amiri"', 'serif'],
-        urdu: ['"Noto Nastaliq Urdu"', 'serif'],
+        app: ['"Montserrat"', 'system-ui', 'sans-serif'],
         ibm: ['"IBM Plex Sans Arabic"', 'sans-serif'],
+        indopak: ['"Al Qalam Quran Publisher"', '"Jameel Noori Nastaleeq"', '"Noto Nastaliq Urdu"', 'serif'],
+        uthmani: ['"KFGQPC Uthman Taha Naskh"', '"KFGQPC Uthmanic Script HAFS"', '"Amiri Quran"', 'serif'],
+        arabic: ['"KFGQPC Uthman Taha Naskh"', '"Amiri Quran"', '"Scheherazade New"', 'serif'],
+        urdu: ['"Jameel Noori Nastaleeq"', '"Noto Nastaliq Urdu"', 'serif'],
       },
       colors: {
         tajweed: {

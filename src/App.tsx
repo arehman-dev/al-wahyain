@@ -6,6 +6,7 @@ import { MushafView } from './components/MushafView';
 import { TranslationView } from './components/TranslationView';
 import { MorphologyView } from './components/MorphologyView';
 import { TafsirView } from './components/TafsirView';
+import { TafsirSettingsModal, DEFAULT_TAFSIR_ORDER } from './components/TafsirSettingsModal';
 import { QuickPeekDrawer } from './components/QuickPeekDrawer';
 import { RootExplorerModal } from './components/RootExplorerModal';
 import { TajweedLegendModal } from './components/TajweedLegendModal';
@@ -22,12 +23,11 @@ import {
   TafsirEntry, 
   AppMode, 
   ScriptMode, 
-  MushafDisplayMode,
-  Bookmark,
-  AyahNote,
-  TafsirHighlight,
-  HighlightColor,
-  ReadingHistoryEntry
+  Bookmark, 
+  AyahNote, 
+  TafsirHighlight, 
+  HighlightColor, 
+  ReadingHistoryEntry 
 } from './types/quran';
 import { 
   fetchSurahs, 
@@ -62,14 +62,13 @@ export const App: React.FC = () => {
   const [scriptMode, setScriptMode] = useState<ScriptMode>(() => {
     return (localStorage.getItem('qs_script_mode') as ScriptMode) || 'indopak';
   });
-  const [mushafDisplayMode, setMushafDisplayMode] = useState<MushafDisplayMode>(() => {
-    return (localStorage.getItem('qs_mushaf_display') as MushafDisplayMode) || 'continuous';
-  });
   const [showTajweed, setShowTajweed] = useState<boolean>(() => {
     return localStorage.getItem('qs_show_tajweed') === 'true';
   });
-  const [showInlineTranslation, setShowInlineTranslation] = useState<boolean>(true);
-  const [selectedTranslationAuthor, setSelectedTranslationAuthor] = useState<string>('taqi_usmani');
+  const [showWordByWord, setShowWordByWord] = useState<boolean>(() => {
+    return localStorage.getItem('qs_show_wbw') === 'true';
+  });
+  const [selectedTranslationAuthor] = useState<string>('taqi_usmani');
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('qs_dark_mode') === 'true';
   });
@@ -78,10 +77,38 @@ export const App: React.FC = () => {
   const [fontSize, setFontSize] = useState<number>(() => {
     return Number(localStorage.getItem('qs_font_size')) || 17;
   });
-  const [tafsirLayout, setTafsirLayout] = useState<'stacked' | 'grid'>(() => {
-    return (localStorage.getItem('qs_tafsir_layout') as 'stacked' | 'grid') || 'stacked';
-  });
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
+
+  // Active Mushaf Page (604 page standard)
+  const [activeMushafPage, setActiveMushafPage] = useState<number>(1);
+
+  // Tafsir Order & Visibility preferences
+  const [tafsirOrder, setTafsirOrder] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('qs_tafsir_order');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return DEFAULT_TAFSIR_ORDER;
+  });
+
+  const [visibleTafasir, setVisibleTafasir] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('qs_tafsir_visibility');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      bayan_ul_quran: true,
+      tafheem: true,
+      maarif: true,
+      ibn_kathir: true,
+      tayseer: true
+    };
+  });
+
+  const [showTafsirSettingsModal, setShowTafsirSettingsModal] = useState<boolean>(false);
 
   // Stacked Tafsir Collapsible State
   const [expandedTafasir, setExpandedTafasir] = useState<Record<string, boolean>>({
@@ -149,11 +176,10 @@ export const App: React.FC = () => {
     localStorage.setItem('qs_ayah_number', String(currentAyahNumber));
     localStorage.setItem('qs_active_mode', activeMode);
     localStorage.setItem('qs_script_mode', scriptMode);
-    localStorage.setItem('qs_mushaf_display', mushafDisplayMode);
     localStorage.setItem('qs_show_tajweed', String(showTajweed));
+    localStorage.setItem('qs_show_wbw', String(showWordByWord));
     localStorage.setItem('qs_font_size', String(fontSize));
-    localStorage.setItem('qs_tafsir_layout', tafsirLayout);
-  }, [currentSurahId, currentAyahNumber, activeMode, scriptMode, mushafDisplayMode, showTajweed, fontSize, tafsirLayout]);
+  }, [currentSurahId, currentAyahNumber, activeMode, scriptMode, showTajweed, showWordByWord, fontSize]);
 
   // Load bookmarks, notes & highlights
   const reloadStudyData = useCallback(() => {
@@ -197,6 +223,13 @@ export const App: React.FC = () => {
   // Current Surah & Ayah Objects
   const currentSurah = surahs.find(s => s.id === currentSurahId);
   const currentAyah = ayahs.find(a => a.ayah_number === currentAyahNumber) || ayahs[0] || null;
+
+  // Sync active page with current Ayah
+  useEffect(() => {
+    if (currentAyah?.page_madani) {
+      setActiveMushafPage(currentAyah.page_madani);
+    }
+  }, [currentAyah]);
 
   // Check if current Ayah is bookmarked
   const isCurrentAyahBookmarked = !!bookmarks.find(
@@ -255,87 +288,25 @@ export const App: React.FC = () => {
 
   // Cross-reference jump handler
   const handleNavigateToVerse = (surahId: number, ayahNumber: number) => {
-    const isSeeded = surahs.some(s => s.id === surahId);
-    if (isSeeded) {
-      setCurrentSurahId(surahId);
-      setCurrentAyahNumber(ayahNumber);
-    } else {
-      alert(`سورہ ${surahId} اگلی اپڈیٹ (v0.9) کے مکمل ڈیٹا میں شامل ہوگی۔ فی الحال سورتیں 1 تا 4 اور 55 تا 57 مکمل دستیاب ہیں۔`);
-    }
+    setCurrentSurahId(surahId);
+    setCurrentAyahNumber(ayahNumber);
   };
 
-  // Track Reading History
-  useEffect(() => {
-    if (!currentAyah || !currentSurah) return;
-    setReadingHistory(prev => {
-      const filtered = prev.filter(item => !(item.surah_id === currentSurahId && item.ayah_number === currentAyahNumber));
-      const updated = [
-        {
-          surah_id: currentSurahId,
-          ayah_number: currentAyahNumber,
-          verse_key: currentAyah.verse_key,
-          surah_name_urdu: currentSurah.name_urdu,
-          timestamp: Date.now()
-        },
-        ...filtered
-      ].slice(0, 15);
-      localStorage.setItem('qs_reading_history', JSON.stringify(updated));
-      return updated;
-    });
-  }, [currentSurahId, currentAyahNumber, currentAyah, currentSurah]);
-
-  // Session Resume Prompt check on initial mount
-  useEffect(() => {
-    const lastRaw = localStorage.getItem('qs_last_session');
-    if (lastRaw) {
-      try {
-        const last = JSON.parse(lastRaw);
-        if (last.surahId && last.ayahNumber) {
-          const savedSurah = Number(localStorage.getItem('qs_surah_id'));
-          const savedAyah = Number(localStorage.getItem('qs_ayah_number'));
-          if (savedSurah === 1 && savedAyah === 1 && (last.surahId !== 1 || last.ayahNumber !== 1)) {
-            setResumePrompt(last);
-          }
-        }
-      } catch {}
-    }
-  }, []);
-
-  // Persist last session info
-  useEffect(() => {
-    if (currentSurah && currentAyah) {
-      localStorage.setItem('qs_last_session', JSON.stringify({
-        surahId: currentSurahId,
-        ayahNumber: currentAyahNumber,
-        verseKey: currentAyah.verse_key,
-        surahName: currentSurah.name_urdu,
-        timestamp: Date.now()
-      }));
-    }
-  }, [currentSurahId, currentAyahNumber, currentSurah, currentAyah]);
-
-  // Navigation handlers
+  // Surah & Ayah Selectors
   const handleSelectSurah = (id: number) => {
     setCurrentSurahId(id);
     setCurrentAyahNumber(1);
+    setIsPlaying(false);
   };
 
   const handleSelectAyah = (num: number) => {
     setCurrentAyahNumber(num);
   };
 
-  const handlePrevAyah = useCallback(() => {
-    if (currentAyahNumber > 1) {
-      setCurrentAyahNumber(prev => prev - 1);
-    } else if (currentSurahId > 1) {
-      const prevSurah = surahs.find(s => s.id === currentSurahId - 1);
-      setCurrentSurahId(prev => prev - 1);
-      setCurrentAyahNumber(prevSurah?.verses_count || 1);
-    }
-  }, [currentAyahNumber, currentSurahId, surahs]);
-
+  // Navigation: Next / Prev Ayah
   const handleNextAyah = useCallback(() => {
-    if (currentSurah && currentAyahNumber < currentSurah.verses_count) {
+    if (!currentSurah) return;
+    if (currentAyahNumber < currentSurah.verses_count) {
       setCurrentAyahNumber(prev => prev + 1);
     } else if (currentSurahId < 114) {
       setCurrentSurahId(prev => prev + 1);
@@ -343,7 +314,19 @@ export const App: React.FC = () => {
     }
   }, [currentSurah, currentAyahNumber, currentSurahId]);
 
-  // Audio Playback Handlers
+  const handlePrevAyah = useCallback(() => {
+    if (currentAyahNumber > 1) {
+      setCurrentAyahNumber(prev => prev - 1);
+    } else if (currentSurahId > 1) {
+      const prevSurah = surahs.find(s => s.id === currentSurahId - 1);
+      if (prevSurah) {
+        setCurrentSurahId(prevSurah.id);
+        setCurrentAyahNumber(prevSurah.verses_count);
+      }
+    }
+  }, [currentAyahNumber, currentSurahId, surahs]);
+
+  // Audio Handlers
   const handlePlayAyah = (ayah: Ayah) => {
     setCurrentAyahNumber(ayah.ayah_number);
     setActivePlayingAyah(ayah.ayah_number);
@@ -354,10 +337,9 @@ export const App: React.FC = () => {
     setIsPlaying(false);
   };
 
-  // Global Power-User Hotkeys Listener
+  // Power-User Hotkeys Listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept if typing inside input, textarea, or select
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)) {
         return;
       }
@@ -376,13 +358,23 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Arrow navigation / J & K
+      // Arrow navigation
       if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'j') {
         handleNextAyah();
         return;
       }
       if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'k') {
         handlePrevAyah();
+        return;
+      }
+
+      // Page Navigation ([ and ] or PageUp/PageDown)
+      if (e.key === 'PageDown' || e.key === ']') {
+        setActiveMushafPage(p => Math.min(604, p + 1));
+        return;
+      }
+      if (e.key === 'PageUp' || e.key === '[') {
+        setActiveMushafPage(p => Math.max(1, p - 1));
         return;
       }
 
@@ -400,7 +392,7 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Z: Toggle Zen / Focus Mode
+      // Z: Toggle Zen Mode
       if (e.key.toLowerCase() === 'z') {
         e.preventDefault();
         setIsZenMode(prev => !prev);
@@ -414,7 +406,7 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Numbers 1, 2, 3, 4: 4 Primary Workspace Tabs
+      // Numbers 1, 2, 3, 4: Switch 4 Primary Tabs
       if (['1', '2', '3', '4'].includes(e.key) && !e.shiftKey && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         if (e.key === '1') setActiveMode('quran');
@@ -422,31 +414,6 @@ export const App: React.FC = () => {
         if (e.key === '3') setActiveMode('sarf');
         if (e.key === '4') setActiveMode('tafseer');
         return;
-      }
-
-      // Shift + 1..5 in Tafsir mode: toggle individual commentary accordions
-      if ((activeMode === 'tafseer' || activeMode === 'tafsir') && e.shiftKey) {
-        if (e.key === '!' || e.key === '1') {
-          e.preventDefault();
-          handleToggleTafsir('bayan_ul_quran');
-          return;
-        } else if (e.key === '@' || e.key === '2') {
-          e.preventDefault();
-          handleToggleTafsir('tafheem');
-          return;
-        } else if (e.key === '#' || e.key === '3') {
-          e.preventDefault();
-          handleToggleTafsir('maarif');
-          return;
-        } else if (e.key === '$' || e.key === '4') {
-          e.preventDefault();
-          handleToggleTafsir('ibn_kathir');
-          return;
-        } else if (e.key === '%' || e.key === '5') {
-          e.preventDefault();
-          handleToggleTafsir('tayseer');
-          return;
-        }
       }
     };
 
@@ -483,7 +450,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/20">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/20 font-app">
       
       {/* ======================================================== */}
       {/* 1. TOP BAR: Primary App Bar (Full Width, h-11 / 44px)   */}
@@ -516,25 +483,28 @@ export const App: React.FC = () => {
           onSelectAyah={handleSelectAyah}
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
-          isBookmarked={isCurrentAyahBookmarked}
-          onToggleBookmark={handleToggleBookmark}
-          hasNote={hasCurrentAyahNote}
-          onOpenNoteDrawer={() => setShowNoteDrawer(true)}
           activeMode={activeMode}
           scriptMode={scriptMode}
           onToggleScript={() => setScriptMode(prev => prev === 'madani' ? 'indopak' : 'madani')}
-          mushafDisplayMode={mushafDisplayMode}
-          onToggleMushafDisplayMode={() => setMushafDisplayMode(prev => prev === 'page' ? 'continuous' : 'page')}
+          
+          // Mushaf page controls
+          activePage={activeMushafPage}
+          onPrevPage={() => setActiveMushafPage(p => Math.max(1, p - 1))}
+          onNextPage={() => setActiveMushafPage(p => Math.min(604, p + 1))}
+          onPageSelect={setActiveMushafPage}
           showTajweed={showTajweed}
           onToggleTajweed={() => setShowTajweed(prev => !prev)}
-          showInlineTranslation={showInlineTranslation}
-          onToggleTranslation={() => setShowInlineTranslation(prev => !prev)}
-          onOpenTajweedLegend={() => setShowTajweedLegend(true)}
-          history={readingHistory}
-          onSelectHistoryItem={(sId, aNum) => {
-            setCurrentSurahId(sId);
-            setCurrentAyahNumber(aNum);
-          }}
+
+          // Translation controls
+          showWordByWord={showWordByWord}
+          onToggleWordByWord={() => setShowWordByWord(prev => !prev)}
+
+          // Tafsir controls
+          onOpenTafsirSettings={() => setShowTafsirSettingsModal(true)}
+          fontSize={fontSize}
+          onFontSizeChange={setFontSize}
+          onExpandAllTafasir={handleExpandAll}
+          onCollapseAllTafasir={handleCollapseAll}
         />
       )}
 
@@ -553,43 +523,7 @@ export const App: React.FC = () => {
       {/* ======================================================== */}
       {/* MAIN WORKSPACE CONTENT AREA                              */}
       {/* ======================================================== */}
-      <main className={`flex-1 ${isZenMode ? 'pt-4' : 'pt-2'} pb-16`}>
-        {/* Intelligent Session Resume Prompt Banner */}
-        {resumePrompt && (
-          <div dir="rtl" className="max-w-5xl mx-auto px-4 pt-1 pb-3 font-ibm">
-            <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700/60 text-slate-800 dark:text-emerald-200 text-xs shadow-sm transition-all animate-in fade-in">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-                <span className="font-semibold text-emerald-800 dark:text-emerald-300">
-                  آخری نشست کا مطالعہ:
-                </span>
-                <span>
-                  <strong>{resumePrompt.surahName}</strong> (آیت {resumePrompt.ayahNumber})
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    setCurrentSurahId(resumePrompt.surahId);
-                    setCurrentAyahNumber(resumePrompt.ayahNumber);
-                    setResumePrompt(null);
-                  }}
-                  className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-xs transition-colors"
-                >
-                  مطالعہ جاری رکھیں ↵
-                </button>
-                <button
-                  onClick={() => setResumePrompt(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                  title="بند کریں"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
+      <main className={`flex-1 ${isZenMode ? 'pt-4' : 'pt-2'} pb-14`}>
         {loading ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-3 font-ibm">
@@ -606,17 +540,17 @@ export const App: React.FC = () => {
               اس سورت کا ڈیٹا لوڈ نہیں ہے
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              فی الوقت درج ذیل سورتیں مکمل متن اور تمام ۴ تفاسیر کے ساتھ ڈیٹا بیس میں دستیاب ہیں:
+              فی الوقت درج ذیل سورتیں مکمل متن اور تمام تفاسیر کے ساتھ دستیاب ہیں:
             </p>
             <div className="flex flex-wrap justify-center gap-2 pt-2">
               {[
                 { id: 1, name: '1. الفاتحہ' },
-                { id: 2, name: '2. البقرۃ (286 آیات)' },
-                { id: 3, name: '3. آل عمران (200 آیات)' },
-                { id: 4, name: '4. النساء (176 آیات)' },
-                { id: 55, name: '55. الرحمن (78 آیات)' },
-                { id: 56, name: '56. الواقعہ (96 آیات)' },
-                { id: 57, name: '57. الحدید (29 آیات)' },
+                { id: 2, name: '2. البقرۃ' },
+                { id: 3, name: '3. آل عمران' },
+                { id: 4, name: '4. النساء' },
+                { id: 55, name: '55. الرحمن' },
+                { id: 56, name: '56. الواقعہ' },
+                { id: 57, name: '57. الحدید' },
               ].map(s => (
                 <button 
                   key={s.id}
@@ -630,17 +564,14 @@ export const App: React.FC = () => {
           </div>
         ) : (
           <>
-            {/* Mode 1: Pure Mushaf View (خالص تلاوت و مصحف) */}
+            {/* Mode 1: Pure Mushaf View (15-Line Pakistani Page View) */}
             {(activeMode === 'quran' || activeMode === 'mushaf') && (
               <MushafView
                 ayahs={ayahs}
                 currentSurah={currentSurah}
                 currentAyahNumber={currentAyahNumber}
                 scriptMode={scriptMode}
-                mushafDisplayMode={mushafDisplayMode}
                 showTajweed={showTajweed}
-                showInlineTranslation={false}
-                selectedTranslationAuthor={selectedTranslationAuthor}
                 onSelectAyah={handleSelectAyah}
                 onOpenMorphology={(num) => {
                   setCurrentAyahNumber(num);
@@ -650,13 +581,14 @@ export const App: React.FC = () => {
                   setCurrentAyahNumber(num);
                   setActiveMode('tafseer');
                 }}
-                onQuickPeek={(ayah) => setQuickPeekAyah(ayah)}
                 isPlaying={isPlaying}
                 activePlayingAyah={activePlayingAyah}
                 activePlayingWordIndex={activePlayingWordIndex}
                 onPlayAyah={handlePlayAyah}
                 onPauseAyah={handlePauseAyah}
                 onSelectWordRoot={(root) => setSelectedRoot(root)}
+                activePage={activeMushafPage}
+                onPageChange={setActiveMushafPage}
               />
             )}
 
@@ -667,6 +599,7 @@ export const App: React.FC = () => {
                 currentSurah={currentSurah}
                 currentAyahNumber={currentAyahNumber}
                 scriptMode={scriptMode}
+                showWordByWord={showWordByWord}
                 selectedTranslationAuthor={selectedTranslationAuthor}
                 onSelectAyah={handleSelectAyah}
                 onOpenMorphology={(num) => {
@@ -726,8 +659,6 @@ export const App: React.FC = () => {
                 onNextAyah={handleNextAyah}
                 expandedTafasir={expandedTafasir}
                 onToggleTafsir={handleToggleTafsir}
-                onExpandAll={handleExpandAll}
-                onCollapseAll={handleCollapseAll}
                 isBookmarked={isCurrentAyahBookmarked}
                 onToggleBookmark={handleToggleBookmark}
                 hasNote={hasCurrentAyahNote}
@@ -735,14 +666,13 @@ export const App: React.FC = () => {
                 onOpenExportModal={() => setShowExportModal(true)}
                 totalVersesInSurah={currentSurah?.verses_count || ayahs.length}
                 fontSize={fontSize}
-                onFontSizeChange={setFontSize}
-                layoutMode={tafsirLayout}
-                onToggleLayoutMode={() => setTafsirLayout(prev => prev === 'stacked' ? 'grid' : 'stacked')}
                 highlights={highlights}
                 onAddHighlight={handleAddHighlight}
                 onDeleteHighlight={handleDeleteHighlight}
                 onNavigateToVerse={handleNavigateToVerse}
                 onSelectWordRoot={(root) => setSelectedRoot(root)}
+                tafsirOrder={tafsirOrder}
+                visibleTafasir={visibleTafasir}
               />
             )}
           </>
@@ -761,21 +691,50 @@ export const App: React.FC = () => {
         onNextAyah={handleNextAyah}
         onPrevAyah={handlePrevAyah}
         onWordTimeUpdate={setActivePlayingWordIndex}
-        activeMode={activeMode}
-        scriptMode={scriptMode}
-        onToggleScript={() => setScriptMode(prev => prev === 'madani' ? 'indopak' : 'madani')}
-        fontSize={fontSize}
-        onFontSizeChange={setFontSize}
-        tafsirLayout={tafsirLayout}
-        onToggleTafsirLayout={() => setTafsirLayout(prev => prev === 'stacked' ? 'grid' : 'stacked')}
-        mushafDisplayMode={mushafDisplayMode}
-        onToggleMushafDisplayMode={() => setMushafDisplayMode(prev => prev === 'page' ? 'continuous' : 'page')}
-        onOpenExportModal={() => setShowExportModal(true)}
+        isBookmarked={isCurrentAyahBookmarked}
+        onToggleBookmark={handleToggleBookmark}
+        hasNote={hasCurrentAyahNote}
+        onOpenNoteDrawer={() => setShowNoteDrawer(true)}
+        onOpenSearch={() => setShowSearchModal(true)}
+        isZenMode={isZenMode}
+        onToggleZenMode={() => setIsZenMode(prev => !prev)}
       />
 
       {/* ======================================================== */}
       {/* MODALS & DRAWERS                                         */}
       {/* ======================================================== */}
+
+      {/* Tafsir Order & Selection Settings Modal */}
+      <TafsirSettingsModal
+        isOpen={showTafsirSettingsModal}
+        onClose={() => setShowTafsirSettingsModal(false)}
+        tafsirOrder={tafsirOrder}
+        onChangeOrder={(newOrder) => {
+          setTafsirOrder(newOrder);
+          localStorage.setItem('qs_tafsir_order', JSON.stringify(newOrder));
+        }}
+        visibleTafasir={visibleTafasir}
+        onToggleVisibility={(slug) => {
+          setVisibleTafasir(prev => {
+            const updated = { ...prev, [slug]: !prev[slug] };
+            localStorage.setItem('qs_tafsir_visibility', JSON.stringify(updated));
+            return updated;
+          });
+        }}
+        onResetDefaults={() => {
+          setTafsirOrder(DEFAULT_TAFSIR_ORDER);
+          localStorage.setItem('qs_tafsir_order', JSON.stringify(DEFAULT_TAFSIR_ORDER));
+          const allVisible = {
+            bayan_ul_quran: true,
+            tafheem: true,
+            maarif: true,
+            ibn_kathir: true,
+            tayseer: true
+          };
+          setVisibleTafasir(allVisible);
+          localStorage.setItem('qs_tafsir_visibility', JSON.stringify(allVisible));
+        }}
+      />
 
       {/* Quick Peek Ayah Drawer */}
       <QuickPeekDrawer
@@ -785,12 +744,12 @@ export const App: React.FC = () => {
         onOpenFullTafsir={() => {
           if (quickPeekAyah) setCurrentAyahNumber(quickPeekAyah.ayah_number);
           setQuickPeekAyah(null);
-          setActiveMode('tafsir');
+          setActiveMode('tafseer');
         }}
         onOpenFullMorphology={() => {
           if (quickPeekAyah) setCurrentAyahNumber(quickPeekAyah.ayah_number);
           setQuickPeekAyah(null);
-          setActiveMode('morphology');
+          setActiveMode('sarf');
         }}
       />
 
@@ -798,60 +757,81 @@ export const App: React.FC = () => {
       <RootExplorerModal
         root={selectedRoot}
         onClose={() => setSelectedRoot(null)}
-        onJumpToAyah={(surahId, ayahNumber) => {
+        onNavigateVerse={(surahId, ayahNumber) => {
           setCurrentSurahId(surahId);
           setCurrentAyahNumber(ayahNumber);
+          setSelectedRoot(null);
         }}
       />
 
-      {/* Tajweed Rules Legend Modal */}
-      {showTajweedLegend && (
-        <TajweedLegendModal onClose={() => setShowTajweedLegend(false)} />
-      )}
+      {/* Tajweed Legend Modal */}
+      <TajweedLegendModal
+        isOpen={showTajweedLegend}
+        onClose={() => setShowTajweedLegend(false)}
+      />
 
-      {/* Official Sources & Citations Modal */}
-      {showAttributions && (
-        <SourcesAttributionModal onClose={() => setShowAttributions(false)} />
-      )}
+      {/* Sources & Scholarly Attribution Modal */}
+      <SourcesAttributionModal
+        isOpen={showAttributions}
+        onClose={() => setShowAttributions(false)}
+      />
 
-      {/* Global Quran & Tafasir Search Modal (Ctrl+K) */}
+      {/* Global Search Modal */}
       <SearchModal
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
         onSelectResult={(surahId, ayahNumber) => {
           setCurrentSurahId(surahId);
           setCurrentAyahNumber(ayahNumber);
-          setActiveMode('tafsir');
+          setShowSearchModal(false);
         }}
       />
 
-      {/* Personal Study Suite: Bookmarks & Reflections Modal */}
+      {/* Study Suite & Bookmarks Drawer */}
       <StudySuiteModal
         isOpen={showStudySuiteModal}
         onClose={() => setShowStudySuiteModal(false)}
-        onJumpToAyah={(surahId, ayahNumber) => {
-          setCurrentSurahId(surahId);
-          setCurrentAyahNumber(ayahNumber);
+        bookmarks={bookmarks}
+        notes={notes}
+        highlights={highlights}
+        onNavigateVerse={(sId, aNum) => {
+          setCurrentSurahId(sId);
+          setCurrentAyahNumber(aNum);
+          setShowStudySuiteModal(false);
+        }}
+        onDeleteBookmark={async (sId, aNum) => {
+          await removeBookmark(sId, aNum);
+          reloadStudyData();
+        }}
+        onDeleteHighlight={async (id) => {
+          await deleteHighlight(id);
+          reloadStudyData();
         }}
       />
 
-      {/* Study Note Editor Drawer */}
-      <NoteEditorDrawer
-        isOpen={showNoteDrawer}
-        onClose={() => setShowNoteDrawer(false)}
-        ayah={currentAyah}
-        onNoteSaved={reloadStudyData}
-      />
+      {/* Note Editor Drawer */}
+      {currentAyah && (
+        <NoteEditorDrawer
+          isOpen={showNoteDrawer}
+          onClose={() => setShowNoteDrawer(false)}
+          currentAyah={currentAyah}
+          existingNote={notes.find(n => n.surah_id === currentSurahId && n.ayah_number === currentAyahNumber)}
+          onNoteSaved={reloadStudyData}
+        />
+      )}
 
-      {/* Export & Sharing Modal */}
-      <ExportShareModal
-        isOpen={showExportModal}
-        onClose={() => setShowExportModal(false)}
-        ayah={currentAyah}
-        tafasir={tafasir}
-      />
+      {/* Export / Share Modal */}
+      {currentAyah && (
+        <ExportShareModal
+          isOpen={showExportModal}
+          onClose={() => setShowExportModal(false)}
+          ayah={currentAyah}
+          surahName={currentSurah?.name_arabic || ''}
+          tafasir={tafasir}
+        />
+      )}
 
-      {/* Keyboard Shortcuts Sheet Modal (?) */}
+      {/* Keyboard Shortcuts Modal */}
       <KeyboardShortcutsModal
         isOpen={showShortcutsModal}
         onClose={() => setShowShortcutsModal(false)}
@@ -860,5 +840,3 @@ export const App: React.FC = () => {
     </div>
   );
 };
-
-export default App;

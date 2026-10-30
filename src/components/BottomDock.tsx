@@ -6,17 +6,13 @@ import {
   SkipForward, 
   Repeat, 
   Gauge, 
-  Type, 
-  ZoomIn, 
-  ZoomOut, 
-  LayoutGrid, 
-  List, 
-  BookOpen, 
-  Share2, 
-  Volume2 
+  Volume2,
+  Bookmark,
+  FileText,
+  Search,
+  Maximize2
 } from 'lucide-react';
-import { Ayah, Surah, ScriptMode, AppMode, MushafDisplayMode } from '../types/quran';
-import { getJuzForPage, JUZ_NAMES_AR } from '../utils/juzMapping';
+import { Ayah, Surah } from '../types/quran';
 
 interface BottomDockProps {
   currentSurah: Surah | undefined;
@@ -27,16 +23,13 @@ interface BottomDockProps {
   onNextAyah: () => void;
   onPrevAyah: () => void;
   onWordTimeUpdate: (wordIndex: number | null) => void;
-  activeMode: AppMode;
-  scriptMode: ScriptMode;
-  onToggleScript: () => void;
-  fontSize: number;
-  onFontSizeChange: (newSize: number) => void;
-  tafsirLayout: 'stacked' | 'grid';
-  onToggleTafsirLayout: () => void;
-  mushafDisplayMode: MushafDisplayMode;
-  onToggleMushafDisplayMode: () => void;
-  onOpenExportModal: () => void;
+  isBookmarked: boolean;
+  onToggleBookmark: () => void;
+  hasNote: boolean;
+  onOpenNoteDrawer: () => void;
+  onOpenSearch: () => void;
+  isZenMode: boolean;
+  onToggleZenMode: () => void;
 }
 
 export const BottomDock: React.FC<BottomDockProps> = ({
@@ -48,16 +41,13 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   onNextAyah,
   onPrevAyah,
   onWordTimeUpdate,
-  activeMode,
-  scriptMode,
-  onToggleScript,
-  fontSize,
-  onFontSizeChange,
-  tafsirLayout,
-  onToggleTafsirLayout,
-  mushafDisplayMode,
-  onToggleMushafDisplayMode,
-  onOpenExportModal
+  isBookmarked,
+  onToggleBookmark,
+  hasNote,
+  onOpenNoteDrawer,
+  onOpenSearch,
+  isZenMode,
+  onToggleZenMode
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playbackRate, setPlaybackRate] = useState<number>(1.0);
@@ -120,20 +110,17 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   };
 
   const cycleRepeat = () => {
-    if (repeatCount === 1) setRepeatCount(3);
-    else if (repeatCount === 3) setRepeatCount(5);
-    else if (repeatCount === 5) setRepeatCount(Infinity);
-    else setRepeatCount(1);
+    const counts = [1, 3, 5, Infinity];
+    const nextIdx = (counts.indexOf(repeatCount) + 1) % counts.length;
+    const nextCount = counts[nextIdx];
+    setRepeatCount(nextCount);
     setCurrentRepeat(1);
   };
-
-  const juzNum = currentAyah ? getJuzForPage(currentAyah.page_madani || 1) : 1;
-  const juzTitle = JUZ_NAMES_AR[juzNum] || `الجزء ${juzNum}`;
 
   return (
     <footer 
       dir="rtl"
-      className="fixed bottom-0 left-0 right-0 z-40 w-full h-11 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 shadow-lg px-4 sm:px-6 flex items-center justify-between text-xs font-ibm select-none transition-colors"
+      className="fixed bottom-0 left-0 right-0 z-40 h-11 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between px-4 sm:px-6 font-ibm select-none transition-colors"
     >
       <audio
         ref={audioRef}
@@ -141,25 +128,24 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         onEnded={handleEnded}
       />
 
-      {/* Right Flank: Telemetry & Status Breadcrumb */}
-      <div className="flex items-center gap-2 shrink-0">
-        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300 font-semibold shadow-2xs">
-          <span className="text-emerald-700 dark:text-emerald-400">
-            {currentSurah?.name_urdu || 'سورۃ'}
-          </span>
-          <span className="font-mono text-[11px] text-slate-500">
-            {currentAyah?.verse_key || '1:1'}
+      {/* Right Side: Global Reciter & Now Playing Ayah Details */}
+      <div className="flex items-center gap-2.5 min-w-0">
+        <div className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 font-semibold truncate">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <span>{currentSurah?.name_arabic || 'سورۃ'}</span>
+          <span className="text-slate-400 font-mono text-[11px]">
+            {currentAyah ? `(آیت ${currentAyah.ayah_number})` : ''}
           </span>
         </div>
 
-        <span className="text-[11px] text-slate-400 hidden md:inline font-arabic">
-          {juzTitle}
-        </span>
+        <div className="hidden md:flex items-center gap-1 text-[11px] text-slate-400 font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">
+          <Volume2 className="w-3 h-3 text-emerald-600" />
+          <span>مشاری العفاسی</span>
+        </div>
       </div>
 
-      {/* Center: Audio Recitation Controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        {/* Prev Ayah Stepper */}
+      {/* Center: Global Audio Player Stepper & Playback Controls */}
+      <div className="flex items-center gap-2">
         <button
           onClick={onPrevAyah}
           title="پچھلی آیت"
@@ -168,7 +154,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <SkipForward className="w-4 h-4" />
         </button>
 
-        {/* Play / Pause Toggle */}
         <button
           onClick={() => isPlaying ? onPause() : onPlay()}
           title={isPlaying ? "تلاوت موقوف کریں (Space)" : "تلاوت شروع کریں (Space)"}
@@ -177,7 +162,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           {isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current mr-0.5" />}
         </button>
 
-        {/* Next Ayah Stepper */}
         <button
           onClick={onNextAyah}
           title="اگلی آیت"
@@ -186,17 +170,10 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <SkipBack className="w-4 h-4" />
         </button>
 
-        {/* Reciter Badge */}
-        <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium px-2 py-0.5 rounded-md bg-slate-100/70 dark:bg-slate-800/70">
-          <Volume2 className="w-3 h-3 text-emerald-600" />
-          <span>مشاری العفاسی</span>
-        </div>
-
-        {/* Repeat Loop Stepper */}
         <button
           onClick={cycleRepeat}
-          title="تکرار / حفظ لوپ (Repeat Ayah)"
-          className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-mono font-bold transition-colors ${
+          title="تکرار لوپ (Repeat)"
+          className={`hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-mono font-bold transition-colors ${
             repeatCount > 1 || repeatCount === Infinity
               ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
               : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -206,86 +183,57 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <span>{repeatCount === Infinity ? '∞' : `${repeatCount}x`}</span>
         </button>
 
-        {/* Speed Stepper */}
         <button
           onClick={cycleSpeed}
           title="رفتار تلاوت (Speed)"
-          className="flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-[11px] font-mono font-bold transition-colors"
+          className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-[11px] font-mono font-bold transition-colors"
         >
           <Gauge className="w-3 h-3" />
           <span>{playbackRate}x</span>
         </button>
       </div>
 
-      {/* Left Flank: Power-User Quick Tools */}
+      {/* Left Side: Essential Global Study Tools (Bookmark, Notes, Search, Zen) */}
       <div className="flex items-center gap-1.5 shrink-0">
-        
-        {/* Font Scaler */}
-        <div className="flex items-center bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 font-mono text-[11px]">
-          <button 
-            onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
-            title="فونٹ چھوٹا کریں"
-            className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
-          >
-            <ZoomOut className="w-3 h-3" />
-          </button>
-          <span className="px-1 text-slate-600 dark:text-slate-300 font-bold">{fontSize}</span>
-          <button 
-            onClick={() => onFontSizeChange(Math.min(26, fontSize + 1))}
-            title="فونٹ بڑا کریں"
-            className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
-          >
-            <ZoomIn className="w-3 h-3" />
-          </button>
-        </div>
-
-        {/* Script Mode Switcher (Madani vs Indo-Pak) */}
         <button
-          onClick={onToggleScript}
-          title={scriptMode === 'indopak' ? 'عثمانی / مدنی رسم الخط پر سوئچ کریں' : 'پاکستانی / انڈو پاک رسم الخط پر سوئچ کریں'}
-          className="px-2 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-[11px] rounded-lg transition-colors"
+          onClick={onToggleBookmark}
+          title={isBookmarked ? "محفوظ فہرست سے نکالیں" : "آیت محفوظ کریں"}
+          className={`p-1.5 rounded-lg border transition-all ${
+            isBookmarked
+              ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/50 text-amber-500'
+              : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
         >
-          {scriptMode === 'indopak' ? 'انڈو-پاک' : 'مدنی'}
+          <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
         </button>
 
-        {/* Mode-Specific Quick Toggles */}
-        {(activeMode === 'tafsir' || activeMode === 'tafseer') && (
-          <button
-            onClick={onToggleTafsirLayout}
-            title={tafsirLayout === 'grid' ? "عمودی اسٹیکڈ منظر (1 Column)" : "تقابلی ۲-کالم منظر (Side-by-Side Grid)"}
-            className={`p-1.5 rounded-lg border transition-colors ${
-              tafsirLayout === 'grid'
-                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            {tafsirLayout === 'grid' ? <LayoutGrid className="w-3.5 h-3.5" /> : <List className="w-3.5 h-3.5" />}
-          </button>
-        )}
-
-        {(activeMode === 'mushaf' || activeMode === 'quran') && (
-          <button
-            onClick={onToggleMushafDisplayMode}
-            title={mushafDisplayMode === 'page' ? "مسلسل منظر (Continuous Reading)" : "صفحہ وار مصحف منظر (15-line Page)"}
-            className={`px-2 py-1 rounded-lg border text-[11px] font-semibold transition-colors ${
-              mushafDisplayMode === 'page'
-                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            {mushafDisplayMode === 'page' ? 'صفحہ وار' : 'مسلسل'}
-          </button>
-        )}
-
-        {/* Share / Export Trigger */}
         <button
-          onClick={onOpenExportModal}
-          title="آیت و تفاسیر برآمد کریں (Export & Share)"
-          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          onClick={onOpenNoteDrawer}
+          title="ذاتی تفسیری نوٹ"
+          className={`p-1.5 rounded-lg border transition-all ${
+            hasNote
+              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600'
+              : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
         >
-          <Share2 className="w-3.5 h-3.5" />
+          <FileText className="w-3.5 h-3.5" />
         </button>
 
+        <button
+          onClick={onOpenSearch}
+          title="تلاش (Ctrl+K)"
+          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          <Search className="w-3.5 h-3.5" />
+        </button>
+
+        <button
+          onClick={onToggleZenMode}
+          title="فوکس / زین موڈ (Z)"
+          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          <Maximize2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </footer>
   );

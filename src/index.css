@@ -3,77 +3,108 @@
 @tailwind utilities;
 
 /* ======================================================== */
-/* Local Offline Arabic & Urdu Bundled Typography           */
+/* Local Offline Arabic, Quranic & Urdu Bundled Typography   */
 /* ======================================================== */
+
+/* 1. App UI Font: Montserrat */
 @font-face {
-  font-family: 'Amiri';
+  font-family: 'Montserrat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/amiri-400.woff2') format('woff2');
+  src: local('Montserrat Regular'), local('Montserrat-Regular');
 }
-@font-face {
-  font-family: 'Amiri';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/amiri-700.woff2') format('woff2');
-}
+
+/* 2. Primary Arabic & Urdu UI/Commentary: IBM Plex Sans Arabic */
 @font-face {
   font-family: 'IBM Plex Sans Arabic';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/ibm-plex-sans-arabic-400.woff2') format('woff2');
+  src: url('/fonts/IBMPlexSansArabic-Regular.ttf') format('truetype');
 }
 @font-face {
   font-family: 'IBM Plex Sans Arabic';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/ibm-plex-sans-arabic-600.woff2') format('woff2');
+  src: url('/fonts/IBMPlexSansArabic-SemiBold.ttf') format('truetype');
 }
 @font-face {
   font-family: 'IBM Plex Sans Arabic';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/ibm-plex-sans-arabic-700.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Noto Nastaliq Urdu';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/noto-nastaliq-urdu-400.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Noto Nastaliq Urdu';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/noto-nastaliq-urdu-700.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Scheherazade New';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/scheherazade-new-400.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Scheherazade New';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/scheherazade-new-700.woff2') format('woff2');
+  src: url('/fonts/IBMPlexSansArabic-Bold.ttf') format('truetype');
 }
 
-/* Custom Tajweed Color Rules */
+/* 3. Indo-Pak Quran Text: Al Qalam Quran Publisher */
+@font-face {
+  font-family: 'Al Qalam Quran Publisher';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url('/fonts/alqalamquranpublisher.ttf') format('truetype'),
+       url('/fonts/al-qalam-quran-publisher.ttf') format('truetype');
+}
+
+/* 4. Uthmani / Madani Quran Text: KFGQPC Uthman Taha Naskh & Amiri Quran */
+@font-face {
+  font-family: 'KFGQPC Uthman Taha Naskh';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/KFGQPC Uthman Taha Naskh Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'KFGQPC Uthman Taha Naskh';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/KFGQPC Uthman Taha Naskh Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'KFGQPC Uthmanic Script HAFS';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/KFGQPC Uthmanic Script HAFS Regular.otf') format('opentype');
+}
+
+/* 5. Fallback & Nastaliq: Jameel Noori & Noto Nastaliq */
+@font-face {
+  font-family: 'Jameel Noori Nastaleeq';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Jameel Noori Nastaleeq Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Amiri Quran';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Amiri Quran.ttf') format('truetype');
+}
+
+/* ======================================================== */
+/* Tajweed Colors & Ligature Normalization                   */
+/* ======================================================== */
 .tajweed-text {
   direction: rtl;
   text-align: right;
-  line-height: 2.4;
+  line-height: 2.6;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+/* Ensure tajweed markup does not fracture Arabic connections */
+tajweed {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  letter-spacing: inherit;
+  font-family: inherit;
 }
 
 tajweed.ham_wasl,
@@ -130,7 +161,7 @@ tajweed.qalqalah {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Amiri', serif;
+  font-family: 'Amiri Quran', 'Amiri', serif;
   font-size: 0.85em;
   color: #059669;
   margin: 0 0.35rem;
@@ -138,30 +169,36 @@ tajweed.qalqalah {
   word-break: keep-all;
 }
 
-/* Authentic Quranic & Indo-Pak Nastaliq Typography */
+/* Indo-Pak Quran Font Class */
 .font-indopak {
-  font-family: 'Noto Nastaliq Urdu', 'Scheherazade New', 'Amiri', serif;
+  font-family: 'Al Qalam Quran Publisher', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+  line-height: 2.7;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv01", "cv02", "calt", "liga";
+}
+
+/* Uthmani / Madani Quran Font Class */
+.font-uthmani {
+  font-family: 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', 'Scheherazade New', serif;
   line-height: 2.5;
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv01", "cv02", "calt", "liga";
 }
 
-.font-arabic {
-  font-family: 'Amiri', 'Scheherazade New', serif;
-  text-rendering: optimizeLegibility;
+/* App UI typography */
+.font-app {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Urdu Nastaliq line heights and flow */
-.urdu-nastaliq {
-  font-family: 'Noto Nastaliq Urdu', serif;
-  line-height: 2.2;
-  text-rendering: optimizeLegibility;
-}
-
-/* IBM Plex Sans Arabic styling */
 .font-ibm {
   font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.01em;
+}
+
+.urdu-nastaliq {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+  line-height: 2.2;
+  text-rendering: optimizeLegibility;
 }
 
 .tafsir-prose {
