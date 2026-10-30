@@ -9,9 +9,11 @@ import {
   Check, 
   Bookmark, 
   FileText, 
-  Share2 
+  Share2,
+  Columns2,
+  BookOpen
 } from 'lucide-react';
-import { Ayah, TafsirEntry, ScriptMode, TafsirHighlight, HighlightColor } from '../types/quran';
+import { Ayah, TafsirEntry, ScriptMode, TafsirHighlight, HighlightColor, TafsirLayoutMode } from '../types/quran';
 import { InteractiveWord } from './WordTooltip';
 import { TextHighlighterBar } from './TextHighlighterBar';
 import { enhanceTafsirHtml } from '../utils/tafsirCrossReference';
@@ -40,6 +42,7 @@ interface TafsirViewProps {
   onSelectWordRoot?: (root: string) => void;
   tafsirOrder: string[];
   visibleTafasir: Record<string, boolean>;
+  tafsirLayoutMode?: TafsirLayoutMode;
 }
 
 export const TafsirView: React.FC<TafsirViewProps> = ({
@@ -63,10 +66,14 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   onNavigateToVerse,
   onSelectWordRoot,
   tafsirOrder,
-  visibleTafasir
+  visibleTafasir,
+  tafsirLayoutMode = 'stacked'
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [splitSlug1, setSplitSlug1] = useState<string>('bayan_ul_quran');
+  const [splitSlug2, setSplitSlug2] = useState<string>('tafheem');
+  const [focusSlug, setFocusSlug] = useState<string>('bayan_ul_quran');
 
   // Auto smooth-scroll to top when navigating to another ayah
   useEffect(() => {
@@ -152,6 +159,110 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
       border: 'border-cyan-200 dark:border-cyan-800/80',
       accent: 'border-r-cyan-500'
     }
+  };
+
+  const renderSingleTafsirCard = (entry: TafsirEntry, isCollapsible: boolean = true) => {
+    const isExpanded = isCollapsible ? expandedTafasir[entry.tafsir_slug] !== false : true;
+    const theme = badgeStyles[entry.tafsir_slug] || badgeStyles.maarif;
+
+    const entryHighlights = highlights.filter(
+      h => h.surah_id === currentAyah.surah_id &&
+           h.ayah_number === currentAyah.ayah_number &&
+           (h.tafsir_slug === entry.tafsir_slug || h.tafsir_slug === 'general')
+    );
+    const withHighlights = applyHighlightsToHtml(entry.content_html, entryHighlights);
+    const enhancedHtml = enhanceTafsirHtml(withHighlights);
+
+    return (
+      <div
+        key={entry.id}
+        className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xs transition-all border-r-4 ${theme.accent}`}
+      >
+        {/* Header */}
+        <div
+          onClick={() => isCollapsible && onToggleTafsir(entry.tafsir_slug)}
+          className={`px-5 sm:px-6 py-4 flex items-center justify-between ${
+            isCollapsible ? 'cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-800/40' : ''
+          } transition-colors select-none font-ibm`}
+        >
+          {/* Right Side: Tafsir Name & Author */}
+          <div className="flex items-center gap-2.5">
+            {isCollapsible && (
+              <button
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                title={isExpanded ? "Collapse" : "Expand"}
+              >
+                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+            )}
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                {entry.tafsir_name}
+              </span>
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${theme.bg} ${theme.text} ${theme.border}`}>
+                {entry.author_name}
+              </span>
+              {entry.ayah_from !== entry.ayah_to && (
+                <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">
+                  (آیات: {toArabicDigits(entry.ayah_from)} تا {toArabicDigits(entry.ayah_to)})
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Left Side: Copy action */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `tafsir-${entry.id}`);
+              }}
+              title="متن کاپی کریں"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              {copiedId === `tafsir-${entry.id}` ? (
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
+            {isCollapsible && (
+              <span className="text-xs text-slate-400 hidden sm:inline">
+                {isExpanded ? 'سمیٹیں' : 'پھیلائیں'}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Content Body */}
+        {isExpanded && (
+          <div className="px-6 sm:px-8 pb-6 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-right">
+            <div 
+              data-tafsir-slug={entry.tafsir_slug}
+              style={{ fontSize: `${fontSize}px` }}
+              className="tafsir-prose font-ibm leading-[2.3] text-slate-800 dark:text-slate-100 max-w-none select-text"
+              dangerouslySetInnerHTML={{ __html: enhancedHtml }}
+            />
+
+            <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs text-slate-400 font-ibm">
+              <span>ماخذ: {entry.source_attribution}</span>
+              {entry.source_url && (
+                <a
+                  href={entry.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-emerald-600 hover:underline"
+                >
+                  <span>مکمل ماخذ دیکھیں</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -281,7 +392,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
         )}
       </div>
 
-      {/* 2. TAFASIR CARDS STREAM (Zero inside toolbars, Clean RTL Cards) */}
+      {/* 2. TAFASIR CONTENT VIEW (Based on Reading Layout Mode: Stacked vs Split vs Focus) */}
       <div className="space-y-4">
         {displayTafasir.length === 0 ? (
           <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-400 font-ibm">
@@ -292,108 +403,89 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
               سب ہیڈر بار میں &quot;ترتیب و انتخابِ تفاسیر&quot; سے تفاسیر کو فعال کریں۔
             </p>
           </div>
-        ) : (
-          displayTafasir.map((entry) => {
-            const isExpanded = expandedTafasir[entry.tafsir_slug] !== false;
-            const theme = badgeStyles[entry.tafsir_slug] || badgeStyles.maarif;
-
-            return (
-              <div
-                key={entry.id}
-                className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xs transition-all border-r-4 ${theme.accent}`}
-              >
-                {/* Header (Clean Accordion Title - Right Title, Left Actions) */}
-                <div
-                  onClick={() => onToggleTafsir(entry.tafsir_slug)}
-                  className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors select-none font-ibm"
+        ) : tafsirLayoutMode === 'split' ? (
+          /* Side-by-Side Comparative Mode (Dual Parallel Columns) */
+          <div className="space-y-3">
+            {/* Split Column Commentator Pickers */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-100/70 dark:bg-slate-900/60 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-ibm">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-700 dark:text-slate-300 shrink-0">پہلی تفسیر:</span>
+                <select
+                  value={splitSlug1}
+                  onChange={(e) => setSplitSlug1(e.target.value)}
+                  className="flex-1 h-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 text-slate-800 dark:text-slate-200 font-medium outline-none"
                 >
-                  {/* Right Side: Tafsir Name & Author */}
-                  <div className="flex items-center gap-3">
-                    <button
-                      className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                      title={isExpanded ? "Collapse" : "Expand"}
-                    >
-                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </button>
+                  {displayTafasir.map(t => (
+                    <option key={`split1-${t.tafsir_slug}`} value={t.tafsir_slug}>
+                      {t.tafsir_name} ({t.author_name})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-lg text-slate-900 dark:text-white">
-                        {entry.tafsir_name}
-                      </span>
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${theme.bg} ${theme.text} ${theme.border}`}>
-                        {entry.author_name}
-                      </span>
-                      {entry.ayah_from !== entry.ayah_to && (
-                        <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">
-                          (آیات: {toArabicDigits(entry.ayah_from)} تا {toArabicDigits(entry.ayah_to)})
-                        </span>
-                      )}
-                    </div>
-                  </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-700 dark:text-slate-300 shrink-0">دوسری تفسیر:</span>
+                <select
+                  value={splitSlug2}
+                  onChange={(e) => setSplitSlug2(e.target.value)}
+                  className="flex-1 h-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 text-slate-800 dark:text-slate-200 font-medium outline-none"
+                >
+                  {displayTafasir.map(t => (
+                    <option key={`split2-${t.tafsir_slug}`} value={t.tafsir_slug}>
+                      {t.tafsir_name} ({t.author_name})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-                  {/* Left Side: Copy action & Expand state */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `tafsir-${entry.id}`);
-                      }}
-                      title="متن کاپی کریں"
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                    >
-                      {copiedId === `tafsir-${entry.id}` ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                    <span className="text-xs text-slate-400 hidden sm:inline">
-                      {isExpanded ? 'سمیٹیں' : 'پھیلائیں'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Expanded Content Section */}
-                {isExpanded && (() => {
-                  const entryHighlights = highlights.filter(
-                    h => h.surah_id === currentAyah.surah_id &&
-                         h.ayah_number === currentAyah.ayah_number &&
-                         (h.tafsir_slug === entry.tafsir_slug || h.tafsir_slug === 'general')
-                  );
-                  const withHighlights = applyHighlightsToHtml(entry.content_html, entryHighlights);
-                  const enhancedHtml = enhanceTafsirHtml(withHighlights);
-
-                  return (
-                    <div className="px-6 sm:px-8 pb-6 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-right">
-                      {/* Commentary Body */}
-                      <div 
-                        data-tafsir-slug={entry.tafsir_slug}
-                        style={{ fontSize: `${fontSize}px` }}
-                        className="tafsir-prose font-ibm leading-[2.3] text-slate-800 dark:text-slate-100 max-w-none select-text"
-                        dangerouslySetInnerHTML={{ __html: enhancedHtml }}
-                      />
-
-                      {/* Subtle Footer Attribution */}
-                      <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs text-slate-400 font-ibm">
-                        <span>ماخذ: {entry.source_attribution}</span>
-                        {entry.source_url && (
-                          <a
-                            href={entry.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-emerald-600 hover:underline"
-                          >
-                            <span>مکمل ماخذ دیکھیں</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  );
+            {/* Parallel Columns Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+              {/* Column 1 */}
+              <div>
+                {(() => {
+                  const entry = displayTafasir.find(t => t.tafsir_slug === splitSlug1) || displayTafasir[0];
+                  return entry ? renderSingleTafsirCard(entry, false) : null;
                 })()}
               </div>
-            );
-          })
+
+              {/* Column 2 */}
+              <div>
+                {(() => {
+                  const entry = displayTafasir.find(t => t.tafsir_slug === splitSlug2) || displayTafasir[1] || displayTafasir[0];
+                  return entry ? renderSingleTafsirCard(entry, false) : null;
+                })()}
+              </div>
+            </div>
+          </div>
+        ) : tafsirLayoutMode === 'focus' ? (
+          /* Single Commentary Focus Reader Mode */
+          <div className="space-y-3">
+            <div className="flex items-center justify-between bg-slate-100/70 dark:bg-slate-900/60 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-ibm">
+              <span className="font-bold text-slate-700 dark:text-slate-300">منتخب تفسیر برائے فوکس ریڈنگ:</span>
+              <select
+                value={focusSlug}
+                onChange={(e) => setFocusSlug(e.target.value)}
+                className="h-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 text-slate-800 dark:text-slate-200 font-semibold outline-none"
+              >
+                {displayTafasir.map(t => (
+                  <option key={`focus-${t.tafsir_slug}`} value={t.tafsir_slug}>
+                    {t.tafsir_name} — {t.author_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              {(() => {
+                const entry = displayTafasir.find(t => t.tafsir_slug === focusSlug) || displayTafasir[0];
+                return entry ? renderSingleTafsirCard(entry, false) : null;
+              })()}
+            </div>
+          </div>
+        ) : (
+          /* Default Stacked Accordion Stream */
+          displayTafasir.map(entry => renderSingleTafsirCard(entry, true))
         )}
       </div>
     </div>

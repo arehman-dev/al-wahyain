@@ -14,9 +14,12 @@ import {
   Maximize2,
   Minimize2,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Columns2,
+  Rows3,
+  BookOpen
 } from 'lucide-react';
-import { Surah, AppMode, ScriptMode } from '../types/quran';
+import { Surah, AppMode, ScriptMode, TafsirLayoutMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
 
 interface SubHeaderToolbarProps {
@@ -55,6 +58,8 @@ interface SubHeaderToolbarProps {
   onFontSizeChange?: (size: number) => void;
   onExpandAllTafasir?: () => void;
   onCollapseAllTafasir?: () => void;
+  tafsirLayoutMode?: TafsirLayoutMode;
+  onSelectTafsirLayoutMode?: (mode: TafsirLayoutMode) => void;
 }
 
 export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
@@ -86,7 +91,9 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   fontSize = 17,
   onFontSizeChange,
   onExpandAllTafasir,
-  onCollapseAllTafasir
+  onCollapseAllTafasir,
+  tafsirLayoutMode = 'stacked',
+  onSelectTafsirLayoutMode
 }) => {
   const [directJumpInput, setDirectJumpInput] = useState('');
   const [pageJumpInput, setPageJumpInput] = useState('');
@@ -340,8 +347,50 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 className="flex items-center gap-1.5 h-5 px-2 rounded bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-semibold text-[11px] hover:bg-emerald-100 transition-colors"
               >
                 <SlidersHorizontal className="w-3 h-3" />
-                <span>ترتیب و انتخابِ تفاسیر</span>
+                <span>ترتیب و انتخاب</span>
               </button>
+            )}
+
+            {/* Reading Layout Modes (Stacked vs Side-by-Side Comparative Split vs Focus) */}
+            {onSelectTafsirLayoutMode && (
+              <div className="flex items-center gap-0.5 border-r border-slate-200 dark:border-slate-700 pr-1 mr-0.5">
+                <button
+                  onClick={() => onSelectTafsirLayoutMode('stacked')}
+                  title="عمودی لڑی (Stacked Accordion)"
+                  className={`flex items-center gap-1 h-5 px-1.5 rounded text-[11px] font-semibold transition-all ${
+                    tafsirLayoutMode === 'stacked'
+                      ? 'bg-emerald-600 text-white shadow-2xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <Rows3 className="w-3 h-3" />
+                  <span className="hidden md:inline">لڑی</span>
+                </button>
+                <button
+                  onClick={() => onSelectTafsirLayoutMode('split')}
+                  title="دو رخی تقابلی اسپلٹ (Side-by-Side Comparative)"
+                  className={`flex items-center gap-1 h-5 px-1.5 rounded text-[11px] font-semibold transition-all ${
+                    tafsirLayoutMode === 'split'
+                      ? 'bg-emerald-600 text-white shadow-2xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <Columns2 className="w-3 h-3" />
+                  <span className="hidden md:inline">تقابلی اسپلٹ</span>
+                </button>
+                <button
+                  onClick={() => onSelectTafsirLayoutMode('focus')}
+                  title="مطالعہ فوکس ریڈر (Single Focus Reader)"
+                  className={`flex items-center gap-1 h-5 px-1.5 rounded text-[11px] font-semibold transition-all ${
+                    tafsirLayoutMode === 'focus'
+                      ? 'bg-emerald-600 text-white shadow-2xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <BookOpen className="w-3 h-3" />
+                  <span className="hidden md:inline">فوکس</span>
+                </button>
+              </div>
             )}
 
             {/* Expand / Collapse All */}

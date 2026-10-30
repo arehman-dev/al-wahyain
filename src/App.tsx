@@ -23,6 +23,8 @@ import {
   TafsirEntry, 
   AppMode, 
   ScriptMode, 
+  ReadingTheme,
+  TafsirLayoutMode,
   Bookmark, 
   AyahNote, 
   TafsirHighlight, 
@@ -75,8 +77,13 @@ export const App: React.FC = () => {
   const [wbwLanguage, setWbwLanguage] = useState<'both' | 'ur' | 'en' | 'ur2' | 'en2'>(() => {
     return (localStorage.getItem('qs_wbw_lang') as any) || 'both';
   });
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    return localStorage.getItem('qs_dark_mode') === 'true';
+  const [themeMode, setThemeMode] = useState<ReadingTheme>(() => {
+    const saved = localStorage.getItem('qs_theme_mode');
+    if (saved === 'light' || saved === 'sepia' || saved === 'dark' || saved === 'oled') return saved as ReadingTheme;
+    return localStorage.getItem('qs_dark_mode') === 'true' ? 'dark' : 'light';
+  });
+  const [tafsirLayoutMode, setTafsirLayoutMode] = useState<TafsirLayoutMode>(() => {
+    return (localStorage.getItem('qs_tafsir_layout') as TafsirLayoutMode) || 'stacked';
   });
 
   // Power User Customization State
@@ -166,15 +173,26 @@ export const App: React.FC = () => {
     surahName: string;
   } | null>(null);
 
-  // Sync dark mode class
+  // Sync reading atmosphere theme (light, sepia, dark, oled)
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    const html = document.documentElement;
+    html.classList.remove('dark', 'theme-sepia', 'theme-oled');
+
+    if (themeMode === 'dark') {
+      html.classList.add('dark');
+    } else if (themeMode === 'oled') {
+      html.classList.add('dark', 'theme-oled');
+    } else if (themeMode === 'sepia') {
+      html.classList.add('theme-sepia');
     }
-    localStorage.setItem('qs_dark_mode', String(darkMode));
-  }, [darkMode]);
+
+    localStorage.setItem('qs_theme_mode', themeMode);
+    localStorage.setItem('qs_dark_mode', String(themeMode === 'dark' || themeMode === 'oled'));
+  }, [themeMode]);
+
+  useEffect(() => {
+    localStorage.setItem('qs_tafsir_layout', tafsirLayoutMode);
+  }, [tafsirLayoutMode]);
 
   // Persist study position & settings
   useEffect(() => {
@@ -472,8 +490,10 @@ export const App: React.FC = () => {
           isZenMode={isZenMode}
           onToggleZenMode={() => setIsZenMode(prev => !prev)}
           bookmarksCount={bookmarks.length}
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(!darkMode)}
+          darkMode={themeMode === 'dark' || themeMode === 'oled'}
+          onToggleDarkMode={() => setThemeMode(prev => prev === 'light' ? 'dark' : 'light')}
+          themeMode={themeMode}
+          onChangeThemeMode={setThemeMode}
         />
       )}
 
@@ -530,6 +550,8 @@ export const App: React.FC = () => {
           onFontSizeChange={setFontSize}
           onExpandAllTafasir={handleExpandAll}
           onCollapseAllTafasir={handleCollapseAll}
+          tafsirLayoutMode={tafsirLayoutMode}
+          onSelectTafsirLayoutMode={setTafsirLayoutMode}
         />
       )}
 
@@ -700,6 +722,7 @@ export const App: React.FC = () => {
                 onSelectWordRoot={(root) => setSelectedRoot(root)}
                 tafsirOrder={tafsirOrder}
                 visibleTafasir={visibleTafasir}
+                tafsirLayoutMode={tafsirLayoutMode}
               />
             )}
           </>

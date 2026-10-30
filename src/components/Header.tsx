@@ -1,6 +1,6 @@
 import React from 'react';
-import { BookOpen, Sparkles, Library, Info, Moon, Sun, Search, Bookmark, Keyboard, Maximize2, Minimize2, Languages } from 'lucide-react';
-import { AppMode } from '../types/quran';
+import { BookOpen, Sparkles, Library, Info, Moon, Sun, Search, Bookmark, Keyboard, Maximize2, Minimize2, Languages, Coffee, Eye } from 'lucide-react';
+import { AppMode, ReadingTheme } from '../types/quran';
 
 interface HeaderProps {
   activeMode: AppMode;
@@ -12,8 +12,10 @@ interface HeaderProps {
   isZenMode: boolean;
   onToggleZenMode: () => void;
   bookmarksCount?: number;
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
+  themeMode: ReadingTheme;
+  onChangeThemeMode: (theme: ReadingTheme) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -27,8 +29,26 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleZenMode,
   bookmarksCount = 0,
   darkMode,
-  onToggleDarkMode
+  onToggleDarkMode,
+  themeMode,
+  onChangeThemeMode
 }) => {
+  const cycleTheme = () => {
+    const cycle: Record<ReadingTheme, ReadingTheme> = {
+      light: 'sepia',
+      sepia: 'dark',
+      dark: 'oled',
+      oled: 'light'
+    };
+    onChangeThemeMode(cycle[themeMode] || 'dark');
+  };
+
+  const themeLabels: Record<ReadingTheme, string> = {
+    light: 'تھیم: دن (Light)',
+    sepia: 'تھیم: قدیم اوراق (Sepia)',
+    dark: 'تھیم: نائٹ (Dark Slate)',
+    oled: 'تھیم: مڈ نائٹ (OLED Black)'
+  };
   return (
     <header 
       dir="rtl" 
@@ -178,13 +198,22 @@ export const Header: React.FC<HeaderProps> = ({
             <Info className="w-3.5 h-3.5" />
           </button>
 
-          {/* Dark Mode */}
+          {/* Reading Atmosphere Theme Switcher */}
           <button
-            onClick={onToggleDarkMode}
-            title="تھیم تبدیل کریں"
-            className="p-1.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            onClick={cycleTheme}
+            title={themeLabels[themeMode] + ' (تبدیل کرنے کے لیے کلک کریں)'}
+            className="flex items-center gap-1 px-2 py-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-xs font-semibold"
           >
-            {darkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5" />}
+            {themeMode === 'light' && <Sun className="w-3.5 h-3.5 text-amber-500" />}
+            {themeMode === 'sepia' && <Coffee className="w-3.5 h-3.5 text-amber-700" />}
+            {themeMode === 'dark' && <Moon className="w-3.5 h-3.5 text-indigo-400" />}
+            {themeMode === 'oled' && <Eye className="w-3.5 h-3.5 text-emerald-400" />}
+            <span className="hidden xl:inline text-[11px]">
+              {themeMode === 'light' && 'روشن'}
+              {themeMode === 'sepia' && 'سپیا'}
+              {themeMode === 'dark' && 'نائٹ'}
+              {themeMode === 'oled' && 'OLED'}
+            </span>
           </button>
         </div>
 
