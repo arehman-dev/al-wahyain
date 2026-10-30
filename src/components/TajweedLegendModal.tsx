@@ -2,10 +2,12 @@ import React from 'react';
 import { X, Palette } from 'lucide-react';
 
 interface TajweedLegendModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-export const TajweedLegendModal: React.FC<TajweedLegendModalProps> = ({ onClose }) => {
+export const TajweedLegendModal: React.FC<TajweedLegendModalProps> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
   const rules = [
     {
       name: 'مد لازم و مد متصل (Madd Necessary & Mandatory)',
