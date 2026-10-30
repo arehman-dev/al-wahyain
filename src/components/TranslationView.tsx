@@ -185,6 +185,11 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                           <span className="font-ibm text-xs text-emerald-700 dark:text-emerald-400 font-semibold mt-1">
                             {w.translation_ur || '—'}
                           </span>
+
+                          {/* English Word-by-Word Meaning */}
+                          <span dir="ltr" className="text-[11px] font-sans text-slate-500 dark:text-slate-400 font-medium text-center leading-tight mt-0.5">
+                            {w.translation_en || '—'}
+                          </span>
                         </div>
                       );
                     })}
