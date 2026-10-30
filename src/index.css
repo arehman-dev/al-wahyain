@@ -42,7 +42,18 @@
 @font-face {
   font-family: 'Al Qalam Quran Publisher';
   font-style: normal;
-  font-weight: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/alqalamquranpublisher.ttf') format('truetype'),
+       url('/fonts/al-qalam-quran-publisher.ttf') format('truetype'),
+       local('Al Qalam Quran Publisher'),
+       local('AlQalamQuranPublisher');
+}
+
+@font-face {
+  font-family: 'AlQalamQuranPublisher';
+  font-style: normal;
+  font-weight: 400;
   font-display: swap;
   src: url('/fonts/alqalamquranpublisher.ttf') format('truetype'),
        url('/fonts/al-qalam-quran-publisher.ttf') format('truetype');
@@ -171,8 +182,8 @@ tajweed.qalqalah {
 
 /* Indo-Pak Quran Font Class */
 .font-indopak {
-  font-family: 'Al Qalam Quran Publisher', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
-  line-height: 2.7;
+  font-family: 'Al Qalam Quran Publisher', 'AlQalamQuranPublisher', 'Jameel Noori Nastaleeq', serif;
+  line-height: 2.8;
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv01", "cv02", "calt", "liga";
 }

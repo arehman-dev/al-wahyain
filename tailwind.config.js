@@ -10,7 +10,7 @@ export default {
       fontFamily: {
         app: ['"Montserrat"', 'system-ui', 'sans-serif'],
         ibm: ['"IBM Plex Sans Arabic"', 'sans-serif'],
-        indopak: ['"Al Qalam Quran Publisher"', '"Jameel Noori Nastaleeq"', '"Noto Nastaliq Urdu"', 'serif'],
+        indopak: ['"Al Qalam Quran Publisher"', '"AlQalamQuranPublisher"', '"Jameel Noori Nastaleeq"', 'serif'],
         uthmani: ['"KFGQPC Uthman Taha Naskh"', '"KFGQPC Uthmanic Script HAFS"', '"Amiri Quran"', 'serif'],
         arabic: ['"KFGQPC Uthman Taha Naskh"', '"Amiri Quran"', '"Scheherazade New"', 'serif'],
         urdu: ['"Jameel Noori Nastaleeq"', '"Noto Nastaliq Urdu"', 'serif'],
