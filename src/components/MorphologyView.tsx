@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Sparkles, BookOpen, Layers, ArrowLeft, ArrowRight, CornerDownLeft } from 'lucide-react';
+import { Play, Pause, Sparkles, BookOpen, Layers, ArrowLeft, ArrowRight, CornerDownLeft, GitBranch } from 'lucide-react';
 import { Ayah, Word, ScriptMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
+import { MorphologyGraph } from './MorphologyGraph';
 
 interface MorphologyViewProps {
   currentAyah: Ayah;
@@ -267,6 +268,14 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
               </p>
             </div>
 
+          </div>
+
+          {/* 4. Morphology Graph & Decomposition Tree */}
+          <div className="mt-6">
+            <MorphologyGraph
+              word={selectedWord}
+              onSelectRoot={onSelectWordRoot}
+            />
           </div>
         </div>
       )}
