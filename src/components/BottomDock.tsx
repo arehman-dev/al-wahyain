@@ -172,15 +172,21 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
         <button
           onClick={cycleRepeat}
-          title="تکرار لوپ (Repeat)"
-          className={`hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-mono font-bold transition-colors ${
+          title={repeatCount === 1 ? "تکرار برائے حفظ (Repeat Loop)" : `دور تکرار: ${currentRepeat} از ${repeatCount === Infinity ? 'لامحدود' : repeatCount}`}
+          className={`hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded-lg border text-[11px] font-mono font-bold transition-all ${
             repeatCount > 1 || repeatCount === Infinity
-              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/50 shadow-xs'
               : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
           <Repeat className="w-3 h-3" />
-          <span>{repeatCount === Infinity ? '∞' : `${repeatCount}x`}</span>
+          <span>
+            {repeatCount === Infinity 
+              ? `∞ (${currentRepeat})` 
+              : repeatCount > 1 
+              ? `${currentRepeat}/${repeatCount}` 
+              : '1x'}
+          </span>
         </button>
 
         <button

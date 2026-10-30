@@ -66,7 +66,15 @@ export const App: React.FC = () => {
   const [showWordByWord, setShowWordByWord] = useState<boolean>(() => {
     return localStorage.getItem('qs_show_wbw') === 'true';
   });
-  const [selectedTranslationAuthor] = useState<string>('taqi_usmani');
+  const [selectedTranslationAuthor, setSelectedTranslationAuthor] = useState<string>(() => {
+    return localStorage.getItem('qs_translation_author') || 'taqi_usmani';
+  });
+  const [secondaryTranslationAuthor, setSecondaryTranslationAuthor] = useState<string | null>(() => {
+    return localStorage.getItem('qs_secondary_translation_author') || null;
+  });
+  const [wbwLanguage, setWbwLanguage] = useState<'both' | 'ur' | 'en' | 'ur2' | 'en2'>(() => {
+    return (localStorage.getItem('qs_wbw_lang') as any) || 'both';
+  });
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('qs_dark_mode') === 'true';
   });
@@ -496,6 +504,25 @@ export const App: React.FC = () => {
           // Translation controls
           showWordByWord={showWordByWord}
           onToggleWordByWord={() => setShowWordByWord(prev => !prev)}
+          selectedTranslationAuthor={selectedTranslationAuthor}
+          onSelectTranslationAuthor={(authorId) => {
+            setSelectedTranslationAuthor(authorId);
+            localStorage.setItem('qs_translation_author', authorId);
+          }}
+          secondaryTranslationAuthor={secondaryTranslationAuthor}
+          onSelectSecondaryTranslationAuthor={(authorId) => {
+            setSecondaryTranslationAuthor(authorId);
+            if (authorId) {
+              localStorage.setItem('qs_secondary_translation_author', authorId);
+            } else {
+              localStorage.removeItem('qs_secondary_translation_author');
+            }
+          }}
+          wbwLanguage={wbwLanguage}
+          onSelectWbwLanguage={(lang) => {
+            setWbwLanguage(lang);
+            localStorage.setItem('qs_wbw_lang', lang);
+          }}
 
           // Tafsir controls
           onOpenTafsirSettings={() => setShowTafsirSettingsModal(true)}
@@ -599,6 +626,8 @@ export const App: React.FC = () => {
                 scriptMode={scriptMode}
                 showWordByWord={showWordByWord}
                 selectedTranslationAuthor={selectedTranslationAuthor}
+                secondaryTranslationAuthor={secondaryTranslationAuthor}
+                wbwLanguage={wbwLanguage}
                 onSelectAyah={handleSelectAyah}
                 onOpenMorphology={(num) => {
                   setCurrentAyahNumber(num);

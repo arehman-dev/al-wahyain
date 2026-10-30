@@ -12,6 +12,8 @@ interface TranslationViewProps {
   scriptMode: ScriptMode;
   showWordByWord: boolean;
   selectedTranslationAuthor: string;
+  secondaryTranslationAuthor?: string | null;
+  wbwLanguage?: 'both' | 'ur' | 'en' | 'ur2' | 'en2';
   onSelectAyah: (num: number) => void;
   onOpenMorphology: (ayahNumber: number) => void;
   onOpenTafsir: (ayahNumber: number) => void;
@@ -32,6 +34,8 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
   scriptMode,
   showWordByWord,
   selectedTranslationAuthor,
+  secondaryTranslationAuthor = null,
+  wbwLanguage = 'both',
   onSelectAyah,
   onOpenMorphology,
   onOpenTafsir,
@@ -76,6 +80,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
           const isSelected = currentAyahNumber === ayah.ayah_number;
           const isAyahPlaying = isPlaying && activePlayingAyah === ayah.ayah_number;
           const activeTr = ayah.translations?.find(t => t.author_id === selectedTranslationAuthor) || ayah.translations?.[0];
+          const secondaryTr = secondaryTranslationAuthor ? ayah.translations?.find(t => t.author_id === secondaryTranslationAuthor) : null;
           const rukuEnd = RUKU_END_AYAHS[`${ayah.surah_id}:${ayah.ayah_number}`];
           const quarter = QUARTER_AYAHS[`${ayah.surah_id}:${ayah.ayah_number}`];
           const sajdah = SAJDAH_AYAHS[`${ayah.surah_id}:${ayah.ayah_number}`];
@@ -207,15 +212,19 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                             </span>
                           </div>
                           
-                          {/* Urdu Word-by-Word Meaning - Standardized Height & Baseline */}
-                          <div className="w-full flex items-center justify-center min-h-[30px] px-1 text-center font-ibm text-xs text-emerald-800 dark:text-emerald-300 font-semibold leading-snug">
-                            {w.translation_ur || '—'}
-                          </div>
+                          {/* Urdu Word-by-Word Meaning */}
+                          {(wbwLanguage === 'both' || wbwLanguage === 'ur' || wbwLanguage === 'ur2') && (
+                            <div className="w-full flex items-center justify-center min-h-[28px] px-1 text-center font-ibm text-xs text-emerald-800 dark:text-emerald-300 font-semibold leading-snug">
+                              {wbwLanguage === 'ur2' ? (w.translation_ur_2 || w.translation_ur || '—') : (w.translation_ur || '—')}
+                            </div>
+                          )}
 
-                          {/* English Word-by-Word Meaning - Standardized Height & Baseline */}
-                          <div dir="ltr" className="w-full flex items-center justify-center min-h-[22px] px-1 text-center font-sans text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight">
-                            {w.translation_en || '—'}
-                          </div>
+                          {/* English Word-by-Word Meaning */}
+                          {(wbwLanguage === 'both' || wbwLanguage === 'en' || wbwLanguage === 'en2') && (
+                            <div dir="ltr" className="w-full flex items-center justify-center min-h-[22px] px-1 text-center font-sans text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight">
+                              {wbwLanguage === 'en2' ? (w.translation_en_2 || w.translation_en || '—') : (w.translation_en || '—')}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -249,12 +258,42 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
               {/* Translation Text Under Ayah */}
               {activeTr && (
                 <div className="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-right">
-                  <p className="font-ibm text-base sm:text-lg text-slate-800 dark:text-slate-200 leading-[2.2] font-medium">
+                  <p 
+                    className={`font-ibm text-base sm:text-lg text-slate-800 dark:text-slate-200 leading-[2.2] font-medium ${
+                      activeTr.language === 'en' ? 'font-sans text-left leading-relaxed' : ''
+                    }`}
+                    dir={activeTr.language === 'en' ? 'ltr' : 'rtl'}
+                  >
                     {activeTr.text}
                   </p>
                   <span className="text-xs text-slate-400 dark:text-slate-500 font-ibm mt-1.5 block">
                     — ترجمہ: {activeTr.author_name}
                   </span>
+                </div>
+              )}
+
+              {/* Secondary Translation (Side-by-side / Stacked if selected) */}
+              {secondaryTr && secondaryTr.author_id !== activeTr?.author_id && (
+                <div className="mt-3.5 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800/80 bg-slate-50/60 dark:bg-slate-950/40 p-4 rounded-2xl">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mb-2 font-ibm">
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      {secondaryTr.author_name}
+                    </span>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold">
+                      {secondaryTr.language === 'en' ? 'English' : 'Urdu'}
+                    </span>
+                  </div>
+                  <p 
+                    className={`text-sm sm:text-base text-slate-700 dark:text-slate-300 ${
+                      secondaryTr.language === 'en' 
+                        ? 'font-sans text-left leading-relaxed' 
+                        : 'font-ibm text-right leading-[2.1] font-medium'
+                    }`}
+                    dir={secondaryTr.language === 'en' ? 'ltr' : 'rtl'}
+                  >
+                    {secondaryTr.text}
+                  </p>
                 </div>
               )}
             </div>

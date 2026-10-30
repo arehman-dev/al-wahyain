@@ -23,6 +23,8 @@ export interface Word {
   text_indopak: string;
   translation_ur: string;
   translation_en: string;
+  translation_ur_2?: string;
+  translation_en_2?: string;
   audio_url?: string;
   root?: string;
   lemma?: string;

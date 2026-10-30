@@ -42,6 +42,12 @@ interface SubHeaderToolbarProps {
   // Translation specific
   showWordByWord?: boolean;
   onToggleWordByWord?: () => void;
+  selectedTranslationAuthor?: string;
+  onSelectTranslationAuthor?: (authorId: string) => void;
+  secondaryTranslationAuthor?: string | null;
+  onSelectSecondaryTranslationAuthor?: (authorId: string | null) => void;
+  wbwLanguage?: 'both' | 'ur' | 'en' | 'ur2' | 'en2';
+  onSelectWbwLanguage?: (lang: 'both' | 'ur' | 'en' | 'ur2' | 'en2') => void;
 
   // Tafsir specific
   onOpenTafsirSettings?: () => void;
@@ -70,6 +76,12 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   onToggleTajweed,
   showWordByWord = false,
   onToggleWordByWord,
+  selectedTranslationAuthor = 'taqi_usmani',
+  onSelectTranslationAuthor,
+  secondaryTranslationAuthor = null,
+  onSelectSecondaryTranslationAuthor,
+  wbwLanguage = 'both',
+  onSelectWbwLanguage,
   onOpenTafsirSettings,
   fontSize = 17,
   onFontSizeChange,
@@ -236,7 +248,55 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
         {/* 2. Translation Mode Controls */}
         {activeMode === 'translation' && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {/* Primary Translation Selector */}
+            {onSelectTranslationAuthor && (
+              <select
+                value={selectedTranslationAuthor}
+                onChange={(e) => onSelectTranslationAuthor(e.target.value)}
+                className="h-7 text-[11px] font-ibm bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 text-slate-800 dark:text-slate-100 outline-none focus:border-emerald-500 shadow-2xs font-semibold cursor-pointer"
+                title="بنیادی ترجمہ"
+              >
+                <optgroup label="اردو تراجم">
+                  <option value="taqi_usmani">مفتی تقی عثمانی (آسان ترجمہ)</option>
+                  <option value="maududi">مولانا مودودی (تفہیم القرآن)</option>
+                  <option value="junagarhi">مولانا محمد جوناگڑھی</option>
+                  <option value="mahmud_hasan">شیخ الہند محمود الحسن</option>
+                  <option value="israr_ahmad">ڈاکٹر اسرار احمد (بیان القرآن)</option>
+                  <option value="jalandhari">فتح محمد جالندھری</option>
+                </optgroup>
+                <optgroup label="English Translations">
+                  <option value="sahih_intl">Saheeh International (EN)</option>
+                  <option value="taqi_usmani_en">Mufti Taqi Usmani (EN)</option>
+                  <option value="abdel_haleem">Abdel Haleem Oxford (EN)</option>
+                </optgroup>
+              </select>
+            )}
+
+            {/* Secondary Translation Selector */}
+            {onSelectSecondaryTranslationAuthor && (
+              <select
+                value={secondaryTranslationAuthor || 'none'}
+                onChange={(e) => onSelectSecondaryTranslationAuthor(e.target.value === 'none' ? null : e.target.value)}
+                className="h-7 text-[11px] font-ibm bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 text-slate-600 dark:text-slate-400 outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
+                title="ثانوی ترجمہ"
+              >
+                <option value="none">ثانوی ترجمہ: بند</option>
+                <optgroup label="English Secondary">
+                  <option value="sahih_intl">+ Saheeh International</option>
+                  <option value="taqi_usmani_en">+ Taqi Usmani (EN)</option>
+                  <option value="abdel_haleem">+ Abdel Haleem (EN)</option>
+                </optgroup>
+                <optgroup label="Urdu Secondary">
+                  <option value="taqi_usmani">+ مفتی تقی عثمانی</option>
+                  <option value="maududi">+ مولانا مودودی</option>
+                  <option value="junagarhi">+ مولانا جوناگڑھی</option>
+                  <option value="israr_ahmad">+ ڈاکٹر اسرار احمد</option>
+                </optgroup>
+              </select>
+            )}
+
+            {/* Word-by-Word Toggle */}
             {onToggleWordByWord && (
               <button
                 onClick={onToggleWordByWord}
@@ -247,8 +307,24 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 }`}
               >
                 {showWordByWord ? <ToggleRight className="w-4 h-4 text-emerald-600" /> : <ToggleLeft className="w-4 h-4 text-slate-400" />}
-                <span>لفظی ترجمہ (Word-by-Word)</span>
+                <span>لفظی ترجمہ</span>
               </button>
+            )}
+
+            {/* WBW Language Selector (only shown if WBW is on) */}
+            {showWordByWord && onSelectWbwLanguage && (
+              <select
+                value={wbwLanguage}
+                onChange={(e) => onSelectWbwLanguage(e.target.value as any)}
+                className="h-7 text-[11px] font-ibm bg-emerald-50/70 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 rounded-lg px-2 text-emerald-900 dark:text-emerald-200 outline-none shadow-2xs font-semibold cursor-pointer"
+                title="لفظی معانی کا انتخاب"
+              >
+                <option value="both">اردو + English</option>
+                <option value="ur">اردو 1 (نذر احمد)</option>
+                <option value="ur2">اردو 2 (توسیعی)</option>
+                <option value="en">English 1 (Shehnaz)</option>
+                <option value="en2">English 2 (Quran.com)</option>
+              </select>
             )}
           </div>
         )}

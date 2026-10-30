@@ -211,6 +211,53 @@ const server = http.createServer(async (req, res) => {
       if (!q || q.length < 2) {
         return jsonResponse(res, []);
       }
+
+      try {
+        const safeQuery = `"${q.replace(/"/g, '')}"`;
+        const ftsRows = db.prepare(`
+          SELECT 
+            f.surah_id, 
+            s.name_urdu as surah_name_urdu, 
+            s.name_arabic as surah_name_arabic, 
+            s.name_simple as surah_name_simple, 
+            f.ayah_number, 
+            f.verse_key, 
+            f.text_uthmani, 
+            f.text_indopak,
+            f.translations_text
+          FROM ayahs_fts f
+          JOIN surahs s ON f.surah_id = s.id
+          WHERE ayahs_fts MATCH ?
+          ORDER BY rank
+          LIMIT 60
+        `).all(safeQuery);
+
+        if (ftsRows.length > 0) {
+          const results = ftsRows.map(r => {
+            let translationText = '';
+            if (r.translations_text) {
+              const parts = r.translations_text.split(/(?<=[۔.])/g);
+              translationText = parts.find(p => p.toLowerCase().includes(q.toLowerCase())) || parts[0] || r.translations_text.slice(0, 160);
+            }
+            return {
+              surah_id: r.surah_id,
+              surah_name_urdu: r.surah_name_urdu,
+              surah_name_arabic: r.surah_name_arabic,
+              surah_name_simple: r.surah_name_simple,
+              ayah_number: r.ayah_number,
+              verse_key: r.verse_key,
+              text_uthmani: r.text_uthmani,
+              text_indopak: r.text_indopak,
+              translation_text: translationText.trim(),
+              author_name: 'FTS5'
+            };
+          });
+          return jsonResponse(res, results);
+        }
+      } catch (err) {
+        console.warn('FTS ayah search fallback to LIKE:', err.message);
+      }
+
       const pattern = `%${q}%`;
       const results = db.prepare(`
         SELECT 
@@ -241,6 +288,34 @@ const server = http.createServer(async (req, res) => {
       if (!q || q.length < 2) {
         return jsonResponse(res, []);
       }
+
+      try {
+        const safeQuery = `"${q.replace(/"/g, '')}"`;
+        const ftsRows = db.prepare(`
+          SELECT 
+            f.rowid as id,
+            f.surah_id, 
+            s.name_urdu as surah_name_urdu, 
+            f.ayah_from, 
+            f.ayah_to, 
+            f.tafsir_slug, 
+            f.tafsir_name, 
+            f.author_name, 
+            snippet(tafasir_fts, 6, '<b>', '</b>', '...', 25) as snippet
+          FROM tafasir_fts f
+          JOIN surahs s ON f.surah_id = s.id
+          WHERE tafasir_fts MATCH ?
+          ORDER BY rank
+          LIMIT 50
+        `).all(safeQuery);
+
+        if (ftsRows.length > 0) {
+          return jsonResponse(res, ftsRows);
+        }
+      } catch (err) {
+        console.warn('FTS tafsir search fallback to LIKE:', err.message);
+      }
+
       const pattern = `%${q}%`;
       const rows = db.prepare(`
         SELECT 

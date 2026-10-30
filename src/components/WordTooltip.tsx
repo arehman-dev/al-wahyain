@@ -28,10 +28,10 @@ export const InteractiveWord: React.FC<InteractiveWordProps> = ({
   return (
     <span
       onClick={handleClick}
-      className={`inline-block select-text px-0.5 rounded transition-colors ${
+      className={`inline-block select-text px-1 py-0.5 rounded-lg transition-all duration-150 ${
         isActive
-          ? 'bg-amber-300 dark:bg-amber-600 text-slate-950 dark:text-white font-bold shadow-xs'
-          : ''
+          ? 'bg-amber-300/90 dark:bg-amber-500/90 text-slate-950 dark:text-slate-950 font-bold ring-2 ring-amber-400 shadow-sm scale-105 z-10'
+          : 'hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
       } ${className}`}
     >
       <span className="font-uthmani">

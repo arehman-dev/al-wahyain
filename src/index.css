@@ -59,7 +59,34 @@
        url('/fonts/al-qalam-quran-publisher.ttf') format('truetype');
 }
 
-/* 4. Uthmani / Madani Quran Text: KFGQPC Uthman Taha Naskh & Amiri Quran */
+/* 4. Uthmani / Madani Quran Text: King Fahd Complex V2 (QPC V2 / QCF V2) */
+@font-face {
+  font-family: 'KFGQPC HAFS Uthmanic Script';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/UthmanicHafs_V20.ttf') format('truetype'),
+       url('/fonts/uthmanic_hafs_v22.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'QPC V2';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/UthmanicHafs_V20.ttf') format('truetype'),
+       url('/fonts/uthmanic_hafs_v22.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'QCF V2';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/UthmanicHafs_V20.ttf') format('truetype'),
+       url('/fonts/uthmanic_hafs_v22.ttf') format('truetype');
+}
+
 @font-face {
   font-family: 'KFGQPC Uthman Taha Naskh';
   font-style: normal;
@@ -188,9 +215,9 @@ tajweed.qalqalah {
   font-feature-settings: "cv01", "cv02", "calt", "liga";
 }
 
-/* Uthmani / Madani Quran Font Class */
+/* Uthmani / Madani Quran Font Class - King Fahd Complex V2 (QPC V2 / QCF V2) */
 .font-uthmani {
-  font-family: 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', 'Scheherazade New', serif;
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'QPC V2', 'QCF V2', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', serif;
   line-height: 2.5;
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv01", "cv02", "calt", "liga";
