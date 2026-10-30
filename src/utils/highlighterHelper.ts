@@ -31,7 +31,8 @@ function escapeRegExp(string: string): string {
 }
 
 /**
- * Injects highlights into HTML text while avoiding HTML tags.
+ * Injects highlights into HTML text while safely avoiding HTML tags & inner attributes.
+ * Splits HTML into tokens: tags vs text blocks, only replacing in pure text blocks.
  */
 export function applyHighlightsToHtml(
   html: string,
@@ -39,21 +40,30 @@ export function applyHighlightsToHtml(
 ): string {
   if (!html || !highlights || highlights.length === 0) return html;
 
-  let result = html;
+  // Split HTML into alternating array of text and tags
+  // Even indexes: plain text outside tags
+  // Odd indexes: full HTML tag e.g. <p class="...">
+  const tokens = html.split(/(<[^>]+>)/g);
 
   for (const hl of highlights) {
-    if (!hl.text || hl.text.length < 2) continue;
-    
-    const escaped = escapeRegExp(hl.text.trim());
+    if (!hl.text || hl.text.trim().length < 2) continue;
+
+    const trimmed = hl.text.trim();
+    // Normalize spaces to match arbitrary HTML whitespace
+    const words = trimmed.split(/\s+/).map(w => escapeRegExp(w));
+    if (words.length === 0) continue;
+
+    const pattern = words.join('\\s+');
+    const regex = new RegExp(`(${pattern})`, 'gi');
     const style = HIGHLIGHT_STYLES[hl.color] || HIGHLIGHT_STYLES.yellow;
 
-    // Replace occurrences that are NOT inside HTML tags
-    // Matches text outside <...>
-    const regex = new RegExp(`(?![^<]*>)(${escaped})`, 'gi');
-    result = result.replace(regex, (match) => {
-      return `<mark data-highlight-id="${hl.id}" class="${style.mark} cursor-pointer transition-all hover:opacity-80" title="ہائی لائٹ حذف کرنے کے لیے کلک کریں">${match}</mark>`;
-    });
+    for (let i = 0; i < tokens.length; i += 2) {
+      if (!tokens[i]) continue;
+      tokens[i] = tokens[i].replace(regex, (match) => {
+        return `<mark data-highlight-id="${hl.id}" class="${style.mark} cursor-pointer transition-all hover:opacity-80" title="ہائی لائٹ حذف کرنے کے لیے کلک کریں">${match}</mark>`;
+      });
+    }
   }
 
-  return result;
+  return tokens.join('');
 }

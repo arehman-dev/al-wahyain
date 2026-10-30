@@ -17,57 +17,68 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const handleSelectionChange = () => {
-      const selection = window.getSelection();
-      if (!selection || selection.isCollapsed || !selection.toString().trim()) {
-        setPosition(null);
-        setSelectedText('');
-        return;
-      }
+    const handleMouseUp = () => {
+      // Small timeout so DOM selection finalizes
+      setTimeout(() => {
+        const selection = window.getSelection();
+        if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+          setPosition(null);
+          setSelectedText('');
+          return;
+        }
 
-      const text = selection.toString().trim();
-      if (text.length < 2) {
-        setPosition(null);
-        return;
-      }
-
-      // Check if selection is within our container
-      if (containerRef.current) {
-        const anchorNode = selection.anchorNode;
-        if (!anchorNode || !containerRef.current.contains(anchorNode)) {
+        const text = selection.toString().trim();
+        if (text.length < 2) {
           setPosition(null);
           return;
         }
 
-        // Find closest tafsir-slug container if any
-        let element = anchorNode.parentElement;
-        let foundSlug: string | undefined = undefined;
-        while (element && element !== containerRef.current) {
-          if (element.dataset.tafsirSlug) {
-            foundSlug = element.dataset.tafsirSlug;
-            break;
+        if (containerRef.current) {
+          const anchorNode = selection.anchorNode;
+          if (!anchorNode || !containerRef.current.contains(anchorNode)) {
+            setPosition(null);
+            return;
           }
-          element = element.parentElement;
-        }
-        setActiveSlug(foundSlug);
 
-        // Position toolbar above the selection range
-        try {
-          const range = selection.getRangeAt(0);
-          const rect = range.getBoundingClientRect();
-          setPosition({
-            x: rect.left + rect.width / 2,
-            y: rect.top - 10
-          });
-          setSelectedText(text);
-        } catch {
-          setPosition(null);
+          // Traverse upwards to find if user is inside a specific tafsir entry
+          let element: HTMLElement | null = anchorNode.parentElement;
+          let foundSlug: string | undefined = undefined;
+          while (element && element !== containerRef.current) {
+            if (element.dataset.tafsirSlug) {
+              foundSlug = element.dataset.tafsirSlug;
+              break;
+            }
+            element = element.parentElement;
+          }
+          setActiveSlug(foundSlug);
+
+          try {
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            // Position tooltip centrally above the selected range
+            setPosition({
+              x: Math.max(100, Math.min(window.innerWidth - 100, rect.left + rect.width / 2)),
+              y: Math.max(10, rect.top - 12)
+            });
+            setSelectedText(text);
+          } catch {
+            setPosition(null);
+          }
         }
-      }
+      }, 20);
     };
 
-    document.addEventListener('selectionchange', handleSelectionChange);
-    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('mouseup', handleMouseUp);
+      container.addEventListener('touchend', handleMouseUp);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener('mouseup', handleMouseUp);
+        container.removeEventListener('touchend', handleMouseUp);
+      }
+    };
   }, [containerRef]);
 
   if (!position || !selectedText) return null;
@@ -99,56 +110,61 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
   return (
     <div
       style={{
-        position: 'fixed',
         left: `${position.x}px`,
         top: `${position.y}px`,
         transform: 'translate(-50%, -100%)'
       }}
-      className="z-50 flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-150 select-none font-ibm"
+      className="fixed z-50 flex items-center gap-1.5 p-1.5 bg-slate-900/95 dark:bg-slate-800/95 text-white rounded-2xl shadow-2xl border border-slate-700/80 backdrop-blur-md animate-in fade-in zoom-in-95 font-ibm select-none"
     >
-      <div className="flex items-center gap-1 pl-1 pr-1.5 text-xs text-slate-400 border-r border-slate-200 dark:border-slate-800">
-        <Highlighter className="w-3.5 h-3.5 text-emerald-500" />
-        <span className="hidden sm:inline">ہائی لائٹ:</span>
+      <div className="flex items-center gap-1 px-1">
+        <Highlighter className="w-3.5 h-3.5 text-emerald-400" />
       </div>
 
-      {/* 4 Palette Colors */}
-      <button
-        onClick={() => handleColorClick('yellow')}
-        title="سنہری ہائی لائٹ"
-        className="w-5 h-5 rounded-full bg-amber-400 hover:scale-115 border-2 border-white dark:border-slate-800 transition-transform shadow-xs"
-      />
-      <button
-        onClick={() => handleColorClick('green')}
-        title="سبز ہائی لائٹ"
-        className="w-5 h-5 rounded-full bg-emerald-500 hover:scale-115 border-2 border-white dark:border-slate-800 transition-transform shadow-xs"
-      />
-      <button
-        onClick={() => handleColorClick('blue')}
-        title="نیلا ہائی لائٹ"
-        className="w-5 h-5 rounded-full bg-sky-500 hover:scale-115 border-2 border-white dark:border-slate-800 transition-transform shadow-xs"
-      />
-      <button
-        onClick={() => handleColorClick('purple')}
-        title="جامنی ہائی لائٹ"
-        className="w-5 h-5 rounded-full bg-purple-500 hover:scale-115 border-2 border-white dark:border-slate-800 transition-transform shadow-xs"
-      />
+      {/* 4 Distinct Highlight Colors */}
+      <div className="flex items-center gap-1.5 px-1 border-x border-slate-700/80">
+        {/* Yellow / Amber */}
+        <button
+          onClick={() => handleColorClick('yellow')}
+          title="سنہری ہائی لائٹ (Yellow)"
+          className="w-5 h-5 rounded-full bg-amber-300 hover:scale-115 active:scale-95 transition-transform border border-amber-400 shadow-xs"
+        />
 
-      <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-0.5" />
+        {/* Green / Emerald */}
+        <button
+          onClick={() => handleColorClick('green')}
+          title="سبز ہائی لائٹ (Green)"
+          className="w-5 h-5 rounded-full bg-emerald-400 hover:scale-115 active:scale-95 transition-transform border border-emerald-500 shadow-xs"
+        />
+
+        {/* Blue / Sky */}
+        <button
+          onClick={() => handleColorClick('blue')}
+          title="نیلا ہائی لائٹ (Blue)"
+          className="w-5 h-5 rounded-full bg-sky-400 hover:scale-115 active:scale-95 transition-transform border border-sky-500 shadow-xs"
+        />
+
+        {/* Purple / Violet */}
+        <button
+          onClick={() => handleColorClick('purple')}
+          title="جامنی ہائی لائٹ (Purple)"
+          className="w-5 h-5 rounded-full bg-purple-400 hover:scale-115 active:scale-95 transition-transform border border-purple-500 shadow-xs"
+        />
+      </div>
 
       {/* Copy selection */}
       <button
         onClick={handleCopy}
         title="منتخب متن کاپی کریں"
-        className="p-1 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        className="p-1 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition-colors"
       >
-        {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+        {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
       </button>
 
-      {/* Dismiss */}
+      {/* Close tooltip */}
       <button
         onClick={handleDismiss}
         title="بند کریں"
-        className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        className="p-1 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors"
       >
         <X className="w-3.5 h-3.5" />
       </button>

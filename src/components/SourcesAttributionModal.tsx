@@ -2,10 +2,12 @@ import React from 'react';
 import { X, ExternalLink, ShieldCheck, Heart } from 'lucide-react';
 
 interface SourcesAttributionModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = ({ onClose }) => {
+export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
   const sources = [
     {
       title: 'The Quranic Arabic Corpus',
