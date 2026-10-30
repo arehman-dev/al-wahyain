@@ -87,9 +87,7 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
         </div>
 
         {/* Full Ayah Arabic Text with Clickable Interactive Words */}
-        <div className={`tajweed-text text-right text-2xl sm:text-3xl leading-[2.8] my-3 ${
-          scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-        } text-slate-900 dark:text-white`}>
+        <div className="tajweed-text text-right text-2xl sm:text-3xl leading-[2.8] my-3 font-uthmani text-slate-900 dark:text-white">
           {currentAyah.words?.map((w, wIdx) => {
             const isWordActive = isPlaying && activePlayingWordIndex === wIdx;
             const isWordSelected = selectedWord?.id === w.id;
@@ -106,7 +104,7 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
                     : 'hover:bg-emerald-100 dark:hover:bg-emerald-950/60'
                 }`}
               >
-                {scriptMode === 'indopak' ? w.text_indopak : w.text_uthmani}
+                {w.text_uthmani}
               </span>
             );
           })}
@@ -156,10 +154,8 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
                 }`}
               >
                 {/* Word in Arabic */}
-                <div className={`text-2xl font-bold text-slate-900 dark:text-white leading-loose ${
-                  scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-                }`}>
-                  {scriptMode === 'indopak' ? w.text_indopak : w.text_uthmani}
+                <div className="text-2xl font-bold text-slate-900 dark:text-white leading-loose font-uthmani">
+                  {w.text_uthmani}
                 </div>
 
                 {/* Urdu Meaning */}
@@ -207,10 +203,8 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
             {/* Column 1 (Right): Word & Meaning */}
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 space-y-2.5">
               <span className="text-xs font-semibold text-slate-400">اللفظ والترجمة</span>
-              <div className={`text-3xl font-bold text-slate-900 dark:text-white ${
-                scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-              }`}>
-                {scriptMode === 'indopak' ? selectedWord.text_indopak : selectedWord.text_uthmani}
+              <div className="text-3xl font-bold text-slate-900 dark:text-white font-uthmani">
+                {selectedWord.text_uthmani}
               </div>
               <div className="font-ibm text-sm font-bold text-emerald-700 dark:text-emerald-400">
                 اردو معنی: {selectedWord.translation_ur || '—'}

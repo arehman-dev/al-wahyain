@@ -216,15 +216,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               </div>
             )}
 
-            {/* Script Toggle */}
-            <button
-              onClick={onToggleScript}
-              title="رسم الخط تبدیل کریں"
-              className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-[11px] rounded-md transition-colors"
-            >
-              {scriptMode === 'indopak' ? 'پاکستانی (15 سطری)' : 'عثمانی / مدنی'}
-            </button>
-
             {/* Tajweed Toggle */}
             {onToggleTajweed && (
               <button
@@ -259,14 +250,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 <span>لفظی ترجمہ (Word-by-Word)</span>
               </button>
             )}
-
-            <button
-              onClick={onToggleScript}
-              title="رسم الخط تبدیل کریں"
-              className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-[11px] rounded-md transition-colors"
-            >
-              {scriptMode === 'indopak' ? 'پاکستانی' : 'عثمانی'}
-            </button>
           </div>
         )}
 
@@ -325,30 +308,11 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 </button>
               </div>
             )}
-
-            {/* Script Toggle */}
-            <button
-              onClick={onToggleScript}
-              title="آیت کا رسم الخط تبدیل کریں"
-              className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-[11px] rounded-md transition-colors"
-            >
-              {scriptMode === 'indopak' ? 'پاکستانی' : 'عثمانی'}
-            </button>
           </div>
         )}
 
         {/* 4. Sarf / Morphology Mode Controls */}
-        {(activeMode === 'sarf' || activeMode === 'morphology') && (
-          <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
-            <button
-              onClick={onToggleScript}
-              title="رسم الخط تبدیل کریں"
-              className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-[11px] rounded-md transition-colors"
-            >
-              رسم الخط: {scriptMode === 'indopak' ? 'پاکستانی' : 'عثمانی'}
-            </button>
-          </div>
-        )}
+        {(activeMode === 'sarf' || activeMode === 'morphology') && null}
       </div>
 
       {/* Left Flank: Surah Details Badge */}

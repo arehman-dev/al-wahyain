@@ -247,9 +247,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
         </div>
 
         {/* Arabic Ayah with Interactive Word Tooltips */}
-        <div className={`tajweed-text text-right text-3xl sm:text-4xl leading-[2.8] my-3 text-slate-900 dark:text-white ${
-          scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-        }`}>
+        <div className="tajweed-text text-right text-3xl sm:text-4xl leading-[2.8] my-3 text-slate-900 dark:text-white font-uthmani">
           {currentAyah.words && currentAyah.words.length > 0 ? (
             currentAyah.words.map((w) => (
               <InteractiveWord
@@ -259,8 +257,6 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                 onSelectRoot={onSelectWordRoot}
               />
             ))
-          ) : scriptMode === 'indopak' ? (
-            <span>{currentAyah.text_indopak}</span>
           ) : (
             <span>{currentAyah.text_uthmani}</span>
           )}

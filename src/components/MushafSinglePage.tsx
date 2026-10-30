@@ -99,9 +99,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
 
           {/* Bismillah Calligraphy (except Surah 9) */}
           {currentSurah?.id !== 9 && (
-            <div className={`text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2 ${
-              scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-            }`}>
+            <div className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2 font-uthmani">
               بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
             </div>
           )}
@@ -161,9 +159,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
 
         {/* 15-Line Body Text with Authentic Justification & Font Selection */}
         <div 
-          className={`tajweed-text text-justify text-2xl sm:text-[27px] leading-[3.1] sm:leading-[3.5] select-text text-slate-900 dark:text-slate-100 ${
-            scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-          }`}
+          className="tajweed-text text-justify text-2xl sm:text-[27px] leading-[3.1] sm:leading-[3.5] select-text text-slate-900 dark:text-slate-100 font-uthmani"
           style={{ textJustify: 'inter-word' }}
         >
           {pageVerses.map((ayah) => {
@@ -172,7 +168,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
             const hasSajdah = !!SAJDAH_AYAHS[`${ayah.surah_id}:${ayah.ayah_number}`];
             const hasRukuEnd = !!RUKU_END_AYAHS[`${ayah.surah_id}:${ayah.ayah_number}`];
 
-            let displayText = scriptMode === 'indopak' ? ayah.text_indopak : ayah.text_uthmani;
+            let displayText = ayah.text_uthmani;
             if (ayah.ayah_number === 1 && currentSurah?.id !== 1 && currentSurah?.id !== 9) {
               displayText = displayText.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/, '');
             }

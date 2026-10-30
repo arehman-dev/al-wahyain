@@ -16,10 +16,9 @@ export const InteractiveWord: React.FC<InteractiveWordProps> = ({
   isActive = false,
   className = ''
 }) => {
-  const displayText = scriptMode === 'indopak' ? (word.text_indopak || word.text_uthmani) : word.text_uthmani;
+  const displayText = word.text_uthmani;
 
   const handleClick = (e: React.MouseEvent) => {
-    // If root search is provided, clicking jumps to root concordance
     if (word.root && onSelectRoot) {
       e.stopPropagation();
       onSelectRoot(word.root);
@@ -35,7 +34,7 @@ export const InteractiveWord: React.FC<InteractiveWordProps> = ({
           : ''
       } ${className}`}
     >
-      <span className={scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'}>
+      <span className="font-uthmani">
         {displayText}
       </span>
     </span>

@@ -177,10 +177,8 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                           }`}
                         >
                           {/* Arabic Token */}
-                          <span className={`text-2xl font-bold leading-loose ${
-                            scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-                          } text-slate-900 dark:text-white`}>
-                            {scriptMode === 'indopak' ? w.text_indopak : w.text_uthmani}
+                          <span className="text-2xl font-bold leading-loose font-uthmani text-slate-900 dark:text-white">
+                            {w.text_uthmani}
                           </span>
                           
                           {/* Urdu Word-by-Word Meaning */}
@@ -196,9 +194,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className={`tajweed-text text-right text-2xl sm:text-3xl leading-[2.8] my-3 text-slate-900 dark:text-white ${
-                  scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'
-                }`}>
+                <div className="tajweed-text text-right text-2xl sm:text-3xl leading-[2.8] my-3 text-slate-900 dark:text-white font-uthmani">
                   {ayah.words && ayah.words.length > 0 ? (
                     ayah.words.map((w, wIdx) => {
                       const isWordActive = isAyahPlaying && activePlayingWordIndex === wIdx;
@@ -212,8 +208,6 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                         />
                       );
                     })
-                  ) : scriptMode === 'indopak' ? (
-                    <span>{ayah.text_indopak}</span>
                   ) : (
                     <span>{ayah.text_uthmani}</span>
                   )}

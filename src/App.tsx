@@ -59,9 +59,7 @@ export const App: React.FC = () => {
     if (saved === 'tafsir' || saved === 'tafseer') return 'tafseer';
     return 'quran';
   });
-  const [scriptMode, setScriptMode] = useState<ScriptMode>(() => {
-    return (localStorage.getItem('qs_script_mode') as ScriptMode) || 'indopak';
-  });
+  const [scriptMode, setScriptMode] = useState<ScriptMode>('madani');
   const [showTajweed, setShowTajweed] = useState<boolean>(() => {
     return localStorage.getItem('qs_show_tajweed') === 'true';
   });
