@@ -68,6 +68,11 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  // Auto smooth-scroll to top when navigating to another ayah
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentAyah.surah_id, currentAyah.ayah_number]);
+
   const urduTranslation = currentAyah.translations?.find(t => t.author_id === 'taqi_usmani') || currentAyah.translations?.[0];
 
   // Intercept clicks inside commentary for cross-reference jumps and highlight deletion

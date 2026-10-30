@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Play, Pause, Sparkles, BookOpen, Bookmark } from 'lucide-react';
 import { Ayah, Surah, ScriptMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
@@ -44,6 +44,30 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
   onToggleBookmark,
   onSelectWordRoot
 }) => {
+  const isInitialOrSurahChange = useRef(true);
+  const prevSurahIdRef = useRef<number | undefined>(currentSurah?.id);
+
+  // Auto smooth-scroll to active Ayah card on tab switch, verse selection, or initial load
+  useEffect(() => {
+    if (prevSurahIdRef.current !== currentSurah?.id) {
+      prevSurahIdRef.current = currentSurah?.id;
+      isInitialOrSurahChange.current = true;
+    }
+
+    const timer = setTimeout(() => {
+      const el = document.getElementById(`ayah-${currentAyahNumber}`);
+      if (el) {
+        el.scrollIntoView({
+          behavior: isInitialOrSurahChange.current ? 'auto' : 'smooth',
+          block: 'center'
+        });
+        isInitialOrSurahChange.current = false;
+      }
+    }, 80);
+
+    return () => clearTimeout(timer);
+  }, [currentAyahNumber, currentSurah?.id]);
+
   return (
     <div dir="rtl" className="max-w-4xl mx-auto px-4 py-4 space-y-4">
       {/* Continuous Verses Stream with Translations (Zero In-Page Bars) */}
@@ -170,31 +194,33 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                             e.stopPropagation();
                             if (w.root && onSelectWordRoot) onSelectWordRoot(w.root);
                           }}
-                          className={`flex flex-col items-center justify-between p-2 rounded-2xl border transition-all cursor-pointer ${
+                          className={`flex flex-col items-center justify-between min-w-[84px] sm:min-w-[96px] min-h-[110px] p-2 rounded-2xl border transition-all cursor-pointer ${
                             isWordActive
-                              ? 'border-emerald-500 bg-emerald-100/90 dark:bg-emerald-950/80 ring-2 ring-emerald-500 scale-105'
-                              : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 bg-slate-50/70 dark:bg-slate-800/40'
+                              ? 'border-emerald-500 bg-emerald-100/90 dark:bg-emerald-950/80 ring-2 ring-emerald-500 scale-105 shadow-md'
+                              : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700 bg-slate-50/70 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-850'
                           }`}
                         >
-                          {/* Arabic Token */}
-                          <span className="text-2xl font-bold leading-loose font-uthmani text-slate-900 dark:text-white">
-                            {w.text_uthmani}
-                          </span>
+                          {/* Arabic Token Container - Standardized Height & Baseline */}
+                          <div className="w-full flex items-center justify-center min-h-[46px] pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
+                            <span className="text-2xl sm:text-[26px] font-bold leading-normal font-uthmani text-slate-900 dark:text-white text-center">
+                              {w.text_uthmani}
+                            </span>
+                          </div>
                           
-                          {/* Urdu Word-by-Word Meaning */}
-                          <span className="font-ibm text-xs text-emerald-700 dark:text-emerald-400 font-semibold mt-1">
+                          {/* Urdu Word-by-Word Meaning - Standardized Height & Baseline */}
+                          <div className="w-full flex items-center justify-center min-h-[30px] px-1 text-center font-ibm text-xs text-emerald-800 dark:text-emerald-300 font-semibold leading-snug">
                             {w.translation_ur || '—'}
-                          </span>
+                          </div>
 
-                          {/* English Word-by-Word Meaning */}
-                          <span dir="ltr" className="text-[11px] font-sans text-slate-500 dark:text-slate-400 font-medium text-center leading-tight mt-0.5">
+                          {/* English Word-by-Word Meaning - Standardized Height & Baseline */}
+                          <div dir="ltr" className="w-full flex items-center justify-center min-h-[22px] px-1 text-center font-sans text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight">
                             {w.translation_en || '—'}
-                          </span>
+                          </div>
                         </div>
                       );
                     })}
-                    <div className="flex items-center justify-center px-2">
-                      <span className="ayah-end-num">﴿{toArabicDigits(ayah.ayah_number)}﴾</span>
+                    <div className="flex items-center justify-center p-2 rounded-2xl border border-dashed border-emerald-300/60 dark:border-emerald-800/60 bg-emerald-50/30 dark:bg-emerald-950/20 min-h-[110px] min-w-[50px]">
+                      <span className="ayah-end-num text-xl">﴿{toArabicDigits(ayah.ayah_number)}﴾</span>
                     </div>
                   </div>
                 </div>

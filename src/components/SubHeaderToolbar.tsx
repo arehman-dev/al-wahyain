@@ -124,7 +124,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         <select
           value={currentSurahId}
           onChange={(e) => onSelectSurah(Number(e.target.value))}
-          className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 py-0.5 text-xs font-semibold text-slate-800 dark:text-slate-100 shadow-2xs focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+          className="h-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2.5 text-xs font-semibold text-slate-800 dark:text-slate-100 shadow-2xs focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
         >
           {surahs.map((s) => (
             <option key={s.id} value={s.id}>
@@ -134,11 +134,11 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         </select>
 
         {/* Ayah Stepper */}
-        <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-2xs">
+        <div className="flex items-center h-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-2xs overflow-hidden">
           <button 
             onClick={onPrevAyah}
             title="پچھلی آیت"
-            className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-r-lg text-slate-500 transition-colors"
+            className="h-7 px-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors flex items-center justify-center"
           >
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -146,7 +146,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           <select
             value={currentAyahNumber}
             onChange={(e) => onSelectAyah(Number(e.target.value))}
-            className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-100 px-1 py-0.5 border-x border-slate-100 dark:border-slate-800 focus:outline-none cursor-pointer"
+            className="h-7 bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-100 px-2 border-x border-slate-100 dark:border-slate-800 focus:outline-none cursor-pointer"
           >
             {Array.from({ length: versesCount }, (_, i) => i + 1).map((num) => (
               <option key={num} value={num}>
@@ -158,7 +158,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           <button 
             onClick={onNextAyah}
             title="اگلی آیت"
-            className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-l-lg text-slate-500 transition-colors"
+            className="h-7 px-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors flex items-center justify-center"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
           </button>
@@ -166,7 +166,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
         {/* Quick Verse Jump Form */}
         <form onSubmit={handleDirectJump} className="hidden sm:flex items-center">
-          <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 py-0.5 shadow-2xs focus-within:border-emerald-500">
+          <div className="flex items-center h-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 shadow-2xs focus-within:border-emerald-500">
             <Compass className="w-3 h-3 text-slate-400 shrink-0 ml-1.5" />
             <input
               type="text"
@@ -186,7 +186,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
       <div className="flex items-center gap-2">
         {/* 1. Quran / Mushaf Mode Controls */}
         {(activeMode === 'quran' || activeMode === 'mushaf') && (
-          <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
+          <div className="flex items-center gap-1.5 h-7 bg-white dark:bg-slate-900 px-2 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
             {/* Page Navigation Stepper */}
             {onPrevPage && onNextPage && (
               <div className="flex items-center gap-1">
@@ -194,12 +194,12 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                   onClick={onPrevPage}
                   disabled={activePage <= 1}
                   title="پچھلا صفحہ"
-                  className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="h-5 w-5 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
 
-                <form onSubmit={handlePageJump} className="flex items-center gap-1">
+                <form onSubmit={handlePageJump} className="flex items-center">
                   <span className="font-mono text-[11px] text-slate-600 dark:text-slate-300">
                     صفحہ {toArabicDigits(activePage)} / ۶۰۴
                   </span>
@@ -209,7 +209,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                   onClick={onNextPage}
                   disabled={activePage >= 604}
                   title="اگلا صفحہ"
-                  className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="h-5 w-5 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
@@ -221,7 +221,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <button
                 onClick={onToggleTajweed}
                 title="تجوید کے رنگ آن / آف کریں"
-                className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-semibold transition-all ${
+                className={`flex items-center gap-1 h-5 px-2 rounded-md border text-[11px] font-semibold transition-all ${
                   showTajweed
                     ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
                     : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -236,17 +236,17 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
         {/* 2. Translation Mode Controls */}
         {activeMode === 'translation' && (
-          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
+          <div className="flex items-center gap-2">
             {onToggleWordByWord && (
               <button
                 onClick={onToggleWordByWord}
-                className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-md border text-[11px] font-semibold transition-all ${
+                className={`flex items-center gap-1.5 h-7 px-2.5 rounded-lg border text-[11px] font-semibold shadow-2xs transition-all ${
                   showWordByWord
                     ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
-                {showWordByWord ? <ToggleRight className="w-3.5 h-3.5 text-emerald-600" /> : <ToggleLeft className="w-3.5 h-3.5 text-slate-400" />}
+                {showWordByWord ? <ToggleRight className="w-4 h-4 text-emerald-600" /> : <ToggleLeft className="w-4 h-4 text-slate-400" />}
                 <span>لفظی ترجمہ (Word-by-Word)</span>
               </button>
             )}
@@ -255,13 +255,13 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
         {/* 3. Tafseer Mode Controls */}
         {(activeMode === 'tafseer' || activeMode === 'tafsir') && (
-          <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
+          <div className="flex items-center gap-1.5 h-7 bg-white dark:bg-slate-900 px-2 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
             {/* Tafsir Re-ordering & Visibility Dialog Trigger */}
             {onOpenTafsirSettings && (
               <button
                 onClick={onOpenTafsirSettings}
                 title="تفاسیر کی ترتیب اور انتخاب"
-                className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-semibold text-[11px] hover:bg-emerald-100 transition-colors"
+                className="flex items-center gap-1.5 h-5 px-2 rounded bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-semibold text-[11px] hover:bg-emerald-100 transition-colors"
               >
                 <SlidersHorizontal className="w-3 h-3" />
                 <span>ترتیب و انتخابِ تفاسیر</span>
@@ -270,18 +270,18 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
             {/* Expand / Collapse All */}
             {onExpandAllTafasir && onCollapseAllTafasir && (
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-0.5 border-r border-slate-200 dark:border-slate-700 pr-1 mr-0.5">
                 <button
                   onClick={onExpandAllTafasir}
                   title="تمام تفاسیر کھولیں"
-                  className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded"
+                  className="p-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded"
                 >
                   <Maximize2 className="w-3 h-3" />
                 </button>
                 <button
                   onClick={onCollapseAllTafasir}
                   title="تمام تفاسیر سمیٹیں"
-                  className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded"
+                  className="p-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded"
                 >
                   <Minimize2 className="w-3 h-3" />
                 </button>
@@ -290,7 +290,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
             {/* Font Scaler for Tafsir */}
             {onFontSizeChange && (
-              <div className="flex items-center gap-1 px-1 bg-slate-100 dark:bg-slate-800 rounded font-mono text-[11px]">
+              <div className="flex items-center gap-1 px-1.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-[11px] h-5">
                 <button
                   onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
                   className="p-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white"
@@ -316,7 +316,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
       </div>
 
       {/* Left Flank: Surah Details Badge */}
-      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs text-[11px] text-slate-500 dark:text-slate-400">
         <span className="font-semibold text-emerald-700 dark:text-emerald-400">
           {currentSurah?.revelation_place === 'makkah' ? 'مکی' : 'مدنی'}
         </span>

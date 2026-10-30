@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center: Primary Workspace 4-Mode Switcher */}
+        {/* Center: Primary Workspace 4-Mode Switcher with subtle Hotkey Badges */}
         <nav className="flex items-center bg-slate-100 dark:bg-slate-800/90 p-0.5 rounded-lg border border-slate-200/70 dark:border-slate-700/70">
           <button
             onClick={() => onChangeMode('quran')}
@@ -64,6 +64,9 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <BookOpen className="w-3.5 h-3.5" />
             <span>قرآن</span>
+            <kbd className="hidden sm:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
+              1
+            </kbd>
           </button>
 
           <button
@@ -77,6 +80,9 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Languages className="w-3.5 h-3.5" />
             <span>ترجمہ</span>
+            <kbd className="hidden sm:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
+              2
+            </kbd>
           </button>
 
           <button
@@ -90,6 +96,9 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>صرف</span>
+            <kbd className="hidden sm:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
+              3
+            </kbd>
           </button>
 
           <button
@@ -103,6 +112,9 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Library className="w-3.5 h-3.5" />
             <span>تفسیر</span>
+            <kbd className="hidden sm:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
+              4
+            </kbd>
           </button>
         </nav>
 

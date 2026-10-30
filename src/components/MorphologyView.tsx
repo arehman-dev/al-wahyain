@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Pause, Sparkles, BookOpen, Layers, ArrowLeft, ArrowRight, CornerDownLeft } from 'lucide-react';
 import { Ayah, Word, ScriptMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
@@ -31,6 +31,16 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
   const [selectedWord, setSelectedWord] = useState<Word | null>(
     currentAyah.words && currentAyah.words.length > 0 ? currentAyah.words[0] : null
   );
+
+  // Sync selected word and reset scroll to top on verse change
+  useEffect(() => {
+    if (currentAyah.words && currentAyah.words.length > 0) {
+      setSelectedWord(currentAyah.words[0]);
+    } else {
+      setSelectedWord(null);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentAyah.id, currentAyah.surah_id, currentAyah.ayah_number]);
 
   const urduTranslation = currentAyah.translations?.find(t => t.author_id === 'taqi_usmani') || currentAyah.translations?.[0];
 
