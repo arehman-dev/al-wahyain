@@ -32,6 +32,18 @@ export interface Word {
   lemma?: string;
   pos_tag?: string;
   grammar_details?: string;
+  page_number?: number;
+  line_number?: number;
+  code_v2?: string;
+  surah_name_arabic?: string;
+  surah_name_urdu?: string;
+}
+
+export interface PageData {
+  page_number: number;
+  lines: Record<string, Word[]>;
+  verses: Ayah[];
+  words_count: number;
 }
 
 export interface AyahTranslation {

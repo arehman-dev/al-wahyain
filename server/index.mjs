@@ -167,6 +167,40 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+    // 4b. GET /api/page/:number (Line-by-Line Mushaf Page Endpoint)
+    const pageMatch = pathname.match(/^\/api\/page\/(\d+)$/);
+    if (req.method === 'GET' && pageMatch) {
+      const pageNumber = parseInt(pageMatch[1], 10);
+      const words = db.prepare(`
+        SELECT w.*, s.name_arabic as surah_name_arabic, s.name_urdu as surah_name_urdu
+        FROM words w
+        JOIN surahs s ON w.surah_id = s.id
+        WHERE w.page_number = ?
+        ORDER BY w.line_number ASC, w.surah_id ASC, w.ayah_number ASC, w.position ASC
+      `).all(pageNumber);
+
+      const lines = {};
+      for (const w of words) {
+        if (!lines[w.line_number]) lines[w.line_number] = [];
+        lines[w.line_number].push(w);
+      }
+
+      const verses = db.prepare(`
+        SELECT a.*, s.name_arabic as surah_name_arabic, s.name_urdu as surah_name_urdu
+        FROM ayahs a
+        JOIN surahs s ON a.surah_id = s.id
+        WHERE a.page_madani = ?
+        ORDER BY a.surah_id ASC, a.ayah_number ASC
+      `).all(pageNumber);
+
+      return jsonResponse(res, {
+        page_number: pageNumber,
+        lines,
+        verses,
+        words_count: words.length
+      });
+    }
+
     // 5. GET /api/tafasir/:surah/:ayah
     const tafsirMatch = pathname.match(/^\/api\/tafasir\/(\d+)\/(\d+)$/);
     if (req.method === 'GET' && tafsirMatch) {

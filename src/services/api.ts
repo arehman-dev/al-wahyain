@@ -7,7 +7,8 @@ import {
   SearchResultTafsir, 
   Bookmark, 
   AyahNote,
-  TafsirHighlight 
+  TafsirHighlight,
+  PageData 
 } from '../types/quran';
 
 const BASE_URL = '/api';
@@ -39,6 +40,12 @@ export async function fetchTafasir(surahId: number, ayahNumber: number): Promise
 export async function fetchRootDetails(root: string): Promise<RootDetail> {
   const res = await fetch(`${BASE_URL}/roots/${encodeURIComponent(root)}`);
   if (!res.ok) throw new Error(`Failed to fetch root details for ${root}`);
+  return res.json();
+}
+
+export async function fetchPageData(pageNumber: number): Promise<PageData> {
+  const res = await fetch(`${BASE_URL}/page/${pageNumber}`);
+  if (!res.ok) throw new Error(`Failed to fetch page data for page ${pageNumber}`);
   return res.json();
 }
 
