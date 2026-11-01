@@ -4,6 +4,7 @@ import { toArabicDigits, getJuzForPage, JUZ_NAMES_AR } from '../utils/juzMapping
 import { RUKU_END_AYAHS, QUARTER_AYAHS, SAJDAH_AYAHS, getManzilForSurah } from '../utils/mushafLayout';
 import { InteractiveWord } from './WordTooltip';
 import { fetchPageData } from '../services/api';
+import { loadQcfPageFont, getQcfFontFamily } from '../utils/qcfFontLoader';
 import { Rows3, AlignJustify } from 'lucide-react';
 
 interface MushafSinglePageProps {
@@ -36,6 +37,13 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
   const [pageData, setPageData] = useState<PageData | null>(null);
   const [layoutMode, setLayoutMode] = useState<'lines' | 'flow'>('lines');
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Dynamic QCF V2 Font Loader for active and adjacent pages
+  useEffect(() => {
+    if (scriptMode === 'madani') {
+      loadQcfPageFont(pageNumber);
+    }
+  }, [pageNumber, scriptMode]);
 
   // Fetch line-by-line page data whenever pageNumber changes
   useEffect(() => {
@@ -248,8 +256,13 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                   )}
 
                   <div 
-                    className="flex items-center justify-between w-full min-h-[44px] sm:min-h-[48px] px-0.5 text-2xl sm:text-[27px] font-uthmani select-text leading-normal"
-                    style={{ fontFeatureSettings: '"cv01", "cv02", "calt", "liga"' }}
+                    className={`flex items-center ${
+                      pageNumber === 1 || (lineWords.length <= 4 && lineNum === 15) ? 'justify-center gap-2.5 sm:gap-4' : 'justify-between'
+                    } w-full min-h-[44px] sm:min-h-[48px] px-0.5 text-2xl sm:text-[27px] select-text leading-normal`}
+                    style={{ 
+                      fontFamily: scriptMode === 'madani' ? getQcfFontFamily(pageNumber) : undefined,
+                      fontFeatureSettings: '"cv01", "cv02", "calt", "liga"' 
+                    }}
                   >
                     {lineWords.map((w, wIdx) => {
                       const isSelected = currentAyahNumber === w.ayah_number && currentSurah?.id === w.surah_id;
@@ -275,6 +288,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                               scriptMode={scriptMode}
                               onSelectRoot={onSelectWordRoot}
                               isActive={isWordActive}
+                              useQcf={scriptMode === 'madani'}
                             />
                           </span>
 
@@ -283,7 +297,16 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                               title={`آیت ${w.ayah_number}`}
                               className="ayah-end-num inline-flex items-center mx-1 cursor-pointer hover:scale-110 transition-transform select-none"
                             >
-                              ﴿{toArabicDigits(w.ayah_number)}﴾
+                              {scriptMode === 'madani' && w.end_code_v2 ? (
+                                <span 
+                                  style={{ fontFamily: getQcfFontFamily(pageNumber) }} 
+                                  className="text-emerald-800 dark:text-emerald-300 text-xl sm:text-2xl"
+                                >
+                                  {w.end_code_v2}
+                                </span>
+                              ) : (
+                                <span>﴿{toArabicDigits(w.ayah_number)}﴾</span>
+                              )}
                             </span>
                           )}
                         </span>
@@ -299,8 +322,11 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
           /* OPTION B: Continuous Verse-by-Verse Justified Flow (Classic or Tajweed)   */
           /* ========================================================================= */
           <div 
-            className="tajweed-text text-justify text-2xl sm:text-[27px] leading-[3.1] sm:leading-[3.5] select-text text-slate-900 dark:text-slate-100 font-uthmani"
-            style={{ textJustify: 'inter-word' }}
+            className="tajweed-text text-justify text-2xl sm:text-[27px] leading-[3.1] sm:leading-[3.5] select-text text-slate-900 dark:text-slate-100"
+            style={{ 
+              textJustify: 'inter-word',
+              fontFamily: scriptMode === 'madani' ? getQcfFontFamily(pageNumber) : undefined 
+            }}
           >
             {pageVerses.map((ayah) => {
               const isSelected = currentAyahNumber === ayah.ayah_number;
@@ -335,6 +361,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                           scriptMode={scriptMode}
                           onSelectRoot={onSelectWordRoot}
                           isActive={isWordActive}
+                          useQcf={scriptMode === 'madani'}
                         />
                       );
                     })
@@ -345,7 +372,16 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                   )}
 
                   <span className="ayah-end-num select-none">
-                    ﴿{toArabicDigits(ayah.ayah_number)}﴾
+                    {scriptMode === 'madani' && ayah.end_code_v2 ? (
+                      <span 
+                        style={{ fontFamily: getQcfFontFamily(pageNumber) }} 
+                        className="text-emerald-800 dark:text-emerald-300 text-xl sm:text-2xl mx-1"
+                      >
+                        {ayah.end_code_v2}
+                      </span>
+                    ) : (
+                      <span>﴿{toArabicDigits(ayah.ayah_number)}﴾</span>
+                    )}
                   </span>
 
                   {hasRukuEnd && (

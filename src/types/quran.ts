@@ -35,6 +35,7 @@ export interface Word {
   page_number?: number;
   line_number?: number;
   code_v2?: string;
+  end_code_v2?: string;
   surah_name_arabic?: string;
   surah_name_urdu?: string;
 }
@@ -63,6 +64,7 @@ export interface Ayah {
   text_tajweed: string;
   page_madani: number;
   page_indopak: number;
+  end_code_v2?: string;
   audio_url?: string;
   audio_segments?: [number, number, number, number][]; // [word_index, word_seq, start_ms, end_ms]
   translations?: AyahTranslation[];

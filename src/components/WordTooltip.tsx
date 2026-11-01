@@ -1,5 +1,6 @@
 import React from 'react';
 import { Word, ScriptMode } from '../types/quran';
+import { getQcfFontFamily } from '../utils/qcfFontLoader';
 
 interface InteractiveWordProps {
   word: Word;
@@ -7,6 +8,7 @@ interface InteractiveWordProps {
   onSelectRoot?: (root: string) => void;
   isActive?: boolean;
   className?: string;
+  useQcf?: boolean;
 }
 
 export const InteractiveWord: React.FC<InteractiveWordProps> = ({
@@ -14,9 +16,27 @@ export const InteractiveWord: React.FC<InteractiveWordProps> = ({
   scriptMode,
   onSelectRoot,
   isActive = false,
-  className = ''
+  className = '',
+  useQcf = true
 }) => {
-  const displayText = word.text_uthmani;
+  const isIndoPak = scriptMode === 'indopak';
+  const hasQcf = useQcf && !isIndoPak && !!word.code_v2 && !!word.page_number;
+
+  const displayText = isIndoPak 
+    ? (word.text_indopak || word.text_uthmani)
+    : hasQcf 
+    ? word.code_v2 
+    : word.text_uthmani;
+
+  const fontStyle = hasQcf
+    ? { fontFamily: getQcfFontFamily(word.page_number) }
+    : undefined;
+
+  const fontClass = isIndoPak
+    ? 'font-indopak'
+    : hasQcf
+    ? 'font-qcf'
+    : 'font-uthmani';
 
   const handleClick = (e: React.MouseEvent) => {
     if (word.root && onSelectRoot) {
@@ -34,7 +54,7 @@ export const InteractiveWord: React.FC<InteractiveWordProps> = ({
           : 'hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
       } ${className}`}
     >
-      <span className="font-uthmani">
+      <span className={fontClass} style={fontStyle}>
         {displayText}
       </span>
     </span>

@@ -215,6 +215,14 @@ tajweed.qalqalah {
   font-feature-settings: "cv01", "cv02", "calt", "liga";
 }
 
+/* King Fahd Complex QCF V2 Page-by-Page Glyph Font Class */
+.font-qcf {
+  font-family: inherit;
+  line-height: 2.2;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv01", "cv02", "calt", "liga";
+}
+
 /* Uthmani / Madani Quran Font Class - King Fahd Complex V2 (QPC V2 / QCF V2) */
 .font-uthmani {
   font-family: 'KFGQPC HAFS Uthmanic Script', 'QPC V2', 'QCF V2', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', serif;

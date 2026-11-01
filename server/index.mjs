@@ -1,4 +1,5 @@
 import http from 'node:http';
+import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -100,6 +101,46 @@ const server = http.createServer(async (req, res) => {
   const pathname = parsedUrl.pathname;
 
   try {
+    // 0. Serve or proxy QCF v2 font files
+    const fontMatch = pathname.match(/^\/fonts\/qcf_v2\/(p\d+\.woff2)$/);
+    if ((req.method === 'GET' || req.method === 'HEAD') && fontMatch) {
+      const fileName = fontMatch[1];
+      const fontDir = path.join(__dirname, '..', 'public', 'fonts', 'qcf_v2');
+      const filePath = path.join(fontDir, fileName);
+
+      try {
+        if (fs.existsSync(filePath)) {
+          const fontData = fs.readFileSync(filePath);
+          res.writeHead(200, {
+            'Content-Type': 'font/woff2',
+            'Cache-Control': 'public, max-age=31536000, immutable',
+            'Access-Control-Allow-Origin': '*'
+          });
+          return res.end(fontData);
+        }
+
+        const cdnUrl = `https://quran.com/fonts/quran/hafs/v2/woff2/${fileName}`;
+        const fetchRes = await fetch(cdnUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        if (fetchRes.ok) {
+          const arrayBuffer = await fetchRes.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          if (!fs.existsSync(fontDir)) fs.mkdirSync(fontDir, { recursive: true });
+          fs.writeFileSync(filePath, buffer);
+
+          res.writeHead(200, {
+            'Content-Type': 'font/woff2',
+            'Cache-Control': 'public, max-age=31536000, immutable',
+            'Access-Control-Allow-Origin': '*'
+          });
+          return res.end(buffer);
+        }
+      } catch (err) {
+        console.error('Error serving font:', err.message);
+      }
+      res.writeHead(404);
+      return res.end('Font not found');
+    }
+
     // 1. GET /api/surahs
     if (req.method === 'GET' && pathname === '/api/surahs') {
       const rows = db.prepare('SELECT * FROM surahs ORDER BY id ASC').all();
