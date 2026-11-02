@@ -3,6 +3,9 @@ import { Header } from './components/Header';
 import { SubHeaderToolbar } from './components/SubHeaderToolbar';
 import { BottomDock } from './components/BottomDock';
 import { MushafView } from './components/MushafView';
+import { MushafBookSpread } from './components/MushafBookSpread';
+import { SplitStudyView } from './components/SplitStudyView';
+import { ZenModeHUD } from './components/ZenModeHUD';
 import { TranslationView } from './components/TranslationView';
 import { MorphologyView } from './components/MorphologyView';
 import { TafsirView } from './components/TafsirView';
@@ -25,6 +28,7 @@ import {
   ScriptMode, 
   ReadingTheme,
   TafsirLayoutMode,
+  OverallReadingMode,
   Bookmark, 
   AyahNote, 
   TafsirHighlight, 
@@ -85,6 +89,15 @@ export const App: React.FC = () => {
   const [tafsirLayoutMode, setTafsirLayoutMode] = useState<TafsirLayoutMode>(() => {
     return (localStorage.getItem('qs_tafsir_layout') as TafsirLayoutMode) || 'stacked';
   });
+  const [overallReadingMode, setOverallReadingMode] = useState<OverallReadingMode>(() => {
+    const saved = localStorage.getItem('qs_reading_mode');
+    if (saved === 'standard' || saved === 'book' || saved === 'split') return saved as OverallReadingMode;
+    return 'standard';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('qs_reading_mode', overallReadingMode);
+  }, [overallReadingMode]);
 
   // Power User Customization State
   const [fontSize, setFontSize] = useState<number>(() => {
@@ -494,6 +507,8 @@ export const App: React.FC = () => {
           onToggleDarkMode={() => setThemeMode(prev => prev === 'light' ? 'dark' : 'light')}
           themeMode={themeMode}
           onChangeThemeMode={setThemeMode}
+          overallReadingMode={overallReadingMode}
+          onChangeReadingMode={setOverallReadingMode}
         />
       )}
 
@@ -552,25 +567,36 @@ export const App: React.FC = () => {
           onCollapseAllTafasir={handleCollapseAll}
           tafsirLayoutMode={tafsirLayoutMode}
           onSelectTafsirLayoutMode={setTafsirLayoutMode}
+          overallReadingMode={overallReadingMode}
+          onSelectOverallReadingMode={setOverallReadingMode}
         />
       )}
 
-      {/* Zen Mode Exit Floater */}
+      {/* Zen Mode Ambient HUD Controller */}
       {isZenMode && (
-        <button
-          onClick={() => setIsZenMode(false)}
-          title="فوکس موڈ سے باہر نکلیں (Z)"
-          className="fixed top-3 left-4 z-50 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-900 text-white text-xs font-semibold backdrop-blur-md border border-slate-700 shadow-xl flex items-center gap-1.5 transition-all font-ibm"
-        >
-          <Maximize2 className="w-3.5 h-3.5" />
-          <span>فوکس موڈ بند کریں</span>
-        </button>
+        <ZenModeHUD
+          currentSurah={currentSurah}
+          currentAyah={currentAyah}
+          activePage={activeMushafPage}
+          isPlaying={isPlaying}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onPrevAyah={handlePrevAyah}
+          onNextAyah={handleNextAyah}
+          themeMode={themeMode}
+          onChangeThemeMode={setThemeMode}
+          readingMode={overallReadingMode}
+          onChangeReadingMode={setOverallReadingMode}
+          fontSize={fontSize}
+          onFontSizeChange={setFontSize}
+          onExitZenMode={() => setIsZenMode(false)}
+        />
       )}
 
       {/* ======================================================== */}
       {/* MAIN WORKSPACE CONTENT AREA                              */}
       {/* ======================================================== */}
-      <main className={`flex-1 ${isZenMode ? 'pt-4' : 'pt-2'} pb-14`}>
+      <main className={`flex-1 ${isZenMode ? 'pt-2 pb-24' : 'pt-2 pb-14'}`}>
         {loading ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-3 font-ibm">
@@ -609,7 +635,70 @@ export const App: React.FC = () => {
               ))}
             </div>
           </div>
+        ) : overallReadingMode === 'book' ? (
+          /* ======================================================== */
+          /* READING MODE B: Two-Page Book Spread (المصحف الشريف)    */
+          /* ======================================================== */
+          <MushafBookSpread
+            activePage={activeMushafPage}
+            ayahs={ayahs}
+            currentSurah={currentSurah}
+            currentAyahNumber={currentAyahNumber}
+            scriptMode={scriptMode}
+            showTajweed={showTajweed}
+            isPlaying={isPlaying}
+            activePlayingAyah={activePlayingAyah}
+            activePlayingWordIndex={activePlayingWordIndex}
+            onSelectAyah={handleSelectAyah}
+            onSelectWordRoot={(root) => setSelectedRoot(root)}
+            onPageChange={setActiveMushafPage}
+          />
+        ) : overallReadingMode === 'split' && currentAyah ? (
+          /* ======================================================== */
+          /* READING MODE C: Synchronized Dual Split Study            */
+          /* ======================================================== */
+          <SplitStudyView
+            activePage={activeMushafPage}
+            ayahs={ayahs}
+            currentSurah={currentSurah}
+            currentAyahNumber={currentAyahNumber}
+            currentAyah={currentAyah}
+            tafasir={tafasir}
+            scriptMode={scriptMode}
+            showTajweed={showTajweed}
+            showWordByWord={showWordByWord}
+            selectedTranslationAuthor={selectedTranslationAuthor}
+            secondaryTranslationAuthor={secondaryTranslationAuthor}
+            wbwLanguage={wbwLanguage}
+            isPlaying={isPlaying}
+            activePlayingAyah={activePlayingAyah}
+            activePlayingWordIndex={activePlayingWordIndex}
+            onSelectAyah={handleSelectAyah}
+            onPrevAyah={handlePrevAyah}
+            onNextAyah={handleNextAyah}
+            onPlayAyah={handlePlayAyah}
+            onPauseAyah={handlePauseAyah}
+            onSelectWordRoot={(root) => setSelectedRoot(root)}
+            isBookmarked={isCurrentAyahBookmarked}
+            onToggleBookmark={handleToggleBookmark}
+            hasNote={hasCurrentAyahNote}
+            onOpenNoteDrawer={() => setShowNoteDrawer(true)}
+            onOpenExportModal={() => setShowExportModal(true)}
+            fontSize={fontSize}
+            highlights={highlights}
+            onAddHighlight={handleAddHighlight}
+            onDeleteHighlight={handleDeleteHighlight}
+            expandedTafasir={expandedTafasir}
+            onToggleTafsir={handleToggleTafsir}
+            tafsirOrder={tafsirOrder}
+            visibleTafasir={visibleTafasir}
+            tafsirLayoutMode={tafsirLayoutMode}
+            onPageChange={setActiveMushafPage}
+          />
         ) : (
+          /* ======================================================== */
+          /* READING MODE A: Standard Focused View                    */
+          /* ======================================================== */
           <>
             {/* Mode 1: Pure Mushaf View (15-Line Pakistani Page View) */}
             {(activeMode === 'quran' || activeMode === 'mushaf') && (
@@ -732,23 +821,25 @@ export const App: React.FC = () => {
       {/* ======================================================== */}
       {/* 3. BOTTOM BAR: Power-User Dock & Unified Audio (h-11)    */}
       {/* ======================================================== */}
-      <BottomDock
-        currentSurah={currentSurah}
-        currentAyah={currentAyah}
-        isPlaying={isPlaying}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onNextAyah={handleNextAyah}
-        onPrevAyah={handlePrevAyah}
-        onWordTimeUpdate={setActivePlayingWordIndex}
-        isBookmarked={isCurrentAyahBookmarked}
-        onToggleBookmark={handleToggleBookmark}
-        hasNote={hasCurrentAyahNote}
-        onOpenNoteDrawer={() => setShowNoteDrawer(true)}
-        onOpenSearch={() => setShowSearchModal(true)}
-        isZenMode={isZenMode}
-        onToggleZenMode={() => setIsZenMode(prev => !prev)}
-      />
+      {!isZenMode && (
+        <BottomDock
+          currentSurah={currentSurah}
+          currentAyah={currentAyah}
+          isPlaying={isPlaying}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onNextAyah={handleNextAyah}
+          onPrevAyah={handlePrevAyah}
+          onWordTimeUpdate={setActivePlayingWordIndex}
+          isBookmarked={isCurrentAyahBookmarked}
+          onToggleBookmark={handleToggleBookmark}
+          hasNote={hasCurrentAyahNote}
+          onOpenNoteDrawer={() => setShowNoteDrawer(true)}
+          onOpenSearch={() => setShowSearchModal(true)}
+          isZenMode={isZenMode}
+          onToggleZenMode={() => setIsZenMode(prev => !prev)}
+        />
+      )}
 
       {/* ======================================================== */}
       {/* MODALS & DRAWERS                                         */}

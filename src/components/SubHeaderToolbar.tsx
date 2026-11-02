@@ -17,9 +17,10 @@ import {
   ToggleRight,
   Columns2,
   Rows3,
-  BookOpen
+  BookOpen,
+  Split
 } from 'lucide-react';
-import { Surah, AppMode, ScriptMode, TafsirLayoutMode } from '../types/quran';
+import { Surah, AppMode, ScriptMode, TafsirLayoutMode, OverallReadingMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
 
 interface SubHeaderToolbarProps {
@@ -60,6 +61,10 @@ interface SubHeaderToolbarProps {
   onCollapseAllTafasir?: () => void;
   tafsirLayoutMode?: TafsirLayoutMode;
   onSelectTafsirLayoutMode?: (mode: TafsirLayoutMode) => void;
+
+  // App-wide Reading Modes
+  overallReadingMode?: OverallReadingMode;
+  onSelectOverallReadingMode?: (mode: OverallReadingMode) => void;
 }
 
 export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
@@ -93,7 +98,9 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   onExpandAllTafasir,
   onCollapseAllTafasir,
   tafsirLayoutMode = 'stacked',
-  onSelectTafsirLayoutMode
+  onSelectTafsirLayoutMode,
+  overallReadingMode = 'standard',
+  onSelectOverallReadingMode
 }) => {
   const [directJumpInput, setDirectJumpInput] = useState('');
   const [pageJumpInput, setPageJumpInput] = useState('');
@@ -440,13 +447,58 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         {(activeMode === 'sarf' || activeMode === 'morphology') && null}
       </div>
 
-      {/* Left Flank: Surah Details Badge */}
-      <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs text-[11px] text-slate-500 dark:text-slate-400">
-        <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-          {currentSurah?.revelation_place === 'makkah' ? 'مکی' : 'مدنی'}
-        </span>
-        <span>•</span>
-        <span>{toArabicDigits(currentSurah?.verses_count || 0)} آیات</span>
+      {/* Overall Reading Mode Switcher & Surah Details Badge */}
+      <div className="flex items-center gap-2">
+        {onSelectOverallReadingMode && (
+          <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg p-0.5 shadow-2xs text-xs">
+            <button
+              onClick={() => onSelectOverallReadingMode('standard')}
+              title="معیاری واحد مطالعہ"
+              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${
+                overallReadingMode === 'standard'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
+            >
+              <Rows3 className="w-3 h-3" />
+              <span className="hidden xl:inline">معیاری</span>
+            </button>
+
+            <button
+              onClick={() => onSelectOverallReadingMode('book')}
+              title="دو ورقی کھلا مصحف (Book Spread)"
+              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${
+                overallReadingMode === 'book'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
+            >
+              <BookOpen className="w-3 h-3" />
+              <span className="hidden xl:inline">دو ورقی مصحف</span>
+            </button>
+
+            <button
+              onClick={() => onSelectOverallReadingMode('split')}
+              title="مصحف مع تفاسیر و تراجم (Split Study)"
+              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${
+                overallReadingMode === 'split'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
+            >
+              <Split className="w-3 h-3" />
+              <span className="hidden xl:inline">مصحف و مطالعہ</span>
+            </button>
+          </div>
+        )}
+
+        <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs text-[11px] text-slate-500 dark:text-slate-400">
+          <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+            {currentSurah?.revelation_place === 'makkah' ? 'مکی' : 'مدنی'}
+          </span>
+          <span>•</span>
+          <span>{toArabicDigits(currentSurah?.verses_count || 0)} آیات</span>
+        </div>
       </div>
     </div>
   );
