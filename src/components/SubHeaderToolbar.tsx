@@ -8,7 +8,6 @@ import {
   CornerDownLeft,
   Palette,
   SlidersHorizontal,
-  RotateCcw,
   ZoomIn,
   ZoomOut,
   Maximize2,
@@ -17,8 +16,7 @@ import {
   ToggleRight,
   Columns2,
   Rows3,
-  BookOpen,
-  Split
+  BookOpen
 } from 'lucide-react';
 import { Surah, AppMode, ScriptMode, TafsirLayoutMode, OverallReadingMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
@@ -109,10 +107,11 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
   const handleDirectJump = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = directJumpInput.trim();
-    if (!clean) return;
+    const trimmed = directJumpInput.trim();
+    if (!trimmed) return;
 
-    const match = clean.match(/^(\d+)[:,\s\-\/](\d+)$/);
+    // Pattern: "55:13" or "55 13"
+    const match = trimmed.match(/^(\d+)[:\s]+(\d+)$/);
     if (match) {
       const sId = parseInt(match[1], 10);
       const aNum = parseInt(match[2], 10);
@@ -120,13 +119,15 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         onSelectSurah(sId);
         onSelectAyah(aNum);
         setDirectJumpInput('');
+        return;
       }
-    } else {
-      const num = parseInt(clean, 10);
-      if (!isNaN(num) && num >= 1 && num <= versesCount) {
-        onSelectAyah(num);
-        setDirectJumpInput('');
-      }
+    }
+
+    // Pattern: Single Ayah number in current Surah
+    const singleNum = parseInt(trimmed, 10);
+    if (!isNaN(singleNum) && singleNum >= 1 && singleNum <= versesCount) {
+      onSelectAyah(singleNum);
+      setDirectJumpInput('');
     }
   };
 
@@ -142,7 +143,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   return (
     <div 
       dir="rtl"
-      className="sticky top-11 z-30 w-full h-10 bg-slate-50/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between px-4 sm:px-6 font-ibm select-none transition-colors"
+      className="sticky top-11 z-30 w-full h-10 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-emerald-950/5 dark:border-white/5 flex items-center justify-between px-4 sm:px-6 font-ibm select-none transition-colors"
     >
       {/* Right Flank: Unified Surah & Ayah Pickers */}
       <div className="flex items-center gap-2">
@@ -150,21 +151,21 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         <select
           value={currentSurahId}
           onChange={(e) => onSelectSurah(Number(e.target.value))}
-          className="h-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2.5 text-xs font-semibold text-slate-800 dark:text-slate-100 shadow-2xs focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+          className="h-7 bg-slate-200/50 dark:bg-slate-800/50 hover:bg-slate-200/80 dark:hover:bg-slate-800 rounded-lg px-2.5 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer transition-colors"
         >
           {surahs.map((s) => (
-            <option key={s.id} value={s.id}>
+            <option key={s.id} value={s.id} className="dark:bg-slate-900">
               {s.id}. {s.name_arabic} ({s.name_simple})
             </option>
           ))}
         </select>
 
         {/* Ayah Stepper */}
-        <div className="flex items-center h-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-2xs overflow-hidden">
+        <div className="flex items-center h-7 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg overflow-hidden">
           <button 
             onClick={onPrevAyah}
             title="پچھلی آیت"
-            className="h-7 px-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors flex items-center justify-center"
+            className="h-7 px-1.5 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-500 transition-colors flex items-center justify-center"
           >
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -172,10 +173,10 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           <select
             value={currentAyahNumber}
             onChange={(e) => onSelectAyah(Number(e.target.value))}
-            className="h-7 bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-100 px-2 border-x border-slate-100 dark:border-slate-800 focus:outline-none cursor-pointer"
+            className="h-7 bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-100 px-2 focus:outline-none cursor-pointer"
           >
             {Array.from({ length: versesCount }, (_, i) => i + 1).map((num) => (
-              <option key={num} value={num}>
+              <option key={num} value={num} className="dark:bg-slate-900">
                 آیت {num}
               </option>
             ))}
@@ -184,7 +185,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           <button 
             onClick={onNextAyah}
             title="اگلی آیت"
-            className="h-7 px-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors flex items-center justify-center"
+            className="h-7 px-1.5 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-500 transition-colors flex items-center justify-center"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
           </button>
@@ -192,7 +193,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
         {/* Quick Verse Jump Form */}
         <form onSubmit={handleDirectJump} className="hidden sm:flex items-center">
-          <div className="flex items-center h-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 shadow-2xs focus-within:border-emerald-500">
+          <div className="flex items-center h-7 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg px-2 focus-within:ring-1 focus-within:ring-emerald-500">
             <Compass className="w-3 h-3 text-slate-400 shrink-0 ml-1.5" />
             <input
               type="text"
@@ -208,11 +209,11 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         </form>
       </div>
 
-      {/* Center: Context-Aware Mode Controls (Zero in-content duplicate bars) */}
+      {/* Center: Context-Aware Mode Controls */}
       <div className="flex items-center gap-2">
         {/* 1. Quran / Mushaf Mode Controls */}
         {(activeMode === 'quran' || activeMode === 'mushaf') && (
-          <div className="flex items-center gap-1.5 h-7 bg-white dark:bg-slate-900 px-2 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
+          <div className="flex items-center gap-1.5 h-7 bg-slate-200/50 dark:bg-slate-800/50 px-2 rounded-lg text-xs">
             {/* Page Navigation Stepper */}
             {onPrevPage && onNextPage && (
               <div className="flex items-center gap-1">
@@ -247,10 +248,10 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <button
                 onClick={onToggleTajweed}
                 title="تجوید کے رنگ آن / آف کریں"
-                className={`flex items-center gap-1 h-5 px-2 rounded-md border text-[11px] font-semibold transition-all ${
+                className={`flex items-center gap-1 h-5 px-2 rounded-md text-[11px] font-semibold transition-all ${
                   showTajweed
-                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 <Palette className="w-3 h-3" />
@@ -268,10 +269,10 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <select
                 value={selectedTranslationAuthor}
                 onChange={(e) => onSelectTranslationAuthor(e.target.value)}
-                className="h-7 text-[11px] font-ibm bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 text-slate-800 dark:text-slate-100 outline-none focus:border-emerald-500 shadow-2xs font-semibold cursor-pointer"
+                className="h-7 text-[11px] font-ibm bg-slate-200/50 dark:bg-slate-800/50 rounded-lg px-2 text-slate-800 dark:text-slate-100 outline-none font-semibold cursor-pointer"
                 title="بنیادی ترجمہ"
               >
-                <optgroup label="اردو تراجم">
+                <optgroup label="اردو تراجم" className="dark:bg-slate-900">
                   <option value="taqi_usmani">مفتی تقی عثمانی (آسان ترجمہ)</option>
                   <option value="maududi">مولانا مودودی (تفہیم القرآن)</option>
                   <option value="junagarhi">مولانا محمد جوناگڑھی</option>
@@ -279,7 +280,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                   <option value="israr_ahmad">ڈاکٹر اسرار احمد (بیان القرآن)</option>
                   <option value="jalandhari">فتح محمد جالندھری</option>
                 </optgroup>
-                <optgroup label="English Translations">
+                <optgroup label="English Translations" className="dark:bg-slate-900">
                   <option value="sahih_intl">Saheeh International (EN)</option>
                   <option value="taqi_usmani_en">Mufti Taqi Usmani (EN)</option>
                   <option value="abdel_haleem">Abdel Haleem Oxford (EN)</option>
@@ -292,16 +293,16 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <select
                 value={secondaryTranslationAuthor || 'none'}
                 onChange={(e) => onSelectSecondaryTranslationAuthor(e.target.value === 'none' ? null : e.target.value)}
-                className="h-7 text-[11px] font-ibm bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg px-2 text-slate-600 dark:text-slate-400 outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
+                className="h-7 text-[11px] font-ibm bg-slate-200/50 dark:bg-slate-800/50 rounded-lg px-2 text-slate-600 dark:text-slate-400 outline-none cursor-pointer"
                 title="ثانوی ترجمہ"
               >
-                <option value="none">ثانوی ترجمہ: بند</option>
-                <optgroup label="English Secondary">
+                <option value="none" className="dark:bg-slate-900">ثانوی ترجمہ: بند</option>
+                <optgroup label="English Secondary" className="dark:bg-slate-900">
                   <option value="sahih_intl">+ Saheeh International</option>
                   <option value="taqi_usmani_en">+ Taqi Usmani (EN)</option>
                   <option value="abdel_haleem">+ Abdel Haleem (EN)</option>
                 </optgroup>
-                <optgroup label="Urdu Secondary">
+                <optgroup label="Urdu Secondary" className="dark:bg-slate-900">
                   <option value="taqi_usmani">+ مفتی تقی عثمانی</option>
                   <option value="maududi">+ مولانا مودودی</option>
                   <option value="junagarhi">+ مولانا جوناگڑھی</option>
@@ -314,30 +315,30 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             {onToggleWordByWord && (
               <button
                 onClick={onToggleWordByWord}
-                className={`flex items-center gap-1.5 h-7 px-2.5 rounded-lg border text-[11px] font-semibold shadow-2xs transition-all ${
+                className={`flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-[11px] font-semibold transition-all ${
                   showWordByWord
-                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                    : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-600 text-white shadow-2xs'
+                    : 'bg-slate-200/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
-                {showWordByWord ? <ToggleRight className="w-4 h-4 text-emerald-600" /> : <ToggleLeft className="w-4 h-4 text-slate-400" />}
+                {showWordByWord ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4 opacity-60" />}
                 <span>لفظی ترجمہ</span>
               </button>
             )}
 
-            {/* WBW Language Selector (only shown if WBW is on) */}
+            {/* WBW Language Selector */}
             {showWordByWord && onSelectWbwLanguage && (
               <select
                 value={wbwLanguage}
                 onChange={(e) => onSelectWbwLanguage(e.target.value as any)}
-                className="h-7 text-[11px] font-ibm bg-emerald-50/70 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 rounded-lg px-2 text-emerald-900 dark:text-emerald-200 outline-none shadow-2xs font-semibold cursor-pointer"
+                className="h-7 text-[11px] font-ibm bg-emerald-100/60 dark:bg-emerald-950/60 rounded-lg px-2 text-emerald-900 dark:text-emerald-200 outline-none font-semibold cursor-pointer"
                 title="لفظی معانی کا انتخاب"
               >
-                <option value="both">اردو + English</option>
-                <option value="ur">اردو 1 (نذر احمد)</option>
-                <option value="ur2">اردو 2 (توسیعی)</option>
-                <option value="en">English 1 (Shehnaz)</option>
-                <option value="en2">English 2 (Quran.com)</option>
+                <option value="both" className="dark:bg-slate-900">اردو + English</option>
+                <option value="ur" className="dark:bg-slate-900">اردو 1 (نذر احمد)</option>
+                <option value="ur2" className="dark:bg-slate-900">اردو 2 (توسیعی)</option>
+                <option value="en" className="dark:bg-slate-900">English 1 (Shehnaz)</option>
+                <option value="en2" className="dark:bg-slate-900">English 2 (Quran.com)</option>
               </select>
             )}
           </div>
@@ -345,95 +346,63 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
         {/* 3. Tafseer Mode Controls */}
         {(activeMode === 'tafseer' || activeMode === 'tafsir') && (
-          <div className="flex items-center gap-1.5 h-7 bg-white dark:bg-slate-900 px-2 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs text-xs">
+          <div className="flex items-center gap-1.5 h-7 bg-slate-200/50 dark:bg-slate-800/50 px-2 rounded-lg text-xs">
             {/* Tafsir Re-ordering & Visibility Dialog Trigger */}
             {onOpenTafsirSettings && (
               <button
                 onClick={onOpenTafsirSettings}
                 title="تفاسیر کی ترتیب اور انتخاب"
-                className="flex items-center gap-1.5 h-5 px-2 rounded bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-semibold text-[11px] hover:bg-emerald-100 transition-colors"
+                className="flex items-center gap-1.5 h-5 px-2 rounded bg-emerald-600 text-white font-semibold text-[11px] hover:bg-emerald-500 transition-colors"
               >
                 <SlidersHorizontal className="w-3 h-3" />
                 <span>ترتیب و انتخاب</span>
               </button>
             )}
 
-            {/* Reading Layout Modes (Stacked vs Side-by-Side Comparative Split vs Focus) */}
+            {/* Reading Layout Modes */}
             {onSelectTafsirLayoutMode && (
-              <div className="flex items-center gap-0.5 border-r border-slate-200 dark:border-slate-700 pr-1 mr-0.5">
+              <div className="flex items-center gap-0.5 border-r border-slate-300 dark:border-slate-700 pr-1 mr-0.5">
                 <button
-                  onClick={() => onSelectTafsirLayoutMode('stacked')}
-                  title="عمودی لڑی (Stacked Accordion)"
+                  onClick={() => onSelectTafsirLayoutMode('focus')}
+                  title="مطالعہ فوکس ریڈر (Single Focus Reader)"
                   className={`flex items-center gap-1 h-5 px-1.5 rounded text-[11px] font-semibold transition-all ${
-                    tafsirLayoutMode === 'stacked'
-                      ? 'bg-emerald-600 text-white shadow-2xs'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    tafsirLayoutMode === 'focus'
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <Rows3 className="w-3 h-3" />
-                  <span className="hidden md:inline">لڑی</span>
+                  <BookOpen className="w-3 h-3" />
+                  <span className="hidden md:inline">فوکس</span>
                 </button>
                 <button
                   onClick={() => onSelectTafsirLayoutMode('split')}
                   title="دو رخی تقابلی اسپلٹ (Side-by-Side Comparative)"
                   className={`flex items-center gap-1 h-5 px-1.5 rounded text-[11px] font-semibold transition-all ${
                     tafsirLayoutMode === 'split'
-                      ? 'bg-emerald-600 text-white shadow-2xs'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <Columns2 className="w-3 h-3" />
                   <span className="hidden md:inline">تقابلی اسپلٹ</span>
-                </button>
-                <button
-                  onClick={() => onSelectTafsirLayoutMode('focus')}
-                  title="مطالعہ فوکس ریڈر (Single Focus Reader)"
-                  className={`flex items-center gap-1 h-5 px-1.5 rounded text-[11px] font-semibold transition-all ${
-                    tafsirLayoutMode === 'focus'
-                      ? 'bg-emerald-600 text-white shadow-2xs'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  <BookOpen className="w-3 h-3" />
-                  <span className="hidden md:inline">فوکس</span>
-                </button>
-              </div>
-            )}
-
-            {/* Expand / Collapse All */}
-            {onExpandAllTafasir && onCollapseAllTafasir && (
-              <div className="flex items-center gap-0.5 border-r border-slate-200 dark:border-slate-700 pr-1 mr-0.5">
-                <button
-                  onClick={onExpandAllTafasir}
-                  title="تمام تفاسیر کھولیں"
-                  className="p-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded"
-                >
-                  <Maximize2 className="w-3 h-3" />
-                </button>
-                <button
-                  onClick={onCollapseAllTafasir}
-                  title="تمام تفاسیر سمیٹیں"
-                  className="p-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded"
-                >
-                  <Minimize2 className="w-3 h-3" />
                 </button>
               </div>
             )}
 
             {/* Font Scaler for Tafsir */}
             {onFontSizeChange && (
-              <div className="flex items-center gap-1 px-1.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-[11px] h-5">
+              <div className="flex items-center gap-1 px-1.5 bg-slate-300/40 dark:bg-slate-700/50 rounded font-mono text-[11px] h-5">
                 <button
                   onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
-                  className="p-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                  className="p-0.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                   title="فونٹ چھوٹا کریں"
                 >
                   <ZoomOut className="w-3 h-3" />
                 </button>
-                <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold">{fontSize}</span>
+                <span className="text-[10px] text-slate-700 dark:text-slate-200 font-bold">{fontSize}</span>
                 <button
                   onClick={() => onFontSizeChange(Math.min(26, fontSize + 1))}
-                  className="p-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                  className="p-0.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                   title="فونٹ بڑا کریں"
                 >
                   <ZoomIn className="w-3 h-3" />
@@ -450,7 +419,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
       {/* Mushaf Page Mode Switcher (Single vs Book Spread) & Surah Details Badge */}
       <div className="flex items-center gap-2">
         {(activeMode === 'quran' || activeMode === 'mushaf') && onSelectOverallReadingMode && (
-          <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg p-0.5 shadow-2xs text-xs">
+          <div className="flex items-center bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-0.5 text-xs">
             <button
               onClick={() => onSelectOverallReadingMode('standard')}
               title="۱۵ سطری واحد صفحہ"
@@ -479,8 +448,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           </div>
         )}
 
-        <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs text-[11px] text-slate-500 dark:text-slate-400">
-          <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+        <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-slate-200/40 dark:bg-slate-800/40 text-[11px] text-slate-500 dark:text-slate-400 font-semibold">
+          <span className="text-emerald-700 dark:text-emerald-400">
             {currentSurah?.revelation_place === 'makkah' ? 'مکی' : 'مدنی'}
           </span>
           <span>•</span>
