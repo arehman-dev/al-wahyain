@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { 
   BookOpen, 
   Sparkles, 
   Library, 
-  Info, 
   Moon, 
   Sun, 
   Search, 
@@ -14,77 +13,21 @@ import {
   Languages, 
   Coffee, 
   Eye, 
-  ChevronDown, 
-  ChevronRight, 
-  ChevronLeft,
-  ArrowRight,
-  ArrowLeft,
-  Compass, 
-  CornerDownLeft, 
-  Palette, 
-  SlidersHorizontal, 
-  ZoomIn, 
-  ZoomOut, 
-  ToggleLeft, 
-  ToggleRight, 
-  Columns2, 
-  Rows3,
-  ChevronsDown,
-  ChevronsUp
+  Menu,
+  SlidersHorizontal,
+  ShieldCheck
 } from 'lucide-react';
-import { Surah, AppMode, ReadingTheme, TafsirLayoutMode, OverallReadingMode, ScriptMode } from '../types/quran';
-import { toArabicDigits } from '../utils/juzMapping';
+import { AppMode, ReadingTheme } from '../types/quran';
+
+export type SidebarTab = 'about' | 'preferences' | 'references';
 
 interface HeaderProps {
-  // Navigation & Location
-  surahs: Surah[];
-  currentSurahId: number;
-  currentAyahNumber: number;
-  onSelectSurah: (id: number) => void;
-  onSelectAyah: (num: number) => void;
-  onPrevAyah: () => void;
-  onNextAyah: () => void;
-
-  // Workspace Mode
   activeMode: AppMode;
   onChangeMode: (mode: AppMode) => void;
-  scriptMode?: ScriptMode;
-  onToggleScript?: () => void;
-
-  // Quran / Mushaf specific
-  activePage?: number;
-  onPrevPage?: () => void;
-  onNextPage?: () => void;
-  onPageSelect?: (page: number) => void;
-  showTajweed?: boolean;
-  onToggleTajweed?: () => void;
-  overallReadingMode?: OverallReadingMode;
-  onChangeReadingMode?: (mode: OverallReadingMode) => void;
-
-  // Translation specific
-  showWordByWord?: boolean;
-  onToggleWordByWord?: () => void;
-  selectedTranslationAuthor?: string;
-  onSelectTranslationAuthor?: (authorId: string) => void;
-  secondaryTranslationAuthor?: string | null;
-  onSelectSecondaryTranslationAuthor?: (authorId: string | null) => void;
-  wbwLanguage?: 'both' | 'ur' | 'en' | 'ur2' | 'en2';
-  onSelectWbwLanguage?: (lang: 'both' | 'ur' | 'en' | 'ur2' | 'en2') => void;
-
-  // Tafsir specific
-  onOpenTafsirSettings?: () => void;
-  fontSize?: number;
-  onFontSizeChange?: (size: number) => void;
-  tafsirLayoutMode?: TafsirLayoutMode;
-  onSelectTafsirLayoutMode?: (mode: TafsirLayoutMode) => void;
-  onExpandAllTafasir?: () => void;
-  onCollapseAllTafasir?: () => void;
-
-  // Global Utilities
   onOpenSearch: () => void;
   onOpenStudySuite: () => void;
   onOpenShortcuts: () => void;
-  onOpenAttributions: () => void;
+  onOpenSidebar: (tab?: SidebarTab) => void;
   isZenMode: boolean;
   onToggleZenMode: () => void;
   bookmarksCount?: number;
@@ -93,98 +36,18 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  surahs,
-  currentSurahId,
-  currentAyahNumber,
-  onSelectSurah,
-  onSelectAyah,
-  onPrevAyah,
-  onNextAyah,
   activeMode,
   onChangeMode,
-  scriptMode = 'madani',
-  onToggleScript,
-  activePage = 1,
-  onPrevPage,
-  onNextPage,
-  onPageSelect,
-  showTajweed = false,
-  onToggleTajweed,
-  overallReadingMode = 'standard',
-  onChangeReadingMode,
-  showWordByWord = false,
-  onToggleWordByWord,
-  selectedTranslationAuthor = 'taqi_usmani',
-  onSelectTranslationAuthor,
-  secondaryTranslationAuthor = null,
-  onSelectSecondaryTranslationAuthor,
-  wbwLanguage = 'both',
-  onSelectWbwLanguage,
-  onOpenTafsirSettings,
-  fontSize = 17,
-  onFontSizeChange,
-  tafsirLayoutMode = 'stacked',
-  onSelectTafsirLayoutMode,
-  onExpandAllTafasir,
-  onCollapseAllTafasir,
   onOpenSearch,
   onOpenStudySuite,
   onOpenShortcuts,
-  onOpenAttributions,
+  onOpenSidebar,
   isZenMode,
   onToggleZenMode,
   bookmarksCount = 0,
   themeMode,
   onChangeThemeMode
 }) => {
-  const [showNavPopover, setShowNavPopover] = useState(false);
-  const [directJumpInput, setDirectJumpInput] = useState('');
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  const currentSurah = surahs.find(s => s.id === currentSurahId) || surahs[0];
-  const versesCount = currentSurah?.verses_count || 7;
-
-  // Close nav popover on outside click
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        setShowNavPopover(false);
-      }
-    };
-    if (showNavPopover) {
-      document.addEventListener('mousedown', handleOutsideClick);
-    }
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [showNavPopover]);
-
-  const handleDirectJump = (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = directJumpInput.trim();
-    if (!trimmed) return;
-
-    // Pattern: "55:13" or "55 13"
-    const match = trimmed.match(/^(\d+)[:\s]+(\d+)$/);
-    if (match) {
-      const sId = parseInt(match[1], 10);
-      const aNum = parseInt(match[2], 10);
-      if (sId >= 1 && sId <= 114) {
-        onSelectSurah(sId);
-        onSelectAyah(aNum);
-        setDirectJumpInput('');
-        setShowNavPopover(false);
-        return;
-      }
-    }
-
-    // Pattern: Single Ayah number in current Surah
-    const singleNum = parseInt(trimmed, 10);
-    if (!isNaN(singleNum) && singleNum >= 1 && singleNum <= versesCount) {
-      onSelectAyah(singleNum);
-      setDirectJumpInput('');
-      setShowNavPopover(false);
-    }
-  };
-
   const cycleTheme = () => {
     const cycle: Record<ReadingTheme, ReadingTheme> = {
       light: 'sepia',
@@ -204,524 +67,189 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header 
-      dir="rtl" 
-      className="sticky top-0 z-40 w-full h-11 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs transition-colors font-ibm select-none px-3 sm:px-5"
+      dir="ltr" 
+      className="sticky top-0 z-40 w-full h-12 glass-bar border-b transition-all font-ibm select-none px-3 sm:px-6"
     >
-      <div className="w-full h-full flex items-center justify-between gap-2 sm:gap-4">
+      <div className="w-full h-full grid grid-cols-3 items-center">
         
         {/* ======================================================== */}
-        {/* RIGHT FLANK: Brand & Fast Location Breadcrumb Navigator   */}
+        {/* LEFT SIDE (Left -> Right): Zen -> Theme -> Bookmarks -> Search */}
         {/* ======================================================== */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Brand Mark */}
-          <div className="flex items-center gap-1.5 pl-1.5 sm:border-l sm:border-slate-200 dark:sm:border-slate-800">
-            <div className="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-              <BookOpen className="w-3.5 h-3.5" />
-            </div>
-            <span className="font-bold text-xs sm:text-sm tracking-tight text-slate-900 dark:text-white hidden md:inline">
-              الوحيين
-            </span>
-          </div>
-
-          {/* Location Breadcrumb Trigger */}
-          <div className="relative" ref={popoverRef}>
-            <button
-              onClick={() => setShowNavPopover(prev => !prev)}
-              title="سورۃ و آیت تبدیل کریں یا جمپ کریں"
-              className="flex items-center gap-1.5 h-7 px-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 text-xs font-semibold text-slate-800 dark:text-slate-100 transition-colors"
-            >
-              <span className="text-emerald-700 dark:text-emerald-400">
-                سورة {currentSurah?.name_arabic}
-              </span>
-              <span className="text-slate-400 text-[10px]">۞</span>
-              <span>آیت {toArabicDigits(currentAyahNumber)}</span>
-              {(activeMode === 'quran' || activeMode === 'mushaf') && (
-                <span className="hidden lg:inline text-[11px] text-slate-400 font-normal">
-                  • ص {toArabicDigits(activePage)}
-                </span>
-              )}
-              <ChevronDown className="w-3 h-3 text-slate-400" />
-            </button>
-
-            {/* Quick Ayah Stepper Arrows */}
-            <div className="hidden sm:inline-flex items-center gap-0.5 mr-1">
-              <button
-                onClick={onPrevAyah}
-                title="پچھلی آیت"
-                className="p-1 text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              >
-                <ArrowRight className="w-3 h-3" />
-              </button>
-              <button
-                onClick={onNextAyah}
-                title="اگلی آیت"
-                className="p-1 text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              >
-                <ArrowLeft className="w-3 h-3" />
-              </button>
-            </div>
-
-            {/* Floating Navigation Popover */}
-            {showNavPopover && (
-              <div 
-                className="absolute top-9 right-0 z-50 w-72 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-3 space-y-3 animate-fadeIn text-xs"
-              >
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-500 mb-1">سورۃ منتخب کریں</label>
-                  <select
-                    value={currentSurahId}
-                    onChange={(e) => {
-                      onSelectSurah(Number(e.target.value));
-                      onSelectAyah(1);
-                    }}
-                    className="w-full h-8 bg-slate-100 dark:bg-slate-800 rounded-lg px-2 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
-                  >
-                    {surahs.map((s) => (
-                      <option key={s.id} value={s.id} className="dark:bg-slate-900">
-                        {s.id}. {s.name_arabic} ({s.name_simple})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
-                    <label className="block text-[11px] font-semibold text-slate-500 mb-1">آیت</label>
-                    <select
-                      value={currentAyahNumber}
-                      onChange={(e) => onSelectAyah(Number(e.target.value))}
-                      className="w-full h-8 bg-slate-100 dark:bg-slate-800 rounded-lg px-2 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
-                    >
-                      {Array.from({ length: versesCount }, (_, i) => i + 1).map((num) => (
-                        <option key={num} value={num} className="dark:bg-slate-900">
-                          آیت {toArabicDigits(num)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="flex-1">
-                    <label className="block text-[11px] font-semibold text-slate-500 mb-1">فاسٹ جمپ</label>
-                    <form onSubmit={handleDirectJump} className="flex items-center h-8 bg-slate-100 dark:bg-slate-800 rounded-lg px-2 focus-within:ring-1 focus-within:ring-emerald-500">
-                      <input
-                        type="text"
-                        value={directJumpInput}
-                        onChange={(e) => setDirectJumpInput(e.target.value)}
-                        placeholder="55:13"
-                        className="w-full bg-transparent outline-none text-[11px] font-mono text-slate-800 dark:text-slate-100 placeholder-slate-400"
-                      />
-                      <button type="submit" title="جمپ کریں (Enter)" className="text-slate-400 hover:text-emerald-600">
-                        <CornerDownLeft className="w-3 h-3" />
-                      </button>
-                    </form>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>{currentSurah?.revelation_place === 'makkah' ? 'مکی سورۃ' : 'مدنی سورۃ'}</span>
-                  <span>{toArabicDigits(currentSurah?.verses_count || 0)} کل آیات</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ======================================================== */}
-        {/* CENTER: Workspace 4-Mode Switcher                         */}
-        {/* ======================================================== */}
-        <nav className="flex items-center bg-slate-100/90 dark:bg-slate-800/90 p-0.5 rounded-lg border border-slate-200/70 dark:border-slate-700/70 shrink-0">
+        <div className="flex items-center gap-1.5 justify-self-start">
+          {/* 1. Zen Mode */}
           <button
-            onClick={() => onChangeMode('quran')}
-            title="خالص عثمانی مصحف و تلاوت (1)"
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs transition-all ${
-              activeMode === 'quran' || activeMode === 'mushaf'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+            onClick={onToggleZenMode}
+            title={isZenMode ? "نارمل موڈ پر واپس آئیں (Z)" : "فوکس / زین موڈ (Z)"}
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+              isZenMode 
+                ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' 
+                : 'border border-transparent text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>قرآن</span>
-            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
-              1
-            </kbd>
+            {isZenMode ? <Minimize2 className="w-4 h-4" strokeWidth={1.85} /> : <Maximize2 className="w-4 h-4" strokeWidth={1.85} />}
           </button>
 
+          {/* 2. Theme Toggler */}
           <button
-            onClick={() => onChangeMode('translation')}
-            title="بامحاورہ و لفظی ترجمہ (2)"
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs transition-all ${
-              activeMode === 'translation'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
-            }`}
+            onClick={cycleTheme}
+            title={themeLabels[themeMode]}
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
-            <Languages className="w-3.5 h-3.5" />
-            <span>ترجمہ</span>
-            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
-              2
-            </kbd>
+            {themeMode === 'light' && <Sun className="w-4 h-4 text-amber-500" strokeWidth={1.85} />}
+            {themeMode === 'sepia' && <Coffee className="w-4 h-4 text-amber-700" strokeWidth={1.85} />}
+            {themeMode === 'dark' && <Moon className="w-4 h-4 text-indigo-400" strokeWidth={1.85} />}
+            {themeMode === 'oled' && <Eye className="w-4 h-4 text-emerald-400" strokeWidth={1.85} />}
           </button>
 
-          <button
-            onClick={() => onChangeMode('sarf')}
-            title="صرف، نحو و لغت (3)"
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs transition-all ${
-              activeMode === 'sarf' || activeMode === 'morphology'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>صرف</span>
-            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
-              3
-            </kbd>
-          </button>
-
-          <button
-            onClick={() => onChangeMode('tafseer')}
-            title="تقابلی تفاسیر (4)"
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs transition-all ${
-              activeMode === 'tafseer' || activeMode === 'tafsir'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
-            }`}
-          >
-            <Library className="w-3.5 h-3.5" />
-            <span>تفسیر</span>
-            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono opacity-60 bg-slate-200/60 dark:bg-slate-800 rounded">
-              4
-            </kbd>
-          </button>
-        </nav>
-
-        {/* ======================================================== */}
-        {/* LEFT FLANK: Mode-Specific Context Controls & Utilities    */}
-        {/* ======================================================== */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          
-          {/* Mode Context Controls: Quran/Mushaf Mode */}
-          {(activeMode === 'quran' || activeMode === 'mushaf') && (
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              {/* Page Stepper */}
-              {onPrevPage && onNextPage && (
-                <div className="flex items-center gap-0.5 h-7 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 text-[11px] font-semibold text-slate-700 dark:text-slate-200">
-                  <button
-                    onClick={onPrevPage}
-                    disabled={activePage <= 1}
-                    title="پچھلا صفحہ"
-                    className="p-0.5 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                  <span className="font-mono px-1">
-                    ص {toArabicDigits(activePage)}
-                  </span>
-                  <button
-                    onClick={onNextPage}
-                    disabled={activePage >= 604}
-                    title="اگلا صفحہ"
-                    className="p-0.5 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
-
-              {/* Mushaf Reading Mode (Single Page vs Book Spread) */}
-              {onChangeReadingMode && (
-                <div className="hidden sm:flex items-center bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg">
-                  <button
-                    onClick={() => onChangeReadingMode('standard')}
-                    title="۱۵ سطری واحد صفحہ"
-                    className={`p-1 rounded-md transition-all ${
-                      overallReadingMode === 'standard'
-                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
-                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'
-                    }`}
-                  >
-                    <Rows3 className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => onChangeReadingMode('book')}
-                    title="دو ورقی کھلا مصحف (Book Spread)"
-                    className={`p-1 rounded-md transition-all ${
-                      overallReadingMode === 'book'
-                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
-                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'
-                    }`}
-                  >
-                    <BookOpen className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-
-              {/* Tajweed Color Toggle */}
-              {onToggleTajweed && (
-                <button
-                  onClick={onToggleTajweed}
-                  title="تجوید کے رنگ آن / آف کریں"
-                  className={`flex items-center gap-1 h-7 px-2 rounded-lg text-xs font-semibold transition-all ${
-                    showTajweed
-                      ? 'bg-rose-500/15 text-rose-700 dark:text-rose-400 font-bold'
-                      : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <Palette className="w-3.5 h-3.5" />
-                  <span className="hidden xl:inline">تجوید</span>
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Mode Context Controls: Translation Mode */}
-          {activeMode === 'translation' && (
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-              {/* Primary Translation Author Dropdown */}
-              {onSelectTranslationAuthor && (
-                <select
-                  value={selectedTranslationAuthor}
-                  onChange={(e) => onSelectTranslationAuthor(e.target.value)}
-                  className="h-7 text-xs bg-slate-100 dark:bg-slate-800/80 rounded-lg px-2 text-slate-800 dark:text-slate-100 outline-none font-semibold cursor-pointer max-w-[125px] truncate"
-                  title="بنیادی ترجمہ"
-                >
-                  <optgroup label="اردو تراجم" className="dark:bg-slate-900">
-                    <option value="taqi_usmani">مفتی تقی عثمانی</option>
-                    <option value="maududi">مولانا مودودی</option>
-                    <option value="junagarhi">مولانا جوناگڑھی</option>
-                    <option value="mahmud_hasan">محمود الحسن</option>
-                    <option value="israr_ahmad">ڈاکٹر اسرار احمد</option>
-                    <option value="jalandhari">فتح محمد جالندھری</option>
-                  </optgroup>
-                  <optgroup label="English Translations" className="dark:bg-slate-900">
-                    <option value="sahih_intl">Saheeh Intl (EN)</option>
-                    <option value="taqi_usmani_en">Taqi Usmani (EN)</option>
-                    <option value="abdel_haleem">Abdel Haleem (EN)</option>
-                  </optgroup>
-                </select>
-              )}
-
-              {/* Secondary Translation Author Dropdown */}
-              {onSelectSecondaryTranslationAuthor && (
-                <select
-                  value={secondaryTranslationAuthor || 'none'}
-                  onChange={(e) => onSelectSecondaryTranslationAuthor(e.target.value === 'none' ? null : e.target.value)}
-                  className="hidden md:inline-block h-7 text-xs bg-slate-100 dark:bg-slate-800/80 rounded-lg px-1.5 text-slate-600 dark:text-slate-400 outline-none cursor-pointer max-w-[110px] truncate"
-                  title="ثانوی ترجمہ"
-                >
-                  <option value="none" className="dark:bg-slate-900">ثانوی: بند</option>
-                  <optgroup label="English Secondary" className="dark:bg-slate-900">
-                    <option value="sahih_intl">+ Saheeh Intl</option>
-                    <option value="taqi_usmani_en">+ Taqi Usmani</option>
-                    <option value="abdel_haleem">+ Abdel Haleem</option>
-                  </optgroup>
-                  <optgroup label="اردو ثانوی" className="dark:bg-slate-900">
-                    <option value="taqi_usmani">+ تقی عثمانی</option>
-                    <option value="maududi">+ مودودی</option>
-                    <option value="junagarhi">+ جوناگڑھی</option>
-                    <option value="israr_ahmad">+ اسرار احمد</option>
-                  </optgroup>
-                </select>
-              )}
-
-              {/* Word-by-Word Toggle */}
-              {onToggleWordByWord && (
-                <button
-                  onClick={onToggleWordByWord}
-                  title="لفظی ترجمہ اور اعراب آن / آف کریں"
-                  className={`flex items-center gap-1 h-7 px-2 rounded-lg text-xs font-semibold transition-all ${
-                    showWordByWord
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-                  }`}
-                >
-                  {showWordByWord ? <ToggleRight className="w-3.5 h-3.5" /> : <ToggleLeft className="w-3.5 h-3.5 opacity-60" />}
-                  <span className="hidden lg:inline">لفظی ترجمہ</span>
-                </button>
-              )}
-
-              {/* WBW Language Selector */}
-              {showWordByWord && onSelectWbwLanguage && (
-                <select
-                  value={wbwLanguage}
-                  onChange={(e) => onSelectWbwLanguage(e.target.value as any)}
-                  className="hidden xl:inline-block h-7 text-[11px] bg-emerald-100/70 dark:bg-emerald-950/70 rounded-lg px-1.5 text-emerald-900 dark:text-emerald-200 outline-none font-semibold cursor-pointer"
-                  title="لفظی معانی زبان"
-                >
-                  <option value="both" className="dark:bg-slate-900">اردو + EN</option>
-                  <option value="ur" className="dark:bg-slate-900">اردو (نذر احمد)</option>
-                  <option value="ur2" className="dark:bg-slate-900">اردو (توسیعی)</option>
-                  <option value="en" className="dark:bg-slate-900">English</option>
-                </select>
-              )}
-            </div>
-          )}
-
-          {/* Mode Context Controls: Tafsir Mode */}
-          {(activeMode === 'tafseer' || activeMode === 'tafsir') && (
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              {/* Tafsir 3-Way Layout Switcher (Focus, Stacked List, Comparative Split) */}
-              {onSelectTafsirLayoutMode && (
-                <div className="flex items-center bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg">
-                  <button
-                    onClick={() => onSelectTafsirLayoutMode('focus')}
-                    title="مطالعہ فوکس ریڈر (Single Focus Reader)"
-                    className={`px-1.5 py-1 rounded text-[11px] font-semibold transition-all ${
-                      tafsirLayoutMode === 'focus'
-                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
-                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'
-                    }`}
-                  >
-                    فوکس
-                  </button>
-                  <button
-                    onClick={() => onSelectTafsirLayoutMode('stacked')}
-                    title="تمام تفاسیر کی فہرست (Stacked All Tafasir List)"
-                    className={`px-1.5 py-1 rounded text-[11px] font-semibold transition-all ${
-                      tafsirLayoutMode === 'stacked'
-                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
-                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'
-                    }`}
-                  >
-                    فہرست
-                  </button>
-                  <button
-                    onClick={() => onSelectTafsirLayoutMode('split')}
-                    title="دو رخی تقابلی اسپلٹ (Comparative Dual Columns)"
-                    className={`px-1.5 py-1 rounded text-[11px] font-semibold transition-all ${
-                      tafsirLayoutMode === 'split'
-                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
-                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'
-                    }`}
-                  >
-                    اسپلٹ
-                  </button>
-                </div>
-              )}
-
-              {/* Expand / Collapse All Controls (In Stacked List Mode) */}
-              {tafsirLayoutMode === 'stacked' && onExpandAllTafasir && onCollapseAllTafasir && (
-                <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg">
-                  <button
-                    onClick={onExpandAllTafasir}
-                    title="تمام تفاسیر پھیلائیں (Expand All)"
-                    className="flex items-center gap-0.5 px-1.5 py-1 rounded text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-900 transition-all"
-                  >
-                    <ChevronsDown className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="hidden md:inline">پھیلائیں</span>
-                  </button>
-                  <button
-                    onClick={onCollapseAllTafasir}
-                    title="تمام تفاسیر سمیٹیں (Collapse All)"
-                    className="flex items-center gap-0.5 px-1.5 py-1 rounded text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-900 transition-all"
-                  >
-                    <ChevronsUp className="w-3.5 h-3.5 text-slate-500" />
-                    <span className="hidden md:inline">سمیٹیں</span>
-                  </button>
-                </div>
-              )}
-
-              {/* Font Size Scaler */}
-              {onFontSizeChange && (
-                <div className="hidden sm:flex items-center gap-0.5 h-7 px-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg text-xs">
-                  <button
-                    onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
-                    className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
-                    title="فونٹ چھوٹا کریں"
-                  >
-                    <ZoomOut className="w-3 h-3" />
-                  </button>
-                  <span className="font-mono text-[10px] text-slate-700 dark:text-slate-300 px-0.5">{fontSize}</span>
-                  <button
-                    onClick={() => onFontSizeChange(Math.min(26, fontSize + 1))}
-                    className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
-                    title="فونٹ بڑا کریں"
-                  >
-                    <ZoomIn className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-
-              {/* Tafsir Select / Reorder Modal Trigger */}
-              {onOpenTafsirSettings && (
-                <button
-                  onClick={onOpenTafsirSettings}
-                  title="تفاسیر کی ترتیب اور انتخاب"
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Script Mode Toggle Button (Madani QCF vs Indo-Pak Nastaliq) */}
-          {onToggleScript && (
-            <button
-              onClick={onToggleScript}
-              title="رسم الخط تبدیل کریں: مدنی عثمانی (QCF) / ہند پاک (Nastaliq)"
-              className="flex items-center gap-1 h-7 px-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
-            >
-              <span className="text-slate-400 text-[10px] hidden sm:inline">خط:</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-bold">
-                {scriptMode === 'madani' ? 'مدنی (QCF)' : 'ہند پاک'}
-              </span>
-            </button>
-          )}
-
-          {/* Divider */}
-          <div className="h-4 w-px bg-slate-200 dark:bg-slate-800" />
-
-          {/* Omnibar / Search Trigger (Ctrl+K) */}
-          <button
-            onClick={onOpenSearch}
-            title="کمانڈ پیلیٹ و تلاش (Ctrl + K)"
-            className="flex items-center gap-1.5 h-7 px-2 rounded-lg border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium transition-colors"
-          >
-            <Search className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="hidden md:inline">تلاش</span>
-            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono bg-slate-200/70 dark:bg-slate-800 rounded text-slate-500">
-              Ctrl K
-            </kbd>
-          </button>
-
-          {/* Study Suite Notebook (Bookmarks) */}
+          {/* 3. All Bookmarks (Study Suite) — With Name */}
           <button
             onClick={onOpenStudySuite}
-            title="محفوظ آیات و نوٹس"
-            className="relative p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="محفوظ آیات، نوٹس اور ہائی لائٹس"
+            className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800/70 hover:bg-amber-500/15 text-slate-700 dark:text-slate-200 hover:text-amber-600 dark:hover:text-amber-400 border border-slate-300/60 dark:border-slate-700/60 text-xs font-semibold transition-all cursor-pointer"
           >
-            <Bookmark className="w-3.5 h-3.5 text-amber-500" />
+            <Bookmark 
+              className="w-3.5 h-3.5 text-amber-500 shrink-0" 
+              strokeWidth={1.85} 
+              fill={bookmarksCount > 0 ? 'currentColor' : 'none'} 
+            />
+            <span>بک مارکس</span>
             {bookmarksCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center font-mono">
+              <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-bold font-app">
                 {bookmarksCount}
               </span>
             )}
           </button>
 
-          {/* Zen / Focus Mode Toggle */}
+          {/* 4. Search (Ctrl+K) — With Name */}
           <button
-            onClick={onToggleZenMode}
-            title={isZenMode ? "نارمل موڈ پر واپس آئیں (Z)" : "زین / فوکس موڈ (Z)"}
-            className={`p-1.5 rounded-lg transition-colors ${
-              isZenMode 
-                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' 
-                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            onClick={onOpenSearch}
+            title="جامع تلاش و کمانڈ پیلیٹ (Ctrl + K)"
+            className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800/70 hover:bg-emerald-500/15 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300/60 dark:border-slate-700/60 text-xs font-semibold transition-all cursor-pointer"
+          >
+            <Search className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" strokeWidth={1.85} />
+            <span>تلاش</span>
+          </button>
+        </div>
+
+        {/* ======================================================== */}
+        {/* CENTER (Screen-Centered): 4 Primary Study Modes          */}
+        {/* ======================================================== */}
+        <nav 
+          dir="rtl"
+          className="justify-self-center flex items-center bg-slate-200/65 dark:bg-slate-800/75 p-1 rounded-xl border border-slate-300/60 dark:border-slate-700/60 shrink-0"
+        >
+          <button
+            onClick={() => onChangeMode('quran')}
+            title="خالص عثمانی مصحف و تلاوت (1)"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+              activeMode === 'quran' || activeMode === 'mushaf'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
             }`}
           >
-            {isZenMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            <BookOpen className="w-3.5 h-3.5" strokeWidth={1.85} />
+            <span>قرآن</span>
           </button>
 
-          {/* Reading Atmosphere Theme Switcher */}
           <button
-            onClick={cycleTheme}
-            title={themeLabels[themeMode] + ' (تبدیل کرنے کے لیے کلک کریں)'}
-            className="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            onClick={() => onChangeMode('translation')}
+            title="بامحاورہ و لفظی ترجمہ (2)"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+              activeMode === 'translation'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+            }`}
           >
-            {themeMode === 'light' && <Sun className="w-3.5 h-3.5 text-amber-500" />}
-            {themeMode === 'sepia' && <Coffee className="w-3.5 h-3.5 text-amber-700" />}
-            {themeMode === 'dark' && <Moon className="w-3.5 h-3.5 text-indigo-400" />}
-            {themeMode === 'oled' && <Eye className="w-3.5 h-3.5 text-emerald-400" />}
+            <Languages className="w-3.5 h-3.5" strokeWidth={1.85} />
+            <span>ترجمہ</span>
+          </button>
+
+          <button
+            onClick={() => onChangeMode('sarf')}
+            title="صرف، نحو و لغت (3)"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+              activeMode === 'sarf' || activeMode === 'morphology'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" strokeWidth={1.85} />
+            <span>صرف</span>
+          </button>
+
+          <button
+            onClick={() => onChangeMode('tafseer')}
+            title="تقابلی تفاسیر (4)"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+              activeMode === 'tafseer' || activeMode === 'tafsir'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+            }`}
+          >
+            <Library className="w-3.5 h-3.5" strokeWidth={1.85} />
+            <span>تفسیر</span>
+          </button>
+        </nav>
+
+        {/* ======================================================== */}
+        {/* RIGHT SIDE: Reference, Preferences, Shortcuts + Brand & Menu */}
+        {/* ======================================================== */}
+        <div className="flex items-center gap-1.5 justify-self-end">
+          {/* Reference / Data Sources */}
+          <button
+            onClick={() => onOpenSidebar('references')}
+            title="مآخذ و مصادر (References)"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+          >
+            <ShieldCheck className="w-4 h-4" strokeWidth={1.85} />
+          </button>
+
+          {/* Preferences */}
+          <button
+            onClick={() => onOpenSidebar('preferences')}
+            title="ترجیحات و ترتیبات (Preferences)"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+          >
+            <SlidersHorizontal className="w-4 h-4" strokeWidth={1.85} />
+          </button>
+
+          {/* Keyboard Shortcuts */}
+          <button
+            onClick={onOpenShortcuts}
+            title="کی بورڈ شارٹ کٹس (?)"
+            className="hidden sm:flex w-8 h-8 rounded-xl items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+          >
+            <Keyboard className="w-4 h-4" strokeWidth={1.85} />
+          </button>
+
+          <div className="h-4 w-px bg-slate-300/70 dark:bg-slate-700/70 mx-1 hidden sm:block" />
+
+          {/* Minimalist Brand Emblem & Title */}
+          <div 
+            onClick={() => onOpenSidebar('about')}
+            className="hidden sm:flex items-center gap-2 cursor-pointer group px-1.5 py-1 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
+            title="الوحیین — تعارف (About)"
+          >
+            <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              الوحيين
+            </span>
+            {/* Minimalist 2D Geometric Open Mushaf & Rehal Icon */}
+            <div className="w-7 h-7 rounded-lg bg-emerald-600/10 dark:bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                <path d="M12 4.5C9.5 3 5.5 3 3 4.5v13c2.5-1.5 6.5-1.5 9 0 2.5-1.5 6.5-1.5 9 0v-13c-2.5-1.5-6.5-1.5-9 0z" />
+                <path d="M12 4.5v13" />
+                <path d="M5 20.5l7-2.5 7 2.5" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Sidebar Drawer Menu Button */}
+          <button
+            onClick={() => onOpenSidebar('about')}
+            title="سائیڈ بار مینو (تعارف، ترجیحات اور مآخذ)"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all cursor-pointer"
+          >
+            <Menu className="w-4 h-4" strokeWidth={1.85} />
           </button>
         </div>
 

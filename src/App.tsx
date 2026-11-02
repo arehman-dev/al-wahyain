@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Header } from './components/Header';
+import { Header, SidebarTab } from './components/Header';
+import { SubHeaderToolbar } from './components/SubHeaderToolbar';
 import { BottomDock } from './components/BottomDock';
+import { SidebarDrawer } from './components/SidebarDrawer';
 import { MushafView } from './components/MushafView';
-import { MushafBookSpread } from './components/MushafBookSpread';
 import { ZenModeHUD } from './components/ZenModeHUD';
 import { TranslationView } from './components/TranslationView';
 import { MorphologyView } from './components/MorphologyView';
@@ -17,7 +18,6 @@ import { StudySuiteModal } from './components/StudySuiteModal';
 import { NoteEditorDrawer } from './components/NoteEditorDrawer';
 import { ExportShareModal } from './components/ExportShareModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
-import { Maximize2, X } from 'lucide-react';
 import { 
   Surah, 
   Ayah, 
@@ -30,8 +30,7 @@ import {
   Bookmark, 
   AyahNote, 
   TafsirHighlight, 
-  HighlightColor, 
-  ReadingHistoryEntry 
+  HighlightColor 
 } from './types/quran';
 import { 
   fetchSurahs, 
@@ -63,7 +62,8 @@ export const App: React.FC = () => {
     if (saved === 'tafsir' || saved === 'tafseer') return 'tafseer';
     return 'quran';
   });
-  const [scriptMode, setScriptMode] = useState<ScriptMode>('madani');
+  // Strictly QCF V2 ('madani') everywhere
+  const [scriptMode] = useState<ScriptMode>('madani');
   const [showTajweed, setShowTajweed] = useState<boolean>(() => {
     return localStorage.getItem('qs_show_tajweed') === 'true';
   });
@@ -85,17 +85,32 @@ export const App: React.FC = () => {
     return localStorage.getItem('qs_dark_mode') === 'true' ? 'dark' : 'light';
   });
   const [tafsirLayoutMode, setTafsirLayoutMode] = useState<TafsirLayoutMode>(() => {
-    return (localStorage.getItem('qs_tafsir_layout') as TafsirLayoutMode) || 'stacked';
+    const saved = localStorage.getItem('qs_tafsir_layout');
+    if (saved === 'focus') return 'focus';
+    return 'stacked';
   });
-  const [overallReadingMode, setOverallReadingMode] = useState<OverallReadingMode>(() => {
-    const saved = localStorage.getItem('qs_reading_mode');
-    if (saved === 'standard' || saved === 'book') return saved as OverallReadingMode;
-    return 'standard';
+  const [overallReadingMode, setOverallReadingMode] = useState<OverallReadingMode>('standard');
+
+  // Left & Right Horizontal Padding Percentage (1% to 24%)
+  const [horizontalPadding, setHorizontalPadding] = useState<number>(() => {
+    const saved = localStorage.getItem('qs_horizontal_padding');
+    if (saved !== null && !isNaN(Number(saved))) {
+      return Math.min(24, Math.max(1, Number(saved)));
+    }
+    return 8;
   });
+
+  // Sidebar Drawer State (About, Preferences, References & Data Sources)
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [sidebarTab, setSidebarTab] = useState<SidebarTab>('about');
 
   useEffect(() => {
     localStorage.setItem('qs_reading_mode', overallReadingMode);
   }, [overallReadingMode]);
+
+  useEffect(() => {
+    localStorage.setItem('qs_horizontal_padding', String(horizontalPadding));
+  }, [horizontalPadding]);
 
   // Power User Customization State
   const [fontSize, setFontSize] = useState<number>(() => {
@@ -112,7 +127,13 @@ export const App: React.FC = () => {
       const saved = localStorage.getItem('qs_tafsir_order');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Ensure 'saadi' is included if user had an older saved order
+          if (!parsed.includes('saadi')) {
+            return [...parsed, 'saadi'];
+          }
+          return parsed;
+        }
       }
     } catch {}
     return DEFAULT_TAFSIR_ORDER;
@@ -121,13 +142,17 @@ export const App: React.FC = () => {
   const [visibleTafasir, setVisibleTafasir] = useState<Record<string, boolean>>(() => {
     try {
       const saved = localStorage.getItem('qs_tafsir_visibility');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { saadi: true, ...parsed };
+      }
     } catch {}
     return {
       bayan_ul_quran: true,
       tafheem: true,
       maarif: true,
       ibn_kathir: true,
+      saadi: true,
       tayseer: true
     };
   });
@@ -140,6 +165,7 @@ export const App: React.FC = () => {
     tafheem: true,
     maarif: true,
     ibn_kathir: true,
+    saadi: true,
     tayseer: true,
   });
 
@@ -169,21 +195,6 @@ export const App: React.FC = () => {
   const [notes, setNotes] = useState<AyahNote[]>([]);
   const [highlights, setHighlights] = useState<TafsirHighlight[]>([]);
 
-  // 6. Intelligent Session Resume & Reading History
-  const [readingHistory, setReadingHistory] = useState<ReadingHistoryEntry[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem('qs_reading_history') || '[]');
-    } catch {
-      return [];
-    }
-  });
-  const [resumePrompt, setResumePrompt] = useState<{
-    surahId: number;
-    ayahNumber: number;
-    verseKey: string;
-    surahName: string;
-  } | null>(null);
-
   // Sync reading atmosphere theme (light, sepia, dark, oled)
   useEffect(() => {
     const html = document.documentElement;
@@ -210,11 +221,11 @@ export const App: React.FC = () => {
     localStorage.setItem('qs_surah_id', String(currentSurahId));
     localStorage.setItem('qs_ayah_number', String(currentAyahNumber));
     localStorage.setItem('qs_active_mode', activeMode);
-    localStorage.setItem('qs_script_mode', scriptMode);
+    localStorage.setItem('qs_script_mode', 'madani');
     localStorage.setItem('qs_show_tajweed', String(showTajweed));
     localStorage.setItem('qs_show_wbw', String(showWordByWord));
     localStorage.setItem('qs_font_size', String(fontSize));
-  }, [currentSurahId, currentAyahNumber, activeMode, scriptMode, showTajweed, showWordByWord, fontSize]);
+  }, [currentSurahId, currentAyahNumber, activeMode, showTajweed, showWordByWord, fontSize]);
 
   // Load bookmarks, notes & highlights
   const reloadStudyData = useCallback(() => {
@@ -334,7 +345,10 @@ export const App: React.FC = () => {
     setIsPlaying(false);
   };
 
-  const handleSelectAyah = (num: number) => {
+  const handleSelectAyah = (num: number, surahId?: number) => {
+    if (surahId && surahId !== currentSurahId) {
+      setCurrentSurahId(surahId);
+    }
     setCurrentAyahNumber(num);
   };
 
@@ -470,6 +484,7 @@ export const App: React.FC = () => {
       tafheem: true,
       maarif: true,
       ibn_kathir: true,
+      saadi: true,
       tayseer: true
     });
   };
@@ -480,37 +495,77 @@ export const App: React.FC = () => {
       tafheem: false,
       maarif: false,
       ibn_kathir: false,
+      saadi: false,
       tayseer: false
     });
   };
 
+  const handlePrevSurah = useCallback(() => {
+    if (currentSurahId > 1) {
+      setCurrentSurahId(prev => prev - 1);
+      setCurrentAyahNumber(1);
+      setIsPlaying(false);
+    }
+  }, [currentSurahId]);
+
+  const handleNextSurah = useCallback(() => {
+    if (currentSurahId < 114) {
+      setCurrentSurahId(prev => prev + 1);
+      setCurrentAyahNumber(1);
+      setIsPlaying(false);
+    }
+  }, [currentSurahId]);
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/25 selection:text-emerald-950 dark:selection:bg-emerald-500/35 dark:selection:text-emerald-100 font-app">
+    <div className="min-h-screen bg-slate-100/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/25 selection:text-emerald-950 dark:selection:bg-emerald-500/35 dark:selection:text-emerald-100 font-app">
       
       {/* ======================================================== */}
-      {/* TOP BAR: Single Quiet Header (Al-Maktabah 2.0, h-11)     */}
+      {/* BAR 1: TOP HEADER BAR (Header.tsx)                       */}
       {/* ======================================================== */}
       {!isZenMode && (
         <Header
+          activeMode={activeMode}
+          onChangeMode={setActiveMode}
+          onOpenSidebar={(tab) => {
+            if (tab) setSidebarTab(tab);
+            setShowSidebar(true);
+          }}
+          onOpenSearch={() => setShowSearchModal(true)}
+          onOpenStudySuite={() => setShowStudySuiteModal(true)}
+          onOpenShortcuts={() => setShowShortcutsModal(true)}
+          isZenMode={isZenMode}
+          onToggleZenMode={() => setIsZenMode(prev => !prev)}
+          bookmarksCount={bookmarks.length}
+          themeMode={themeMode}
+          onChangeThemeMode={setThemeMode}
+        />
+      )}
+
+      {/* ======================================================== */}
+      {/* BAR 2: SUB-HEADER BAR (SubHeaderToolbar.tsx)             */}
+      {/* ======================================================== */}
+      {!isZenMode && (
+        <SubHeaderToolbar
           surahs={surahs}
           currentSurahId={currentSurahId}
           currentAyahNumber={currentAyahNumber}
           onSelectSurah={handleSelectSurah}
           onSelectAyah={handleSelectAyah}
+          onPrevSurah={handlePrevSurah}
+          onNextSurah={handleNextSurah}
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
           activeMode={activeMode}
-          onChangeMode={setActiveMode}
-          scriptMode={scriptMode}
-          onToggleScript={() => setScriptMode(prev => prev === 'madani' ? 'indopak' : 'madani')}
+          isBookmarked={isCurrentAyahBookmarked}
+          onToggleBookmark={handleToggleBookmark}
+          hasNote={hasCurrentAyahNote}
+          onOpenNoteDrawer={() => setShowNoteDrawer(true)}
           activePage={activeMushafPage}
-          onPrevPage={() => setActiveMushafPage(p => Math.max(1, overallReadingMode === 'book' ? p - 2 : p - 1))}
-          onNextPage={() => setActiveMushafPage(p => Math.min(604, overallReadingMode === 'book' ? p + 2 : p + 1))}
+          onPrevPage={() => setActiveMushafPage(p => Math.max(1, p - 1))}
+          onNextPage={() => setActiveMushafPage(p => Math.min(604, p + 1))}
           onPageSelect={setActiveMushafPage}
           showTajweed={showTajweed}
           onToggleTajweed={() => setShowTajweed(prev => !prev)}
-          overallReadingMode={overallReadingMode}
-          onChangeReadingMode={setOverallReadingMode}
           showWordByWord={showWordByWord}
           onToggleWordByWord={() => setShowWordByWord(prev => !prev)}
           selectedTranslationAuthor={selectedTranslationAuthor}
@@ -539,15 +594,6 @@ export const App: React.FC = () => {
           onSelectTafsirLayoutMode={setTafsirLayoutMode}
           onExpandAllTafasir={handleExpandAll}
           onCollapseAllTafasir={handleCollapseAll}
-          onOpenSearch={() => setShowSearchModal(true)}
-          onOpenStudySuite={() => setShowStudySuiteModal(true)}
-          onOpenShortcuts={() => setShowShortcutsModal(true)}
-          onOpenAttributions={() => setShowAttributions(true)}
-          isZenMode={isZenMode}
-          onToggleZenMode={() => setIsZenMode(prev => !prev)}
-          bookmarksCount={bookmarks.length}
-          themeMode={themeMode}
-          onChangeThemeMode={setThemeMode}
         />
       )}
 
@@ -573,9 +619,15 @@ export const App: React.FC = () => {
       )}
 
       {/* ======================================================== */}
-      {/* MAIN WORKSPACE CONTENT AREA                              */}
+      {/* MAIN WORKSPACE CONTENT AREA (With Dynamic Padding)       */}
       {/* ======================================================== */}
-      <main className={`flex-1 ${isZenMode ? 'pt-2 pb-24' : 'pt-2 pb-20'}`}>
+      <main
+        className={`flex-1 transition-all duration-150 ${isZenMode ? 'pt-3 pb-24' : 'pt-3 pb-16'}`}
+        style={{
+          paddingLeft: `${horizontalPadding}%`,
+          paddingRight: `${horizontalPadding}%`,
+        }}
+      >
         {loading ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-3 font-ibm">
@@ -614,30 +666,12 @@ export const App: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : (activeMode === 'quran' || activeMode === 'mushaf') && overallReadingMode === 'book' ? (
-          /* ======================================================== */
-          /* TWO-PAGE BOOK SPREAD (المصحف الشريف - صفحتان)            */
-          /* ======================================================== */
-          <MushafBookSpread
-            activePage={activeMushafPage}
-            ayahs={ayahs}
-            currentSurah={currentSurah}
-            currentAyahNumber={currentAyahNumber}
-            scriptMode={scriptMode}
-            showTajweed={showTajweed}
-            isPlaying={isPlaying}
-            activePlayingAyah={activePlayingAyah}
-            activePlayingWordIndex={activePlayingWordIndex}
-            onSelectAyah={handleSelectAyah}
-            onSelectWordRoot={(root) => setSelectedRoot(root)}
-            onPageChange={setActiveMushafPage}
-          />
         ) : (
           /* ======================================================== */
           /* STANDARD PRIMARY MODES (Mushaf, Translation, Sarf, Tafsir) */
           /* ======================================================== */
           <>
-            {/* Mode 1: Pure Mushaf View (15-Line Pakistani Page View) */}
+            {/* Mode 1: Pure Mushaf View (Single Continuous Page Mode Only per 2.1) */}
             {(activeMode === 'quran' || activeMode === 'mushaf') && (
               <MushafView
                 ayahs={ayahs}
@@ -672,6 +706,7 @@ export const App: React.FC = () => {
                 currentSurah={currentSurah}
                 currentAyahNumber={currentAyahNumber}
                 scriptMode={scriptMode}
+                showTajweed={showTajweed}
                 showWordByWord={showWordByWord}
                 selectedTranslationAuthor={selectedTranslationAuthor}
                 secondaryTranslationAuthor={secondaryTranslationAuthor}
@@ -710,6 +745,7 @@ export const App: React.FC = () => {
               <MorphologyView
                 currentAyah={currentAyah}
                 scriptMode={scriptMode}
+                showTajweed={showTajweed}
                 onPrevAyah={handlePrevAyah}
                 onNextAyah={handleNextAyah}
                 onSelectWordRoot={(root) => setSelectedRoot(root)}
@@ -730,6 +766,7 @@ export const App: React.FC = () => {
                 currentAyah={currentAyah}
                 tafasir={tafasir}
                 scriptMode={scriptMode}
+                showTajweed={showTajweed}
                 onPrevAyah={handlePrevAyah}
                 onNextAyah={handleNextAyah}
                 expandedTafasir={expandedTafasir}
@@ -756,7 +793,7 @@ export const App: React.FC = () => {
       </main>
 
       {/* ======================================================== */}
-      {/* 3. BOTTOM BAR: Power-User Dock & Unified Audio (h-11)    */}
+      {/* BAR 3: BOTTOM BAR (BottomDock.tsx)                       */}
       {/* ======================================================== */}
       {!isZenMode && (
         <BottomDock
@@ -768,15 +805,58 @@ export const App: React.FC = () => {
           onNextAyah={handleNextAyah}
           onPrevAyah={handlePrevAyah}
           onWordTimeUpdate={setActivePlayingWordIndex}
-          isBookmarked={isCurrentAyahBookmarked}
-          onToggleBookmark={handleToggleBookmark}
-          hasNote={hasCurrentAyahNote}
-          onOpenNoteDrawer={() => setShowNoteDrawer(true)}
+          onOpenExportModal={() => setShowExportModal(true)}
           onOpenSearch={() => setShowSearchModal(true)}
           isZenMode={isZenMode}
           onToggleZenMode={() => setIsZenMode(prev => !prev)}
+          horizontalPadding={horizontalPadding}
+          onChangeHorizontalPadding={setHorizontalPadding}
         />
       )}
+
+      {/* ======================================================== */}
+      {/* SIDEBAR DRAWER (About, Preferences, References)          */}
+      {/* ======================================================== */}
+      <SidebarDrawer
+        isOpen={showSidebar}
+        onClose={() => setShowSidebar(false)}
+        activeTab={sidebarTab}
+        onSelectTab={setSidebarTab}
+        themeMode={themeMode}
+        onChangeThemeMode={setThemeMode}
+        showTajweed={showTajweed}
+        onToggleTajweed={() => setShowTajweed(prev => !prev)}
+        showWordByWord={showWordByWord}
+        onToggleWordByWord={() => setShowWordByWord(prev => !prev)}
+        fontSize={fontSize}
+        onFontSizeChange={setFontSize}
+        horizontalPadding={horizontalPadding}
+        onChangeHorizontalPadding={setHorizontalPadding}
+        selectedTranslationAuthor={selectedTranslationAuthor}
+        onSelectTranslationAuthor={(authorId) => {
+          setSelectedTranslationAuthor(authorId);
+          localStorage.setItem('qs_translation_author', authorId);
+        }}
+        secondaryTranslationAuthor={secondaryTranslationAuthor}
+        onSelectSecondaryTranslationAuthor={(authorId) => {
+          setSecondaryTranslationAuthor(authorId);
+          if (authorId) {
+            localStorage.setItem('qs_secondary_translation_author', authorId);
+          } else {
+            localStorage.removeItem('qs_secondary_translation_author');
+          }
+        }}
+        wbwLanguage={wbwLanguage}
+        onSelectWbwLanguage={(lang) => {
+          setWbwLanguage(lang);
+          localStorage.setItem('qs_wbw_lang', lang);
+        }}
+        tafsirLayoutMode={tafsirLayoutMode}
+        onSelectTafsirLayoutMode={setTafsirLayoutMode}
+        overallReadingMode={overallReadingMode}
+        onChangeReadingMode={setOverallReadingMode}
+        onOpenTafsirSettings={() => setShowTafsirSettingsModal(true)}
+      />
 
       {/* ======================================================== */}
       {/* MODALS & DRAWERS                                         */}
@@ -807,6 +887,7 @@ export const App: React.FC = () => {
             tafheem: true,
             maarif: true,
             ibn_kathir: true,
+            saadi: true,
             tayseer: true
           };
           setVisibleTafasir(allVisible);
@@ -868,7 +949,7 @@ export const App: React.FC = () => {
         onChangeTheme={(theme) => setThemeMode(theme)}
         onToggleZenMode={() => setIsZenMode(prev => !prev)}
         onToggleTajweed={() => setShowTajweed(prev => !prev)}
-        onToggleScript={() => setScriptMode(prev => prev === 'madani' ? 'indopak' : 'madani')}
+        onToggleScript={() => {}}
         onSelectReadingMode={(mode) => setOverallReadingMode(mode)}
       />
 

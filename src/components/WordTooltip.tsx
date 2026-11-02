@@ -4,39 +4,29 @@ import { getQcfFontFamily } from '../utils/qcfFontLoader';
 
 interface InteractiveWordProps {
   word: Word;
-  scriptMode: ScriptMode;
+  scriptMode?: ScriptMode;
+  showTajweed?: boolean;
   onSelectRoot?: (root: string) => void;
   isActive?: boolean;
+  isVerseSelected?: boolean;
   className?: string;
   useQcf?: boolean;
 }
 
 export const InteractiveWord: React.FC<InteractiveWordProps> = ({
   word,
-  scriptMode,
+  showTajweed = false,
   onSelectRoot,
   isActive = false,
-  className = '',
-  useQcf = true
+  isVerseSelected = false,
+  className = ''
 }) => {
-  const isIndoPak = scriptMode === 'indopak';
-  const hasQcf = useQcf && !isIndoPak && !!word.code_v2 && !!word.page_number;
-
-  const displayText = isIndoPak 
-    ? (word.text_indopak || word.text_uthmani)
-    : hasQcf 
-    ? word.code_v2 
-    : word.text_uthmani;
+  const hasQcf = !!word.code_v2 && !!word.page_number;
+  const displayText = hasQcf ? word.code_v2 : word.text_uthmani;
 
   const fontStyle = hasQcf
-    ? { fontFamily: getQcfFontFamily(word.page_number) }
+    ? { fontFamily: getQcfFontFamily(word.page_number, showTajweed) }
     : undefined;
-
-  const fontClass = isIndoPak
-    ? 'font-indopak'
-    : hasQcf
-    ? 'font-qcf'
-    : 'font-uthmani';
 
   const handleClick = (e: React.MouseEvent) => {
     if (word.root && onSelectRoot) {
@@ -45,18 +35,28 @@ export const InteractiveWord: React.FC<InteractiveWordProps> = ({
     }
   };
 
+  // Non-boxed text-color-only highlighting (Quran.com style)
+  // For COLRv1 Tajweed V4 font, CSS classes .qcf-tajweed-word handle hover/active via text-shadow
+  const colorClasses = showTajweed
+    ? isActive
+      ? 'qcf-tajweed-word-active'
+      : 'qcf-tajweed-word'
+    : isActive
+    ? 'text-amber-600 dark:text-amber-400'
+    : isVerseSelected
+    ? 'text-emerald-700 dark:text-emerald-400 hover:text-amber-600 dark:hover:text-amber-300'
+    : 'hover:text-[#2ca4ab] dark:hover:text-[#2ca4ab]';
+
   return (
     <span
       onClick={handleClick}
-      className={`inline-block select-text px-1 py-0.5 rounded-lg transition-all duration-150 ${
-        isActive
-          ? 'bg-amber-300/90 dark:bg-amber-500/90 text-slate-950 dark:text-slate-950 font-bold ring-2 ring-amber-400 shadow-sm scale-105 z-10'
-          : 'hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
-      } ${className}`}
+      className={`inline-block cursor-pointer px-0.5 transition-colors duration-150 ${colorClasses} ${className}`}
     >
-      <span className={fontClass} style={fontStyle}>
-        {displayText}
-      </span>
+      <span
+        className="font-qcf cursor-pointer"
+        style={fontStyle}
+        dangerouslySetInnerHTML={{ __html: displayText || '' }}
+      />
     </span>
   );
 };

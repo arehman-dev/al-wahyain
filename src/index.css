@@ -6,7 +6,7 @@
 /* Local Offline Arabic, Quranic & Urdu Bundled Typography   */
 /* ======================================================== */
 
-/* 1. App UI Font: Montserrat */
+/* 1. App UI Font: Montserrat & IBM Plex Sans Arabic */
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
@@ -21,52 +21,35 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/IBMPlexSansArabic-Regular.ttf') format('truetype');
+  src: url('/fonts/ibm-plex-sans-arabic-400.woff2') format('woff2'),
+       url('/fonts/IBMPlexSansArabic-Regular.ttf') format('truetype');
 }
 @font-face {
   font-family: 'IBM Plex Sans Arabic';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/IBMPlexSansArabic-SemiBold.ttf') format('truetype');
+  src: url('/fonts/ibm-plex-sans-arabic-600.woff2') format('woff2'),
+       url('/fonts/IBMPlexSansArabic-SemiBold.ttf') format('truetype');
 }
 @font-face {
   font-family: 'IBM Plex Sans Arabic';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/IBMPlexSansArabic-Bold.ttf') format('truetype');
+  src: url('/fonts/ibm-plex-sans-arabic-700.woff2') format('woff2'),
+       url('/fonts/IBMPlexSansArabic-Bold.ttf') format('truetype');
 }
 
-/* 3. Indo-Pak Quran Text: Al Qalam Quran Publisher */
-@font-face {
-  font-family: 'Al Qalam Quran Publisher';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/alqalamquranpublisher.ttf') format('truetype'),
-       url('/fonts/al-qalam-quran-publisher.ttf') format('truetype'),
-       local('Al Qalam Quran Publisher'),
-       local('AlQalamQuranPublisher');
-}
-
-@font-face {
-  font-family: 'AlQalamQuranPublisher';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/alqalamquranpublisher.ttf') format('truetype'),
-       url('/fonts/al-qalam-quran-publisher.ttf') format('truetype');
-}
-
-/* 4. Uthmani / Madani Quran Text: King Fahd Complex V2 (QPC V2 / QCF V2) */
+/* 3. Uthmani / Madani Quran Text: King Fahd Complex V2 (QPC V2 / QCF V2) */
 @font-face {
   font-family: 'KFGQPC HAFS Uthmanic Script';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
   src: url('/fonts/UthmanicHafs_V20.ttf') format('truetype'),
-       url('/fonts/uthmanic_hafs_v22.ttf') format('truetype');
+       url('/fonts/uthmanic_hafs_v22.ttf') format('truetype'),
+       url('/fonts/KFGQPC Uthmanic Script HAFS Regular.otf') format('opentype');
 }
 
 @font-face {
@@ -87,168 +70,140 @@
        url('/fonts/uthmanic_hafs_v22.ttf') format('truetype');
 }
 
-@font-face {
-  font-family: 'KFGQPC Uthman Taha Naskh';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/KFGQPC Uthman Taha Naskh Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'KFGQPC Uthman Taha Naskh';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/KFGQPC Uthman Taha Naskh Bold.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'KFGQPC Uthmanic Script HAFS';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/KFGQPC Uthmanic Script HAFS Regular.otf') format('opentype');
-}
-
-/* 5. Fallback & Nastaliq: Jameel Noori & Noto Nastaliq */
+/* 4. Urdu Translation Typography: Jameel Noori Nastaleeq */
 @font-face {
   font-family: 'Jameel Noori Nastaleeq';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/Jameel Noori Nastaleeq Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Amiri Quran';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/Amiri Quran.ttf') format('truetype');
+  src: url('/fonts/Jameel Noori Nastaleeq Regular.ttf') format('truetype'),
+       url('/fonts/noto-nastaliq-urdu-400.woff2') format('woff2');
 }
 
 /* ======================================================== */
-/* Tajweed Colors & Ligature Normalization                   */
+/* Glassmorphic 3-Bar System (Distinct from Background)      */
 /* ======================================================== */
-.tajweed-text {
-  direction: rtl;
-  text-align: right;
-  line-height: 2.6;
-  letter-spacing: normal;
-  word-spacing: normal;
+.glass-bar {
+  background-color: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-color: rgba(203, 213, 225, 0.75);
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);
 }
 
-/* Ensure tajweed markup does not fracture Arabic connections */
-tajweed {
-  display: inline;
-  margin: 0;
-  padding: 0;
-  letter-spacing: inherit;
-  font-family: inherit;
+html.dark .glass-bar {
+  background-color: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-color: rgba(51, 65, 85, 0.75);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.45);
 }
 
-tajweed.ham_wasl,
-tajweed.laam_shamsiyah {
-  color: #94a3b8; /* Silent / Gray */
-  opacity: 0.85;
+html.theme-sepia .glass-bar {
+  background-color: rgba(238, 226, 200, 0.76) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-color: rgba(212, 193, 156, 0.85) !important;
+  box-shadow: 0 4px 20px -4px rgba(68, 50, 27, 0.08);
 }
 
-tajweed.madda_normal {
-  color: #d97706; /* 2 harakat / Amber */
-  font-weight: 600;
+html.theme-oled .glass-bar {
+  background-color: rgba(12, 12, 14, 0.78) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-color: rgba(38, 38, 42, 0.85) !important;
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.8);
 }
 
-tajweed.madda_permissible {
-  color: #e11d48; /* 2-4-6 harakat / Rose */
-  font-weight: 700;
+/* ======================================================== */
+/* QCF V4 COLRv1 Tajweed Theme Palette & Highlight Rules     */
+/* ======================================================== */
+html {
+  font-palette: --Light;
 }
 
-tajweed.madda_necessary {
-  color: #7c3aed; /* 6 harakat / Purple */
-  font-weight: 700;
+html.dark {
+  font-palette: --Dark;
 }
 
-tajweed.ghunnah {
-  color: #16a34a; /* Green */
-  font-weight: 600;
+html.theme-sepia {
+  font-palette: --Sepia;
 }
 
-tajweed.ikhfa {
-  color: #059669; /* Emerald */
-  font-weight: 600;
+html.theme-oled {
+  font-palette: --Dark;
 }
 
-tajweed.idgham_ghunnah {
-  color: #0d9488; /* Teal */
-  font-weight: 600;
+/* Quran.com COLRv1 Word Hover & Selection Color Override (No Boxes) */
+.qcf-tajweed-word {
+  cursor: pointer;
+  transition: text-shadow 0.15s ease, color 0.15s ease;
 }
 
-tajweed.idgham_wo_ghunnah {
-  color: #64748b; /* Slate */
+.qcf-tajweed-word:hover {
+  color: transparent !important;
+  text-shadow: 0px 0px #2ca4ab !important;
 }
 
-tajweed.iqlab {
-  color: #2563eb; /* Blue */
-  font-weight: 700;
+.qcf-tajweed-word-active {
+  color: transparent !important;
+  text-shadow: 0px 0px #d97706 !important;
 }
 
-tajweed.qalqalah {
-  color: #0284c7; /* Sky Blue */
-  font-weight: 700;
+.qcf-tajweed-word-selected {
+  color: transparent !important;
+  text-shadow: 0px 0px #059669 !important;
+  text-decoration: underline;
+  text-decoration-color: rgba(16, 185, 129, 0.6);
+  text-underline-offset: 8px;
+}
+
+.qcf-tajweed-verse-selected {
+  text-decoration: underline;
+  text-decoration-color: rgba(16, 185, 129, 0.45);
+  text-underline-offset: 10px;
+  text-decoration-thickness: 2px;
 }
 
 .ayah-end-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Amiri Quran', 'Amiri', serif;
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'QCF V2', 'Amiri', serif;
   font-size: 0.85em;
   color: #059669;
   margin: 0 0.35rem;
   white-space: nowrap;
   word-break: keep-all;
+  cursor: pointer;
 }
 
-/* Indo-Pak Quran Font Class */
-.font-indopak {
-  font-family: 'Al Qalam Quran Publisher', 'AlQalamQuranPublisher', 'Jameel Noori Nastaleeq', serif;
-  line-height: 2.8;
+/* Strictly QCF V2 Font Everywhere for Quranic Text & Hand Cursor on Hover */
+.font-qcf,
+.font-uthmani,
+.font-indopak,
+.font-arabic {
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'QCF V2', 'QPC V2', 'Amiri', serif;
+  line-height: 2.35;
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv01", "cv02", "calt", "liga";
-}
-
-/* King Fahd Complex QCF V2 Page-by-Page Glyph Font Class */
-.font-qcf {
-  font-family: inherit;
-  line-height: 2.2;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: "cv01", "cv02", "calt", "liga";
-}
-
-/* Uthmani / Madani Quran Font Class - King Fahd Complex V2 (QPC V2 / QCF V2) */
-.font-uthmani {
-  font-family: 'KFGQPC HAFS Uthmanic Script', 'QPC V2', 'QCF V2', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', serif;
-  line-height: 2.5;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: "cv01", "cv02", "calt", "liga";
+  cursor: pointer;
 }
 
 /* App UI typography */
 .font-app {
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Montserrat', 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .font-ibm {
-  font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'IBM Plex Sans Arabic', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.01em;
 }
 
 .urdu-nastaliq {
-  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'IBM Plex Sans Arabic', serif;
   line-height: 2.2;
   text-rendering: optimizeLegibility;
-}
-
-.font-arabic {
-  font-family: 'KFGQPC HAFS Uthmanic Script', 'QPC V2', 'Amiri Quran', 'Amiri', serif;
 }
 
 .font-urdu {
@@ -256,9 +211,20 @@ tajweed.qalqalah {
   line-height: 2.0;
 }
 
-.tafsir-prose {
+/* Tafsir Commentary Prose: Strictly I-Beam ("I") Cursor for Text Selection */
+.tafsir-prose,
+.tafsir-prose * {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   line-height: 2.2;
+  cursor: text;
+  user-select: text;
+}
+
+.tafsir-prose a,
+.tafsir-prose button,
+.tafsir-prose [data-quran-ref],
+.tafsir-prose mark[data-highlight-id] {
+  cursor: pointer !important;
 }
 
 .tafsir-prose p {
@@ -321,13 +287,6 @@ html.theme-sepia .text-slate-500,
 html.theme-sepia .text-slate-400 {
   color: #7d6344 !important;
 }
-html.theme-sepia header,
-html.theme-sepia nav,
-html.theme-sepia footer,
-html.theme-sepia .sticky {
-  background-color: rgba(245, 237, 216, 0.95) !important;
-  border-color: #e5d7bc !important;
-}
 
 /* 2. OLED Pure Midnight Black (سیاہ ترین) */
 html.theme-oled {
@@ -347,12 +306,5 @@ html.theme-oled .bg-slate-800 {
 }
 html.theme-oled .border-slate-800,
 html.theme-oled .border-slate-700 {
-  border-color: #1a1a1a !important;
-}
-html.theme-oled header,
-html.theme-oled nav,
-html.theme-oled footer,
-html.theme-oled .sticky {
-  background-color: rgba(5, 5, 5, 0.96) !important;
   border-color: #1a1a1a !important;
 }

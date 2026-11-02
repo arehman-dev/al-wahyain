@@ -101,11 +101,12 @@ const server = http.createServer(async (req, res) => {
   const pathname = parsedUrl.pathname;
 
   try {
-    // 0. Serve or proxy QCF v2 font files
-    const fontMatch = pathname.match(/^\/fonts\/qcf_v2\/(p\d+\.woff2)$/);
+    // 0. Serve or proxy QCF v2 & v4 (COLRv1 Tajweed) font files
+    const fontMatch = pathname.match(/^\/(?:api\/)?fonts\/(qcf_v2|qcf_v4)\/(p\d+\.woff2)$/);
     if ((req.method === 'GET' || req.method === 'HEAD') && fontMatch) {
-      const fileName = fontMatch[1];
-      const fontDir = path.join(__dirname, '..', 'public', 'fonts', 'qcf_v2');
+      const fontFolder = fontMatch[1];
+      const fileName = fontMatch[2];
+      const fontDir = path.join(__dirname, '..', 'public', 'fonts', fontFolder);
       const filePath = path.join(fontDir, fileName);
 
       try {
@@ -119,7 +120,9 @@ const server = http.createServer(async (req, res) => {
           return res.end(fontData);
         }
 
-        const cdnUrl = `https://quran.com/fonts/quran/hafs/v2/woff2/${fileName}`;
+        const cdnUrl = fontFolder === 'qcf_v4'
+          ? `https://verses.quran.com/fonts/quran/hafs/v4/colrv1/woff2/${fileName}`
+          : `https://verses.quran.com/fonts/quran/hafs/v2/woff2/${fileName}`;
         const fetchRes = await fetch(cdnUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
         if (fetchRes.ok) {
           const arrayBuffer = await fetchRes.arrayBuffer();
@@ -221,18 +224,27 @@ const server = http.createServer(async (req, res) => {
       `).all(pageNumber);
 
       const lines = {};
+      const wordsByVerseKey = {};
       for (const w of words) {
         if (!lines[w.line_number]) lines[w.line_number] = [];
         lines[w.line_number].push(w);
+        const vk = `${w.surah_id}:${w.ayah_number}`;
+        if (!wordsByVerseKey[vk]) wordsByVerseKey[vk] = [];
+        wordsByVerseKey[vk].push(w);
       }
 
-      const verses = db.prepare(`
+      const rawVerses = db.prepare(`
         SELECT a.*, s.name_arabic as surah_name_arabic, s.name_urdu as surah_name_urdu
         FROM ayahs a
         JOIN surahs s ON a.surah_id = s.id
         WHERE a.page_madani = ?
         ORDER BY a.surah_id ASC, a.ayah_number ASC
       `).all(pageNumber);
+
+      const verses = rawVerses.map(v => ({
+        ...v,
+        words: wordsByVerseKey[`${v.surah_id}:${v.ayah_number}`] || []
+      }));
 
       return jsonResponse(res, {
         page_number: pageNumber,

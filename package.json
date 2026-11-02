@@ -1,6 +1,6 @@
 {
   "name": "al-wahyain",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "Al-Wahyain (الوحيين) — Quran & Islamic Study Station",
   "main": "index.js",
   "type": "module",

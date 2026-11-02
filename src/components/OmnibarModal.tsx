@@ -198,7 +198,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     {
       keywords: ['quran', 'قرآن', 'مصحف', 'تلاوت', '1'],
       title: 'قرآن و مصحف موڈ (1)',
-      subtitle: '۱۵ سطری خالص عثمانی مصحف',
+      subtitle: 'مسلسل خالص عثمانی مصحف (QCF V2)',
       icon: <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
       action: () => onChangeMode && onChangeMode('quran')
     },
@@ -239,17 +239,10 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     },
     {
       keywords: ['tajweed', 'تجوید', 'رنگ'],
-      title: 'تجوید کے قواعد کے رنگ آن / آف',
+      title: 'تجوید کے قواعد کے رنگ آن / آف (QCF V4 COLRv1)',
       subtitle: 'مخارج اور احکام تجوید کے رنگین حروف',
       icon: <Palette className="w-4 h-4 text-rose-500" />,
       action: () => onToggleTajweed && onToggleTajweed()
-    },
-    {
-      keywords: ['script', 'font', 'رسم', 'خط', 'مدنی', 'ہند پاک', 'نستعلیق', 'qcf'],
-      title: 'رسم الخط تبدیل کریں: مدنی (QCF) / ہند پاک',
-      subtitle: 'عثمانی رسم الخط یا ہند و پاک نستعلیق فونٹس',
-      icon: <BookOpen className="w-4 h-4 text-emerald-600" />,
-      action: () => onToggleScript && onToggleScript()
     },
     {
       keywords: ['sepia', 'سپیا', 'قدیم'],

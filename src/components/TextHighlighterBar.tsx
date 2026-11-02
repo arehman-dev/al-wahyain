@@ -17,8 +17,19 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    const findTafsirSlug = (node: Node | null, root: HTMLElement): string | undefined => {
+      let el: HTMLElement | null =
+        node instanceof HTMLElement ? node : node?.parentElement || null;
+      while (el && el !== root) {
+        if (el.dataset && el.dataset.tafsirSlug) {
+          return el.dataset.tafsirSlug;
+        }
+        el = el.parentElement;
+      }
+      return undefined;
+    };
+
     const handleMouseUp = () => {
-      // Small timeout so DOM selection finalizes
       setTimeout(() => {
         const selection = window.getSelection();
         if (!selection || selection.isCollapsed || !selection.toString().trim()) {
@@ -30,35 +41,42 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
         const text = selection.toString().trim();
         if (text.length < 2) {
           setPosition(null);
+          setSelectedText('');
           return;
         }
 
         if (containerRef.current) {
           const anchorNode = selection.anchorNode;
-          if (!anchorNode || !containerRef.current.contains(anchorNode)) {
+          const focusNode = selection.focusNode;
+          if (
+            !anchorNode ||
+            !focusNode ||
+            !containerRef.current.contains(anchorNode) ||
+            !containerRef.current.contains(focusNode)
+          ) {
             setPosition(null);
+            setSelectedText('');
             return;
           }
 
-          // Traverse upwards to find if user is inside a specific tafsir entry
-          let element: HTMLElement | null = anchorNode.parentElement;
-          let foundSlug: string | undefined = undefined;
-          while (element && element !== containerRef.current) {
-            if (element.dataset.tafsirSlug) {
-              foundSlug = element.dataset.tafsirSlug;
-              break;
-            }
-            element = element.parentElement;
+          // Strictly require selection to be inside a [data-tafsir-slug] commentary block
+          // Never pop up on Quran verse or translation header
+          const anchorSlug = findTafsirSlug(anchorNode, containerRef.current);
+          const focusSlug = findTafsirSlug(focusNode, containerRef.current);
+          if (!anchorSlug || !focusSlug || anchorSlug !== focusSlug) {
+            setPosition(null);
+            setSelectedText('');
+            return;
           }
-          setActiveSlug(foundSlug);
+
+          setActiveSlug(anchorSlug);
 
           try {
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
-            // Position tooltip centrally above the selected range
             setPosition({
-              x: Math.max(100, Math.min(window.innerWidth - 100, rect.left + rect.width / 2)),
-              y: Math.max(10, rect.top - 12)
+              x: Math.max(110, Math.min(window.innerWidth - 110, rect.left + rect.width / 2)),
+              y: Math.max(12, rect.top - 12)
             });
             setSelectedText(text);
           } catch {
@@ -81,7 +99,7 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
     };
   }, [containerRef]);
 
-  if (!position || !selectedText) return null;
+  if (!position || !selectedText || !activeSlug) return null;
 
   const handleColorClick = (color: HighlightColor) => {
     onAddHighlight(selectedText, color, activeSlug);
@@ -109,6 +127,7 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
 
   return (
     <div
+      dir="ltr"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -120,42 +139,35 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
         <Highlighter className="w-3.5 h-3.5 text-emerald-400" />
       </div>
 
-      {/* 4 Distinct Highlight Colors */}
-      <div className="flex items-center gap-1.5 px-1 border-x border-slate-700/80">
-        {/* Yellow / Amber */}
+      {/* Colors strictly from Left to Right: Yellow, Sky Blue, Light Green */}
+      <div dir="ltr" className="flex items-center gap-1.5 px-1.5 border-x border-slate-700/80">
+        {/* 1. Yellow */}
         <button
           onClick={() => handleColorClick('yellow')}
-          title="سنہری ہائی لائٹ (Yellow)"
-          className="w-5 h-5 rounded-full bg-amber-300 hover:scale-115 active:scale-95 transition-transform border border-amber-400 shadow-xs"
+          title="Yellow (زرد ہائی لائٹ)"
+          className="w-5 h-5 rounded-full bg-yellow-300 hover:scale-115 active:scale-95 transition-transform border border-yellow-400 shadow-xs cursor-pointer"
         />
 
-        {/* Green / Emerald */}
-        <button
-          onClick={() => handleColorClick('green')}
-          title="سبز ہائی لائٹ (Green)"
-          className="w-5 h-5 rounded-full bg-emerald-400 hover:scale-115 active:scale-95 transition-transform border border-emerald-500 shadow-xs"
-        />
-
-        {/* Blue / Sky */}
+        {/* 2. Sky Blue */}
         <button
           onClick={() => handleColorClick('blue')}
-          title="نیلا ہائی لائٹ (Blue)"
-          className="w-5 h-5 rounded-full bg-sky-400 hover:scale-115 active:scale-95 transition-transform border border-sky-500 shadow-xs"
+          title="Sky Blue (آسمانی نیلا ہائی لائٹ)"
+          className="w-5 h-5 rounded-full bg-sky-400 hover:scale-115 active:scale-95 transition-transform border border-sky-500 shadow-xs cursor-pointer"
         />
 
-        {/* Purple / Violet */}
+        {/* 3. Light Green */}
         <button
-          onClick={() => handleColorClick('purple')}
-          title="جامنی ہائی لائٹ (Purple)"
-          className="w-5 h-5 rounded-full bg-purple-400 hover:scale-115 active:scale-95 transition-transform border border-purple-500 shadow-xs"
+          onClick={() => handleColorClick('green')}
+          title="Light Green (ہلکا سبز ہائی لائٹ)"
+          className="w-5 h-5 rounded-full bg-emerald-300 hover:scale-115 active:scale-95 transition-transform border border-emerald-400 shadow-xs cursor-pointer"
         />
       </div>
 
       {/* Copy selection */}
       <button
         onClick={handleCopy}
-        title="منتخب متن کاپی کریں"
-        className="p-1 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition-colors"
+        title="منتخب تفسیری متن کاپی کریں"
+        className="p-1 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
       >
         {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
       </button>
@@ -164,7 +176,7 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
       <button
         onClick={handleDismiss}
         title="بند کریں"
-        className="p-1 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors"
+        className="p-1 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
       >
         <X className="w-3.5 h-3.5" />
       </button>

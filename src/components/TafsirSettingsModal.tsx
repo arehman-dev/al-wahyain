@@ -12,10 +12,11 @@ export const ALL_KNOWN_TAFASEER: TafsirMetadata[] = [
   { slug: 'tafheem', name: 'تفہیم القرآن', author: 'سید ابوالاعلیٰ مودودی' },
   { slug: 'maarif', name: 'معارف القرآن', author: 'مفتی محمد شفیع' },
   { slug: 'ibn_kathir', name: 'تفسیر ابن کثیر', author: 'علامہ ابن کثیر' },
+  { slug: 'saadi', name: 'تفسیر السعدی', author: 'شیخ عبدالرحمٰن بن ناصر السعدی' },
   { slug: 'tayseer', name: 'تیسیر القرآن', author: 'مولانا عبد الرحمن کیلانی' },
 ];
 
-export const DEFAULT_TAFSIR_ORDER = ['bayan_ul_quran', 'tafheem', 'maarif', 'ibn_kathir', 'tayseer'];
+export const DEFAULT_TAFSIR_ORDER = ['bayan_ul_quran', 'tafheem', 'maarif', 'ibn_kathir', 'saadi', 'tayseer'];
 
 interface TafsirSettingsModalProps {
   isOpen: boolean;
