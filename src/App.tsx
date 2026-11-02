@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
-import { SubHeaderToolbar } from './components/SubHeaderToolbar';
 import { BottomDock } from './components/BottomDock';
 import { MushafView } from './components/MushafView';
 import { MushafBookSpread } from './components/MushafBookSpread';
@@ -13,7 +12,7 @@ import { QuickPeekDrawer } from './components/QuickPeekDrawer';
 import { RootExplorerModal } from './components/RootExplorerModal';
 import { TajweedLegendModal } from './components/TajweedLegendModal';
 import { SourcesAttributionModal } from './components/SourcesAttributionModal';
-import { SearchModal } from './components/SearchModal';
+import { OmnibarModal } from './components/OmnibarModal';
 import { StudySuiteModal } from './components/StudySuiteModal';
 import { NoteEditorDrawer } from './components/NoteEditorDrawer';
 import { ExportShareModal } from './components/ExportShareModal';
@@ -489,33 +488,10 @@ export const App: React.FC = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/25 selection:text-emerald-950 dark:selection:bg-emerald-500/35 dark:selection:text-emerald-100 font-app">
       
       {/* ======================================================== */}
-      {/* 1. TOP BAR: Primary App Bar (Full Width, h-11 / 44px)   */}
+      {/* TOP BAR: Single Quiet Header (Al-Maktabah 2.0, h-11)     */}
       {/* ======================================================== */}
       {!isZenMode && (
         <Header
-          activeMode={activeMode}
-          onChangeMode={setActiveMode}
-          onOpenAttributions={() => setShowAttributions(true)}
-          onOpenSearch={() => setShowSearchModal(true)}
-          onOpenStudySuite={() => setShowStudySuiteModal(true)}
-          onOpenShortcuts={() => setShowShortcutsModal(true)}
-          isZenMode={isZenMode}
-          onToggleZenMode={() => setIsZenMode(prev => !prev)}
-          bookmarksCount={bookmarks.length}
-          darkMode={themeMode === 'dark' || themeMode === 'oled'}
-          onToggleDarkMode={() => setThemeMode(prev => prev === 'light' ? 'dark' : 'light')}
-          themeMode={themeMode}
-          onChangeThemeMode={setThemeMode}
-          overallReadingMode={overallReadingMode}
-          onChangeReadingMode={setOverallReadingMode}
-        />
-      )}
-
-      {/* ======================================================== */}
-      {/* 2. SUB-HEADER BAR: Navigation & Context Toolbar (h-10)   */}
-      {/* ======================================================== */}
-      {!isZenMode && (
-        <SubHeaderToolbar
           surahs={surahs}
           currentSurahId={currentSurahId}
           currentAyahNumber={currentAyahNumber}
@@ -524,18 +500,15 @@ export const App: React.FC = () => {
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
           activeMode={activeMode}
-          scriptMode={scriptMode}
-          onToggleScript={() => setScriptMode(prev => prev === 'madani' ? 'indopak' : 'madani')}
-          
-          // Mushaf page controls
+          onChangeMode={setActiveMode}
           activePage={activeMushafPage}
           onPrevPage={() => setActiveMushafPage(p => Math.max(1, overallReadingMode === 'book' ? p - 2 : p - 1))}
           onNextPage={() => setActiveMushafPage(p => Math.min(604, overallReadingMode === 'book' ? p + 2 : p + 1))}
           onPageSelect={setActiveMushafPage}
           showTajweed={showTajweed}
           onToggleTajweed={() => setShowTajweed(prev => !prev)}
-
-          // Translation controls
+          overallReadingMode={overallReadingMode}
+          onChangeReadingMode={setOverallReadingMode}
           showWordByWord={showWordByWord}
           onToggleWordByWord={() => setShowWordByWord(prev => !prev)}
           selectedTranslationAuthor={selectedTranslationAuthor}
@@ -557,17 +530,20 @@ export const App: React.FC = () => {
             setWbwLanguage(lang);
             localStorage.setItem('qs_wbw_lang', lang);
           }}
-
-          // Tafsir controls
           onOpenTafsirSettings={() => setShowTafsirSettingsModal(true)}
           fontSize={fontSize}
           onFontSizeChange={setFontSize}
-          onExpandAllTafasir={handleExpandAll}
-          onCollapseAllTafasir={handleCollapseAll}
           tafsirLayoutMode={tafsirLayoutMode}
           onSelectTafsirLayoutMode={setTafsirLayoutMode}
-          overallReadingMode={overallReadingMode}
-          onSelectOverallReadingMode={setOverallReadingMode}
+          onOpenSearch={() => setShowSearchModal(true)}
+          onOpenStudySuite={() => setShowStudySuiteModal(true)}
+          onOpenShortcuts={() => setShowShortcutsModal(true)}
+          onOpenAttributions={() => setShowAttributions(true)}
+          isZenMode={isZenMode}
+          onToggleZenMode={() => setIsZenMode(prev => !prev)}
+          bookmarksCount={bookmarks.length}
+          themeMode={themeMode}
+          onChangeThemeMode={setThemeMode}
         />
       )}
 
@@ -874,15 +850,21 @@ export const App: React.FC = () => {
         onClose={() => setShowAttributions(false)}
       />
 
-      {/* Global Search Modal */}
-      <SearchModal
+      {/* Global Omnibar Command Palette */}
+      <OmnibarModal
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
-        onSelectResult={(surahId, ayahNumber) => {
-          setCurrentSurahId(surahId);
-          setCurrentAyahNumber(ayahNumber);
-          setShowSearchModal(false);
+        surahs={surahs}
+        onSelectSurahAyah={(surahId, ayahNumber) => {
+          handleSelectSurah(surahId);
+          handleSelectAyah(ayahNumber);
         }}
+        onSelectPage={(page) => setActiveMushafPage(page)}
+        onChangeMode={(mode) => setActiveMode(mode)}
+        onChangeTheme={(theme) => setThemeMode(theme)}
+        onToggleZenMode={() => setIsZenMode(prev => !prev)}
+        onToggleTajweed={() => setShowTajweed(prev => !prev)}
+        onSelectReadingMode={(mode) => setOverallReadingMode(mode)}
       />
 
       {/* Study Suite & Bookmarks Drawer */}
