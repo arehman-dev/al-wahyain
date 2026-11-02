@@ -35,6 +35,7 @@ interface OmnibarModalProps {
   onChangeTheme?: (theme: ReadingTheme) => void;
   onToggleZenMode?: () => void;
   onToggleTajweed?: () => void;
+  onToggleScript?: () => void;
   onSelectReadingMode?: (mode: OverallReadingMode) => void;
 }
 
@@ -58,6 +59,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
   onChangeTheme,
   onToggleZenMode,
   onToggleTajweed,
+  onToggleScript,
   onSelectReadingMode
 }) => {
   const [query, setQuery] = useState('');
@@ -243,6 +245,13 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       action: () => onToggleTajweed && onToggleTajweed()
     },
     {
+      keywords: ['script', 'font', 'رسم', 'خط', 'مدنی', 'ہند پاک', 'نستعلیق', 'qcf'],
+      title: 'رسم الخط تبدیل کریں: مدنی (QCF) / ہند پاک',
+      subtitle: 'عثمانی رسم الخط یا ہند و پاک نستعلیق فونٹس',
+      icon: <BookOpen className="w-4 h-4 text-emerald-600" />,
+      action: () => onToggleScript && onToggleScript()
+    },
+    {
       keywords: ['sepia', 'سپیا', 'قدیم'],
       title: 'قدیم اوراق تھیم (Sepia)',
       subtitle: 'روایتی کاغذ کی گرم رنگت آنکھوں کی راحت کیلئے',
@@ -320,7 +329,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       id: `quran-${qr.surah_id}-${qr.ayah_number}`,
       type: 'quran',
       title: qr.text_uthmani,
-      subtitle: `سورة ${qr.surah_name_arabic} [${qr.surah_id}:${qr.ayah_number}] • ${qr.translation_ur || ''}`,
+      subtitle: `سورة ${qr.surah_name_arabic} [${qr.surah_id}:${qr.ayah_number}] • ${qr.translation_text || ''}`,
       icon: <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
       badge: `${qr.surah_id}:${qr.ayah_number}`,
       execute: () => {
@@ -333,14 +342,14 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
   // 7. Tafsir Search Results
   tafsirResults.forEach(tr => {
     actions.push({
-      id: `tafsir-${tr.surah_id}-${tr.ayah_number}-${tr.author_id}`,
+      id: `tafsir-${tr.surah_id}-${tr.ayah_from}-${tr.tafsir_slug}`,
       type: 'tafsir',
-      title: `${tr.author_name} — سورة ${tr.surah_name} [${tr.surah_id}:${tr.ayah_number}]`,
-      subtitle: tr.text_snippet,
+      title: `${tr.author_name} — سورة ${tr.surah_name_urdu} [${tr.surah_id}:${tr.ayah_from}]`,
+      subtitle: tr.snippet,
       icon: <Library className="w-4 h-4 text-indigo-500" />,
       badge: 'تفسیر',
       execute: () => {
-        onSelectSurahAyah(tr.surah_id, tr.ayah_number);
+        onSelectSurahAyah(tr.surah_id, tr.ayah_from);
         if (onChangeMode) onChangeMode('tafseer');
         onClose();
       }

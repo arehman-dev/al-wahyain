@@ -8,7 +8,9 @@ import {
   Bookmark, 
   FileText, 
   Share2,
-  BookOpen
+  BookOpen,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { Ayah, TafsirEntry, ScriptMode, TafsirHighlight, HighlightColor, TafsirLayoutMode } from '../types/quran';
 import { InteractiveWord } from './WordTooltip';
@@ -16,6 +18,7 @@ import { TextHighlighterBar } from './TextHighlighterBar';
 import { enhanceTafsirHtml } from '../utils/tafsirCrossReference';
 import { applyHighlightsToHtml } from '../utils/highlighterHelper';
 import { toArabicDigits } from '../utils/juzMapping';
+import { loadQcfPageFont, getQcfFontFamily } from '../utils/qcfFontLoader';
 
 interface TafsirViewProps {
   currentAyah: Ayah;
@@ -76,6 +79,13 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentAyah.surah_id, currentAyah.ayah_number]);
+
+  // Preload King Fahd Complex QCF page font for active verse
+  useEffect(() => {
+    if (scriptMode === 'madani' && currentAyah.page_madani) {
+      loadQcfPageFont(currentAyah.page_madani);
+    }
+  }, [currentAyah.page_madani, scriptMode]);
 
   const urduTranslation = currentAyah.translations?.find(t => t.author_id === 'taqi_usmani') || currentAyah.translations?.[0];
 
@@ -297,7 +307,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
         </div>
 
         {/* Majestic Matn Verse Script */}
-        <div className="tajweed-text text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.8] my-3 text-slate-900 dark:text-white font-uthmani select-text">
+        <div className={`tajweed-text text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.8] my-3 text-slate-900 dark:text-white select-text ${scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'}`}>
           {currentAyah.words && currentAyah.words.length > 0 ? (
             currentAyah.words.map((w, wIdx) => (
               <InteractiveWord
@@ -305,12 +315,22 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                 word={w}
                 scriptMode={scriptMode}
                 onSelectRoot={onSelectWordRoot}
+                useQcf={scriptMode === 'madani'}
               />
             ))
           ) : (
-            <span>{currentAyah.text_uthmani}</span>
+            <span>{scriptMode === 'indopak' ? (currentAyah.text_indopak || currentAyah.text_uthmani) : currentAyah.text_uthmani}</span>
           )}
-          <span className="ayah-end-num select-none mr-2">﴿{toArabicDigits(currentAyah.ayah_number)}﴾</span>
+          {scriptMode === 'madani' && currentAyah.end_code_v2 ? (
+            <span 
+              className="ayah-end-num select-none mr-2 font-qcf inline-block align-middle"
+              style={{ fontFamily: getQcfFontFamily(currentAyah.page_madani) }}
+            >
+              {currentAyah.end_code_v2}
+            </span>
+          ) : (
+            <span className="ayah-end-num select-none mr-2">﴿{toArabicDigits(currentAyah.ayah_number)}﴾</span>
+          )}
         </div>
 
         {/* Flowing Translation */}
@@ -334,6 +354,57 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
           <BookOpen className="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
           <p className="font-bold">اس آیت کے لیے فی الحال کوئی تفسیر منتخب نہیں ہے</p>
           <p className="text-xs">سب ہیڈر بار میں &quot;ترتیب و انتخابِ تفاسیر&quot; سے تفاسیر کو فعال کریں۔</p>
+        </div>
+      ) : tafsirLayoutMode === 'stacked' ? (
+        /* Stacked Editorial List (All Tafasir with Expand/Collapse Controls) */
+        <div className="space-y-6">
+          {displayTafasir.map((entry) => {
+            const isExpanded = expandedTafasir[entry.tafsir_slug] !== false;
+            return (
+              <div 
+                key={`stacked-${entry.tafsir_slug}`} 
+                className="pb-6 border-b border-emerald-950/8 dark:border-white/5 space-y-3"
+              >
+                {/* Author & Tafsir Header */}
+                <div 
+                  onClick={() => onToggleTafsir(entry.tafsir_slug)}
+                  className="flex items-center justify-between cursor-pointer py-1.5 px-2 rounded-xl hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors select-none"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-5 h-5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center">
+                      {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </div>
+                    <span className="font-bold text-sm text-slate-800 dark:text-slate-100 font-ibm">
+                      {entry.tafsir_name}
+                    </span>
+                    <span className="text-xs text-slate-400 font-ibm">
+                      — {entry.author_name}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-slate-400 font-ibm">
+                    <span className="hidden sm:inline text-[11px]">
+                      {isExpanded ? 'سمیٹیں' : 'پڑھیں'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Commentary Body */}
+                {isExpanded ? (
+                  <div className="pr-2 sm:pr-4">
+                    {renderEditorialCommentary(entry)}
+                  </div>
+                ) : (
+                  <p 
+                    onClick={() => onToggleTafsir(entry.tafsir_slug)}
+                    className="text-xs text-slate-400 dark:text-slate-500 font-ibm pr-7 cursor-pointer hover:text-emerald-600 transition-colors line-clamp-1 italic"
+                  >
+                    {entry.content_html.replace(/<[^>]*>/g, '').slice(0, 120)}... (پڑھنے کے لیے کلک کریں)
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       ) : tafsirLayoutMode === 'split' ? (
         /* Side-by-Side Comparative Mode (Dual Parallel Columns) */

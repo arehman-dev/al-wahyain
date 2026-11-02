@@ -247,6 +247,15 @@ tajweed.qalqalah {
   text-rendering: optimizeLegibility;
 }
 
+.font-arabic {
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'QPC V2', 'Amiri Quran', 'Amiri', serif;
+}
+
+.font-urdu {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'IBM Plex Sans Arabic', serif;
+  line-height: 2.0;
+}
+
 .tafsir-prose {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   line-height: 2.2;

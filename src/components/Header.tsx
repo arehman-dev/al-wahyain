@@ -28,9 +28,11 @@ import {
   ToggleLeft, 
   ToggleRight, 
   Columns2, 
-  Rows3 
+  Rows3,
+  ChevronsDown,
+  ChevronsUp
 } from 'lucide-react';
-import { Surah, AppMode, ReadingTheme, TafsirLayoutMode, OverallReadingMode } from '../types/quran';
+import { Surah, AppMode, ReadingTheme, TafsirLayoutMode, OverallReadingMode, ScriptMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
 
 interface HeaderProps {
@@ -46,6 +48,8 @@ interface HeaderProps {
   // Workspace Mode
   activeMode: AppMode;
   onChangeMode: (mode: AppMode) => void;
+  scriptMode?: ScriptMode;
+  onToggleScript?: () => void;
 
   // Quran / Mushaf specific
   activePage?: number;
@@ -73,6 +77,8 @@ interface HeaderProps {
   onFontSizeChange?: (size: number) => void;
   tafsirLayoutMode?: TafsirLayoutMode;
   onSelectTafsirLayoutMode?: (mode: TafsirLayoutMode) => void;
+  onExpandAllTafasir?: () => void;
+  onCollapseAllTafasir?: () => void;
 
   // Global Utilities
   onOpenSearch: () => void;
@@ -96,6 +102,8 @@ export const Header: React.FC<HeaderProps> = ({
   onNextAyah,
   activeMode,
   onChangeMode,
+  scriptMode = 'madani',
+  onToggleScript,
   activePage = 1,
   onPrevPage,
   onNextPage,
@@ -117,6 +125,8 @@ export const Header: React.FC<HeaderProps> = ({
   onFontSizeChange,
   tafsirLayoutMode = 'stacked',
   onSelectTafsirLayoutMode,
+  onExpandAllTafasir,
+  onCollapseAllTafasir,
   onOpenSearch,
   onOpenStudySuite,
   onOpenShortcuts,
@@ -466,14 +476,14 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Mode Context Controls: Translation Mode */}
           {activeMode === 'translation' && (
-            <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
               {/* Primary Translation Author Dropdown */}
               {onSelectTranslationAuthor && (
                 <select
                   value={selectedTranslationAuthor}
                   onChange={(e) => onSelectTranslationAuthor(e.target.value)}
-                  className="h-7 text-xs bg-slate-100 dark:bg-slate-800/80 rounded-lg px-2 text-slate-800 dark:text-slate-100 outline-none font-semibold cursor-pointer max-w-[130px] truncate"
-                  title="مترجم کا انتخاب"
+                  className="h-7 text-xs bg-slate-100 dark:bg-slate-800/80 rounded-lg px-2 text-slate-800 dark:text-slate-100 outline-none font-semibold cursor-pointer max-w-[125px] truncate"
+                  title="بنیادی ترجمہ"
                 >
                   <optgroup label="اردو تراجم" className="dark:bg-slate-900">
                     <option value="taqi_usmani">مفتی تقی عثمانی</option>
@@ -487,6 +497,29 @@ export const Header: React.FC<HeaderProps> = ({
                     <option value="sahih_intl">Saheeh Intl (EN)</option>
                     <option value="taqi_usmani_en">Taqi Usmani (EN)</option>
                     <option value="abdel_haleem">Abdel Haleem (EN)</option>
+                  </optgroup>
+                </select>
+              )}
+
+              {/* Secondary Translation Author Dropdown */}
+              {onSelectSecondaryTranslationAuthor && (
+                <select
+                  value={secondaryTranslationAuthor || 'none'}
+                  onChange={(e) => onSelectSecondaryTranslationAuthor(e.target.value === 'none' ? null : e.target.value)}
+                  className="hidden md:inline-block h-7 text-xs bg-slate-100 dark:bg-slate-800/80 rounded-lg px-1.5 text-slate-600 dark:text-slate-400 outline-none cursor-pointer max-w-[110px] truncate"
+                  title="ثانوی ترجمہ"
+                >
+                  <option value="none" className="dark:bg-slate-900">ثانوی: بند</option>
+                  <optgroup label="English Secondary" className="dark:bg-slate-900">
+                    <option value="sahih_intl">+ Saheeh Intl</option>
+                    <option value="taqi_usmani_en">+ Taqi Usmani</option>
+                    <option value="abdel_haleem">+ Abdel Haleem</option>
+                  </optgroup>
+                  <optgroup label="اردو ثانوی" className="dark:bg-slate-900">
+                    <option value="taqi_usmani">+ تقی عثمانی</option>
+                    <option value="maududi">+ مودودی</option>
+                    <option value="junagarhi">+ جوناگڑھی</option>
+                    <option value="israr_ahmad">+ اسرار احمد</option>
                   </optgroup>
                 </select>
               )}
@@ -506,18 +539,33 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="hidden lg:inline">لفظی ترجمہ</span>
                 </button>
               )}
+
+              {/* WBW Language Selector */}
+              {showWordByWord && onSelectWbwLanguage && (
+                <select
+                  value={wbwLanguage}
+                  onChange={(e) => onSelectWbwLanguage(e.target.value as any)}
+                  className="hidden xl:inline-block h-7 text-[11px] bg-emerald-100/70 dark:bg-emerald-950/70 rounded-lg px-1.5 text-emerald-900 dark:text-emerald-200 outline-none font-semibold cursor-pointer"
+                  title="لفظی معانی زبان"
+                >
+                  <option value="both" className="dark:bg-slate-900">اردو + EN</option>
+                  <option value="ur" className="dark:bg-slate-900">اردو (نذر احمد)</option>
+                  <option value="ur2" className="dark:bg-slate-900">اردو (توسیعی)</option>
+                  <option value="en" className="dark:bg-slate-900">English</option>
+                </select>
+              )}
             </div>
           )}
 
           {/* Mode Context Controls: Tafsir Mode */}
           {(activeMode === 'tafseer' || activeMode === 'tafsir') && (
             <div className="flex items-center gap-1 sm:gap-1.5">
-              {/* Tafsir Layout Switcher */}
+              {/* Tafsir 3-Way Layout Switcher (Focus, Stacked List, Comparative Split) */}
               {onSelectTafsirLayoutMode && (
                 <div className="flex items-center bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg">
                   <button
                     onClick={() => onSelectTafsirLayoutMode('focus')}
-                    title="مطالعہ فوکس ریڈر (Single Focus)"
+                    title="مطالعہ فوکس ریڈر (Single Focus Reader)"
                     className={`px-1.5 py-1 rounded text-[11px] font-semibold transition-all ${
                       tafsirLayoutMode === 'focus'
                         ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
@@ -527,8 +575,19 @@ export const Header: React.FC<HeaderProps> = ({
                     فوکس
                   </button>
                   <button
+                    onClick={() => onSelectTafsirLayoutMode('stacked')}
+                    title="تمام تفاسیر کی فہرست (Stacked All Tafasir List)"
+                    className={`px-1.5 py-1 rounded text-[11px] font-semibold transition-all ${
+                      tafsirLayoutMode === 'stacked'
+                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'
+                    }`}
+                  >
+                    فہرست
+                  </button>
+                  <button
                     onClick={() => onSelectTafsirLayoutMode('split')}
-                    title="دو رخی تقابلی اسپلٹ (Comparative)"
+                    title="دو رخی تقابلی اسپلٹ (Comparative Dual Columns)"
                     className={`px-1.5 py-1 rounded text-[11px] font-semibold transition-all ${
                       tafsirLayoutMode === 'split'
                         ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-2xs'
@@ -536,6 +595,28 @@ export const Header: React.FC<HeaderProps> = ({
                     }`}
                   >
                     اسپلٹ
+                  </button>
+                </div>
+              )}
+
+              {/* Expand / Collapse All Controls (In Stacked List Mode) */}
+              {tafsirLayoutMode === 'stacked' && onExpandAllTafasir && onCollapseAllTafasir && (
+                <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg">
+                  <button
+                    onClick={onExpandAllTafasir}
+                    title="تمام تفاسیر پھیلائیں (Expand All)"
+                    className="flex items-center gap-0.5 px-1.5 py-1 rounded text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-900 transition-all"
+                  >
+                    <ChevronsDown className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="hidden md:inline">پھیلائیں</span>
+                  </button>
+                  <button
+                    onClick={onCollapseAllTafasir}
+                    title="تمام تفاسیر سمیٹیں (Collapse All)"
+                    className="flex items-center gap-0.5 px-1.5 py-1 rounded text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-900 transition-all"
+                  >
+                    <ChevronsUp className="w-3.5 h-3.5 text-slate-500" />
+                    <span className="hidden md:inline">سمیٹیں</span>
                   </button>
                 </div>
               )}
@@ -572,6 +653,20 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               )}
             </div>
+          )}
+
+          {/* Script Mode Toggle Button (Madani QCF vs Indo-Pak Nastaliq) */}
+          {onToggleScript && (
+            <button
+              onClick={onToggleScript}
+              title="رسم الخط تبدیل کریں: مدنی عثمانی (QCF) / ہند پاک (Nastaliq)"
+              className="flex items-center gap-1 h-7 px-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
+            >
+              <span className="text-slate-400 text-[10px] hidden sm:inline">خط:</span>
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                {scriptMode === 'madani' ? 'مدنی (QCF)' : 'ہند پاک'}
+              </span>
+            </button>
           )}
 
           {/* Divider */}

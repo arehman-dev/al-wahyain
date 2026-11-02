@@ -501,6 +501,8 @@ export const App: React.FC = () => {
           onNextAyah={handleNextAyah}
           activeMode={activeMode}
           onChangeMode={setActiveMode}
+          scriptMode={scriptMode}
+          onToggleScript={() => setScriptMode(prev => prev === 'madani' ? 'indopak' : 'madani')}
           activePage={activeMushafPage}
           onPrevPage={() => setActiveMushafPage(p => Math.max(1, overallReadingMode === 'book' ? p - 2 : p - 1))}
           onNextPage={() => setActiveMushafPage(p => Math.min(604, overallReadingMode === 'book' ? p + 2 : p + 1))}
@@ -535,6 +537,8 @@ export const App: React.FC = () => {
           onFontSizeChange={setFontSize}
           tafsirLayoutMode={tafsirLayoutMode}
           onSelectTafsirLayoutMode={setTafsirLayoutMode}
+          onExpandAllTafasir={handleExpandAll}
+          onCollapseAllTafasir={handleCollapseAll}
           onOpenSearch={() => setShowSearchModal(true)}
           onOpenStudySuite={() => setShowStudySuiteModal(true)}
           onOpenShortcuts={() => setShowShortcutsModal(true)}
@@ -831,7 +835,7 @@ export const App: React.FC = () => {
       <RootExplorerModal
         root={selectedRoot}
         onClose={() => setSelectedRoot(null)}
-        onNavigateVerse={(surahId, ayahNumber) => {
+        onJumpToAyah={(surahId: number, ayahNumber: number) => {
           setCurrentSurahId(surahId);
           setCurrentAyahNumber(ayahNumber);
           setSelectedRoot(null);
@@ -864,6 +868,7 @@ export const App: React.FC = () => {
         onChangeTheme={(theme) => setThemeMode(theme)}
         onToggleZenMode={() => setIsZenMode(prev => !prev)}
         onToggleTajweed={() => setShowTajweed(prev => !prev)}
+        onToggleScript={() => setScriptMode(prev => prev === 'madani' ? 'indopak' : 'madani')}
         onSelectReadingMode={(mode) => setOverallReadingMode(mode)}
       />
 
@@ -871,21 +876,10 @@ export const App: React.FC = () => {
       <StudySuiteModal
         isOpen={showStudySuiteModal}
         onClose={() => setShowStudySuiteModal(false)}
-        bookmarks={bookmarks}
-        notes={notes}
-        highlights={highlights}
-        onNavigateVerse={(sId, aNum) => {
+        onJumpToAyah={(sId: number, aNum: number) => {
           setCurrentSurahId(sId);
           setCurrentAyahNumber(aNum);
           setShowStudySuiteModal(false);
-        }}
-        onDeleteBookmark={async (sId, aNum) => {
-          await removeBookmark(sId, aNum);
-          reloadStudyData();
-        }}
-        onDeleteHighlight={async (id) => {
-          await deleteHighlight(id);
-          reloadStudyData();
         }}
       />
 
@@ -894,8 +888,7 @@ export const App: React.FC = () => {
         <NoteEditorDrawer
           isOpen={showNoteDrawer}
           onClose={() => setShowNoteDrawer(false)}
-          currentAyah={currentAyah}
-          existingNote={notes.find(n => n.surah_id === currentSurahId && n.ayah_number === currentAyahNumber)}
+          ayah={currentAyah}
           onNoteSaved={reloadStudyData}
         />
       )}
@@ -906,7 +899,6 @@ export const App: React.FC = () => {
           isOpen={showExportModal}
           onClose={() => setShowExportModal(false)}
           ayah={currentAyah}
-          surahName={currentSurah?.name_arabic || ''}
           tafasir={tafasir}
         />
       )}

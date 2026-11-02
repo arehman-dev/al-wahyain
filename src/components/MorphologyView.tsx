@@ -3,6 +3,7 @@ import { Play, Pause, Sparkles, BookOpen, Layers, ArrowLeft, ArrowRight } from '
 import { Ayah, Word, ScriptMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
 import { MorphologyGraph } from './MorphologyGraph';
+import { loadQcfPageFont, getQcfFontFamily } from '../utils/qcfFontLoader';
 
 interface MorphologyViewProps {
   currentAyah: Ayah;
@@ -42,6 +43,13 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentAyah.id, currentAyah.surah_id, currentAyah.ayah_number]);
+
+  // Preload King Fahd Complex QCF page font for active verse
+  useEffect(() => {
+    if (scriptMode === 'madani' && currentAyah.page_madani) {
+      loadQcfPageFont(currentAyah.page_madani);
+    }
+  }, [currentAyah.page_madani, scriptMode]);
 
   const urduTranslation = currentAyah.translations?.find(t => t.author_id === 'taqi_usmani') || currentAyah.translations?.[0];
 
@@ -101,17 +109,27 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
           </div>
         </div>
 
-        {/* Full Ayah Arabic Text with Clickable Interactive Words */}
-        <div className="text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.8] my-3 font-uthmani text-slate-900 dark:text-white">
+        {/* Full Ayah Arabic Text with Clickable Interactive Words (QCF V2 / Madani / Indo-Pak) */}
+        <div className={`text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.8] my-3 text-slate-900 dark:text-white ${scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'}`}>
           {currentAyah.words?.map((w, wIdx) => {
             const isWordActive = isPlaying && activePlayingWordIndex === wIdx;
             const isWordSelected = selectedWord?.id === w.id;
+            const isIndoPak = scriptMode === 'indopak';
+            const hasQcf = !isIndoPak && !!w.code_v2 && !!w.page_number;
+            const displayText = isIndoPak 
+              ? (w.text_indopak || w.text_uthmani) 
+              : hasQcf 
+              ? w.code_v2 
+              : w.text_uthmani;
+            const fontStyle = hasQcf ? { fontFamily: getQcfFontFamily(w.page_number) } : undefined;
+            const fontClass = isIndoPak ? 'font-indopak' : hasQcf ? 'font-qcf' : 'font-uthmani';
 
             return (
               <span
                 key={w.id}
                 onClick={() => setSelectedWord(w)}
-                className={`inline-block mx-1 px-2 py-0.5 rounded-lg cursor-pointer transition-all ${
+                style={fontStyle}
+                className={`inline-block mx-1 px-2 py-0.5 rounded-lg cursor-pointer transition-all ${fontClass} ${
                   isWordSelected
                     ? 'bg-emerald-700 text-white shadow-xs font-bold scale-105'
                     : isWordActive
@@ -119,11 +137,20 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
                     : 'hover:bg-emerald-500/15 dark:hover:bg-emerald-400/15'
                 }`}
               >
-                {scriptMode === 'indopak' ? (w.text_indopak || w.text_uthmani) : w.text_uthmani}
+                {displayText}
               </span>
             );
           })}
-          <span className="ayah-end-num select-none mr-2">﴿{toArabicDigits(currentAyah.ayah_number)}﴾</span>
+          {scriptMode === 'madani' && currentAyah.end_code_v2 ? (
+            <span 
+              className="ayah-end-num select-none mr-2 font-qcf inline-block align-middle"
+              style={{ fontFamily: getQcfFontFamily(currentAyah.page_madani) }}
+            >
+              {currentAyah.end_code_v2}
+            </span>
+          ) : (
+            <span className="ayah-end-num select-none mr-2">﴿{toArabicDigits(currentAyah.ayah_number)}﴾</span>
+          )}
         </div>
 
         {/* Translation */}
@@ -147,7 +174,7 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
           <div className="flex items-center justify-between pb-2 border-b border-emerald-950/8 dark:border-white/5 text-xs select-none">
             <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <Layers className="w-4 h-4 text-emerald-600" />
-              <span>تجزیہ برائے لفظ: <span className="font-uthmani text-base text-emerald-800 dark:text-emerald-300">«{selectedWord.text_uthmani}»</span></span>
+              <span>تجزیہ برائے لفظ: <span className={`${scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'} text-base text-emerald-800 dark:text-emerald-300`}>«{scriptMode === 'indopak' ? (selectedWord.text_indopak || selectedWord.text_uthmani) : selectedWord.text_uthmani}»</span></span>
             </h3>
             <span className="text-slate-400 font-mono text-[11px]">
               مقام: {selectedWord.location}
@@ -160,9 +187,22 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
             {/* Pillar 1: Word & Meaning */}
             <div className="space-y-1.5 pb-3 border-b md:border-b-0 md:border-l border-emerald-950/8 dark:border-white/5 md:pl-4">
               <span className="text-xs font-semibold text-slate-400 block">اللفظ والترجمة</span>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white font-uthmani">
-                {selectedWord.text_uthmani}
-              </div>
+              {(() => {
+                const isSelIndoPak = scriptMode === 'indopak';
+                const hasSelQcf = !isSelIndoPak && !!selectedWord.code_v2 && !!selectedWord.page_number;
+                const selDisplayText = isSelIndoPak ? (selectedWord.text_indopak || selectedWord.text_uthmani) : hasSelQcf ? selectedWord.code_v2 : selectedWord.text_uthmani;
+                const selFontStyle = hasSelQcf ? { fontFamily: getQcfFontFamily(selectedWord.page_number) } : undefined;
+                const selFontClass = isSelIndoPak ? 'font-indopak' : hasSelQcf ? 'font-qcf' : 'font-uthmani';
+
+                return (
+                  <div 
+                    className={`text-3xl font-bold text-slate-900 dark:text-white ${selFontClass}`}
+                    style={selFontStyle}
+                  >
+                    {selDisplayText}
+                  </div>
+                );
+              })()}
               <div className="text-sm font-bold text-emerald-800 dark:text-emerald-400 leading-snug">
                 {selectedWord.translation_ur || '—'}
               </div>

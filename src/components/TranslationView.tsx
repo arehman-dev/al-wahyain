@@ -4,6 +4,7 @@ import { Ayah, Surah, ScriptMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
 import { RUKU_END_AYAHS, QUARTER_AYAHS, SAJDAH_AYAHS } from '../utils/mushafLayout';
 import { InteractiveWord } from './WordTooltip';
+import { loadQcfPageFont, getQcfFontFamily } from '../utils/qcfFontLoader';
 
 interface TranslationViewProps {
   ayahs: Ayah[];
@@ -72,6 +73,22 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
 
     return () => clearTimeout(timer);
   }, [currentAyahNumber, currentSurah?.id]);
+
+  // Preload King Fahd Complex QCF page fonts for all visible verses
+  useEffect(() => {
+    if (scriptMode === 'madani') {
+      const pageSet = new Set<number>();
+      ayahs.forEach(a => {
+        if (a.page_madani) pageSet.add(a.page_madani);
+        if (a.words) {
+          a.words.forEach(w => {
+            if (w.page_number) pageSet.add(w.page_number);
+          });
+        }
+      });
+      pageSet.forEach(p => loadQcfPageFont(p));
+    }
+  }, [ayahs, scriptMode]);
 
   return (
     <div dir="rtl" className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
@@ -176,8 +193,8 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const transText = primaryTranslation?.translation_text || '';
-                      const fullCopy = `${ayah.text_madani || ayah.text_uthmani}\n\n${transText}\n\n[سورة ${currentSurah?.name_arabic || ''} : ${ayah.ayah_number}]`;
+                      const transText = activeTr?.text || '';
+                      const fullCopy = `${ayah.text_uthmani}\n\n${transText}\n\n[سورة ${currentSurah?.name_arabic || ''} : ${ayah.ayah_number}]`;
                       navigator.clipboard.writeText(fullCopy);
                       setCopiedAyahId(ayah.ayah_number);
                       setTimeout(() => setCopiedAyahId(null), 1800);
@@ -232,6 +249,16 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                 <div className="flex flex-wrap items-baseline gap-x-3.5 sm:gap-x-5 gap-y-4 my-3 text-right select-text" dir="rtl">
                   {ayah.words.map((w, wIdx) => {
                     const isWordActive = isAyahPlaying && activePlayingWordIndex === wIdx;
+                    const isIndoPak = scriptMode === 'indopak';
+                    const hasQcf = !isIndoPak && !!w.code_v2 && !!w.page_number;
+                    const displayText = isIndoPak 
+                      ? (w.text_indopak || w.text_uthmani) 
+                      : hasQcf 
+                      ? w.code_v2 
+                      : w.text_uthmani;
+                    const fontStyle = hasQcf ? { fontFamily: getQcfFontFamily(w.page_number) } : undefined;
+                    const fontClass = isIndoPak ? 'font-indopak' : hasQcf ? 'font-qcf' : 'font-uthmani';
+
                     return (
                       <div
                         key={w.id}
@@ -246,10 +273,13 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                         }`}
                       >
                         {/* Arabic Token */}
-                        <span className={`text-2xl sm:text-[27px] font-uthmani leading-normal transition-colors ${
-                          isWordActive ? 'text-slate-950 font-bold' : 'text-slate-900 dark:text-slate-100'
-                        }`}>
-                          {scriptMode === 'indopak' ? (w.text_indopak || w.text_uthmani) : w.text_uthmani}
+                        <span 
+                          className={`text-2xl sm:text-[27px] leading-normal transition-colors ${fontClass} ${
+                            isWordActive ? 'text-slate-950 font-bold' : 'text-slate-900 dark:text-slate-100'
+                          }`}
+                          style={fontStyle}
+                        >
+                          {displayText}
                         </span>
 
                         {/* Interlinear Muted Meanings Stack */}
@@ -269,14 +299,23 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                     );
                   })}
 
-                  {/* Classical Ayah End Medallion */}
-                  <span className="ayah-end-num inline-flex items-center text-2xl text-emerald-800 dark:text-emerald-400 select-none align-middle mr-1">
-                    ﴿{toArabicDigits(ayah.ayah_number)}﴾
-                  </span>
+                  {/* Classical Ayah End Medallion (QCF V2 Glyph or Numbered Circle) */}
+                  {scriptMode === 'madani' && ayah.end_code_v2 ? (
+                    <span 
+                      className="ayah-end-num inline-flex items-center text-2xl text-emerald-800 dark:text-emerald-400 select-none align-middle mr-1 font-qcf"
+                      style={{ fontFamily: getQcfFontFamily(ayah.page_madani) }}
+                    >
+                      {ayah.end_code_v2}
+                    </span>
+                  ) : (
+                    <span className="ayah-end-num inline-flex items-center text-2xl text-emerald-800 dark:text-emerald-400 select-none align-middle mr-1">
+                      ﴿{toArabicDigits(ayah.ayah_number)}﴾
+                    </span>
+                  )}
                 </div>
               ) : (
                 /* Continuous Majestic Flow (When Word-by-Word is Off) */
-                <div className="text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.8] my-3 text-slate-900 dark:text-slate-100 font-uthmani select-text">
+                <div className={`text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.8] my-3 text-slate-900 dark:text-slate-100 select-text ${scriptMode === 'indopak' ? 'font-indopak' : 'font-uthmani'}`}>
                   {ayah.words && ayah.words.length > 0 ? (
                     ayah.words.map((w, wIdx) => {
                       const isWordActive = isAyahPlaying && activePlayingWordIndex === wIdx;
@@ -287,13 +326,23 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                           scriptMode={scriptMode}
                           onSelectRoot={onSelectWordRoot}
                           isActive={isWordActive}
+                          useQcf={scriptMode === 'madani'}
                         />
                       );
                     })
                   ) : (
-                    <span>{ayah.text_uthmani}</span>
+                    <span>{scriptMode === 'indopak' ? (ayah.text_indopak || ayah.text_uthmani) : ayah.text_uthmani}</span>
                   )}
-                  <span className="ayah-end-num select-none mr-1.5">﴿{toArabicDigits(ayah.ayah_number)}﴾</span>
+                  {scriptMode === 'madani' && ayah.end_code_v2 ? (
+                    <span 
+                      className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle"
+                      style={{ fontFamily: getQcfFontFamily(ayah.page_madani) }}
+                    >
+                      {ayah.end_code_v2}
+                    </span>
+                  ) : (
+                    <span className="ayah-end-num select-none mr-1.5">﴿{toArabicDigits(ayah.ayah_number)}﴾</span>
+                  )}
                 </div>
               )}
 
