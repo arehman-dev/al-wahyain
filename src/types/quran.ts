@@ -3,7 +3,7 @@ export type MushafDisplayMode = 'page' | 'continuous';
 export type AppMode = 'quran' | 'translation' | 'sarf' | 'tafseer' | 'mushaf' | 'morphology' | 'tafsir';
 export type ReadingTheme = 'light' | 'sepia' | 'dark' | 'oled';
 export type TafsirLayoutMode = 'stacked' | 'split' | 'focus';
-export type OverallReadingMode = 'standard' | 'book' | 'split';
+export type OverallReadingMode = 'standard' | 'book';
 
 export interface Surah {
   id: number;

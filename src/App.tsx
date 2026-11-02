@@ -4,7 +4,6 @@ import { SubHeaderToolbar } from './components/SubHeaderToolbar';
 import { BottomDock } from './components/BottomDock';
 import { MushafView } from './components/MushafView';
 import { MushafBookSpread } from './components/MushafBookSpread';
-import { SplitStudyView } from './components/SplitStudyView';
 import { ZenModeHUD } from './components/ZenModeHUD';
 import { TranslationView } from './components/TranslationView';
 import { MorphologyView } from './components/MorphologyView';
@@ -91,7 +90,7 @@ export const App: React.FC = () => {
   });
   const [overallReadingMode, setOverallReadingMode] = useState<OverallReadingMode>(() => {
     const saved = localStorage.getItem('qs_reading_mode');
-    if (saved === 'standard' || saved === 'book' || saved === 'split') return saved as OverallReadingMode;
+    if (saved === 'standard' || saved === 'book') return saved as OverallReadingMode;
     return 'standard';
   });
 
@@ -635,9 +634,9 @@ export const App: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : overallReadingMode === 'book' ? (
+        ) : (activeMode === 'quran' || activeMode === 'mushaf') && overallReadingMode === 'book' ? (
           /* ======================================================== */
-          /* READING MODE B: Two-Page Book Spread (المصحف الشريف)    */
+          /* TWO-PAGE BOOK SPREAD (المصحف الشريف - صفحتان)            */
           /* ======================================================== */
           <MushafBookSpread
             activePage={activeMushafPage}
@@ -653,51 +652,9 @@ export const App: React.FC = () => {
             onSelectWordRoot={(root) => setSelectedRoot(root)}
             onPageChange={setActiveMushafPage}
           />
-        ) : overallReadingMode === 'split' && currentAyah ? (
-          /* ======================================================== */
-          /* READING MODE C: Synchronized Dual Split Study            */
-          /* ======================================================== */
-          <SplitStudyView
-            activePage={activeMushafPage}
-            ayahs={ayahs}
-            currentSurah={currentSurah}
-            currentAyahNumber={currentAyahNumber}
-            currentAyah={currentAyah}
-            tafasir={tafasir}
-            scriptMode={scriptMode}
-            showTajweed={showTajweed}
-            showWordByWord={showWordByWord}
-            selectedTranslationAuthor={selectedTranslationAuthor}
-            secondaryTranslationAuthor={secondaryTranslationAuthor}
-            wbwLanguage={wbwLanguage}
-            isPlaying={isPlaying}
-            activePlayingAyah={activePlayingAyah}
-            activePlayingWordIndex={activePlayingWordIndex}
-            onSelectAyah={handleSelectAyah}
-            onPrevAyah={handlePrevAyah}
-            onNextAyah={handleNextAyah}
-            onPlayAyah={handlePlayAyah}
-            onPauseAyah={handlePauseAyah}
-            onSelectWordRoot={(root) => setSelectedRoot(root)}
-            isBookmarked={isCurrentAyahBookmarked}
-            onToggleBookmark={handleToggleBookmark}
-            hasNote={hasCurrentAyahNote}
-            onOpenNoteDrawer={() => setShowNoteDrawer(true)}
-            onOpenExportModal={() => setShowExportModal(true)}
-            fontSize={fontSize}
-            highlights={highlights}
-            onAddHighlight={handleAddHighlight}
-            onDeleteHighlight={handleDeleteHighlight}
-            expandedTafasir={expandedTafasir}
-            onToggleTafsir={handleToggleTafsir}
-            tafsirOrder={tafsirOrder}
-            visibleTafasir={visibleTafasir}
-            tafsirLayoutMode={tafsirLayoutMode}
-            onPageChange={setActiveMushafPage}
-          />
         ) : (
           /* ======================================================== */
-          /* READING MODE A: Standard Focused View                    */
+          /* STANDARD PRIMARY MODES (Mushaf, Translation, Sarf, Tafsir) */
           /* ======================================================== */
           <>
             {/* Mode 1: Pure Mushaf View (15-Line Pakistani Page View) */}

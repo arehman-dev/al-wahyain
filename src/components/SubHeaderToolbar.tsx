@@ -447,13 +447,13 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         {(activeMode === 'sarf' || activeMode === 'morphology') && null}
       </div>
 
-      {/* Overall Reading Mode Switcher & Surah Details Badge */}
+      {/* Mushaf Page Mode Switcher (Single vs Book Spread) & Surah Details Badge */}
       <div className="flex items-center gap-2">
-        {onSelectOverallReadingMode && (
+        {(activeMode === 'quran' || activeMode === 'mushaf') && onSelectOverallReadingMode && (
           <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg p-0.5 shadow-2xs text-xs">
             <button
               onClick={() => onSelectOverallReadingMode('standard')}
-              title="معیاری واحد مطالعہ"
+              title="۱۵ سطری واحد صفحہ"
               className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${
                 overallReadingMode === 'standard'
                   ? 'bg-emerald-600 text-white shadow-2xs'
@@ -461,7 +461,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               }`}
             >
               <Rows3 className="w-3 h-3" />
-              <span className="hidden xl:inline">معیاری</span>
+              <span className="hidden xl:inline">واحد صفحہ</span>
             </button>
 
             <button
@@ -475,19 +475,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             >
               <BookOpen className="w-3 h-3" />
               <span className="hidden xl:inline">دو ورقی مصحف</span>
-            </button>
-
-            <button
-              onClick={() => onSelectOverallReadingMode('split')}
-              title="مصحف مع تفاسیر و تراجم (Split Study)"
-              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${
-                overallReadingMode === 'split'
-                  ? 'bg-emerald-600 text-white shadow-2xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
-            >
-              <Split className="w-3 h-3" />
-              <span className="hidden xl:inline">مصحف و مطالعہ</span>
             </button>
           </div>
         )}

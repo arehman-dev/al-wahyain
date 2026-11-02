@@ -180,12 +180,12 @@ export const Header: React.FC<HeaderProps> = ({
             <Keyboard className="w-3.5 h-3.5" />
           </button>
 
-          {/* Overall Reading Mode Switcher */}
-          {onChangeReadingMode && (
+          {/* Mushaf Reading Mode Switcher (Single Page vs Book Spread) */}
+          {(activeMode === 'quran' || activeMode === 'mushaf') && onChangeReadingMode && (
             <div className="hidden lg:flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80">
               <button
                 onClick={() => onChangeReadingMode('standard')}
-                title="معیاری واحد موڈ"
+                title="۱۵ سطری واحد صفحہ"
                 className={`p-1.5 rounded-md transition-all ${
                   overallReadingMode === 'standard'
                     ? 'bg-emerald-600 text-white shadow-2xs'
@@ -204,17 +204,6 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => onChangeReadingMode('split')}
-                title="مصحف مع تفسیر (Split Study)"
-                className={`p-1.5 rounded-md transition-all ${
-                  overallReadingMode === 'split'
-                    ? 'bg-emerald-600 text-white shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-                }`}
-              >
-                <Split className="w-3.5 h-3.5" />
               </button>
             </div>
           )}

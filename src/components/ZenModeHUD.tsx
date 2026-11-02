@@ -13,7 +13,6 @@ import {
   ZoomIn, 
   ZoomOut,
   BookOpen,
-  Split,
   Rows3
 } from 'lucide-react';
 import { Surah, Ayah, ReadingTheme, OverallReadingMode } from '../types/quran';
@@ -126,15 +125,6 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-        </button>
-        <button
-          onClick={() => onChangeReadingMode('split')}
-          title="مصحف مع تفسیر (Split Study)"
-          className={`p-1.5 rounded-lg transition-all ${
-            readingMode === 'split' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <Split className="w-3.5 h-3.5" />
         </button>
       </div>
 
