@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Play, Pause, Sparkles, BookOpen, Bookmark } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, Pause, Sparkles, BookOpen, Bookmark, Copy, Check } from 'lucide-react';
 import { Ayah, Surah, ScriptMode } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
 import { RUKU_END_AYAHS, QUARTER_AYAHS, SAJDAH_AYAHS } from '../utils/mushafLayout';
@@ -48,6 +48,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
   onToggleBookmark,
   onSelectWordRoot
 }) => {
+  const [copiedAyahId, setCopiedAyahId] = useState<number | null>(null);
   const isInitialOrSurahChange = useRef(true);
   const prevSurahIdRef = useRef<number | undefined>(currentSurah?.id);
 
@@ -142,15 +143,15 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                   )}
                 </div>
 
-                {/* Left: Quiet Action Buttons (Reveals naturally) */}
-                <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                {/* Left: Floating Contextual Micro-Toolbar (Progressive Disclosure) */}
+                <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-all duration-200 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex items-center gap-0.5">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       isAyahPlaying ? onPauseAyah() : onPlayAyah(ayah);
                     }}
                     title={isAyahPlaying ? "تلاوت موقوف کریں" : "تلاوت سنیں"}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-700 dark:text-slate-400 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors"
+                    className="p-1 rounded-full text-slate-500 hover:text-emerald-700 dark:text-slate-400 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors"
                   >
                     {isAyahPlaying ? <Pause className="w-3.5 h-3.5 text-emerald-600" /> : <Play className="w-3.5 h-3.5 fill-current" />}
                   </button>
@@ -162,10 +163,10 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                         onToggleBookmark(ayah);
                       }}
                       title={bookmarked ? "محفوظ فہرست سے نکالیں" : "محفوظ کریں"}
-                      className={`p-1.5 rounded-lg transition-colors ${
+                      className={`p-1 rounded-full transition-colors ${
                         bookmarked 
                           ? 'text-amber-500 bg-amber-50 dark:bg-amber-950/60' 
-                          : 'text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          : 'text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-700'
                       }`}
                     >
                       <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? 'fill-current' : ''}`} />
@@ -175,10 +176,31 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      const transText = primaryTranslation?.translation_text || '';
+                      const fullCopy = `${ayah.text_madani || ayah.text_uthmani}\n\n${transText}\n\n[سورة ${currentSurah?.name_arabic || ''} : ${ayah.ayah_number}]`;
+                      navigator.clipboard.writeText(fullCopy);
+                      setCopiedAyahId(ayah.ayah_number);
+                      setTimeout(() => setCopiedAyahId(null), 1800);
+                    }}
+                    title="آیت اور ترجمہ کاپی کریں"
+                    className="p-1 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    {copiedAyahId === ayah.ayah_number ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+
+                  <div className="w-px h-3 bg-slate-200 dark:bg-slate-700 mx-0.5" />
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onOpenMorphology(ayah.ayah_number);
                     }}
                     title="صرف، اعراب و نحو"
-                    className="px-2 py-1 rounded-md text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                    className="px-2 py-0.5 rounded-full text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
                   >
                     <span className="flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-emerald-600" />
@@ -192,7 +214,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                       onOpenTafsir(ayah.ayah_number);
                     }}
                     title="تفاسیر کا مطالعہ"
-                    className="px-2 py-1 rounded-md text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                    className="px-2 py-0.5 rounded-full text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
                   >
                     <span className="flex items-center gap-1">
                       <BookOpen className="w-3 h-3 text-emerald-600" />

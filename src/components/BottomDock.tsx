@@ -120,7 +120,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   return (
     <footer 
       dir="rtl"
-      className="fixed bottom-0 left-0 right-0 z-40 h-11 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between px-4 sm:px-6 font-ibm select-none transition-colors"
+      className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-40 max-w-xl sm:max-w-2xl w-[94%] sm:w-auto px-4 py-1.5 bg-white/92 dark:bg-slate-900/92 backdrop-blur-xl rounded-full border border-slate-200/80 dark:border-slate-800/80 shadow-xl shadow-slate-900/10 flex items-center justify-between gap-3 sm:gap-5 font-ibm select-none transition-all"
     >
       <audio
         ref={audioRef}
@@ -129,8 +129,8 @@ export const BottomDock: React.FC<BottomDockProps> = ({
       />
 
       {/* Right Side: Global Reciter & Now Playing Ayah Details */}
-      <div className="flex items-center gap-2.5 min-w-0">
-        <div className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 font-semibold truncate">
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold truncate">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
           <span>{currentSurah?.name_arabic || 'سورۃ'}</span>
           <span className="text-slate-400 font-mono text-[11px]">
@@ -138,18 +138,18 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           </span>
         </div>
 
-        <div className="hidden md:flex items-center gap-1 text-[11px] text-slate-400 font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">
+        <div className="hidden lg:flex items-center gap-1 text-[10px] text-slate-400 font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800">
           <Volume2 className="w-3 h-3 text-emerald-600" />
-          <span>مشاری العفاسی</span>
+          <span>العفاسی</span>
         </div>
       </div>
 
       {/* Center: Global Audio Player Stepper & Playback Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         <button
           onClick={onPrevAyah}
           title="پچھلی آیت"
-          className="p-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="p-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           <SkipForward className="w-4 h-4" />
         </button>
@@ -157,15 +157,15 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         <button
           onClick={() => isPlaying ? onPause() : onPlay()}
           title={isPlaying ? "تلاوت موقوف کریں (Space)" : "تلاوت شروع کریں (Space)"}
-          className="w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-xs transition-all transform active:scale-95"
+          className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 active:scale-95 transition-all"
         >
-          {isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current mr-0.5" />}
+          {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current mr-0.5" />}
         </button>
 
         <button
           onClick={onNextAyah}
           title="اگلی آیت"
-          className="p-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="p-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           <SkipBack className="w-4 h-4" />
         </button>
@@ -173,7 +173,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         <button
           onClick={cycleRepeat}
           title={repeatCount === 1 ? "تکرار برائے حفظ (Repeat Loop)" : `دور تکرار: ${currentRepeat} از ${repeatCount === Infinity ? 'لامحدود' : repeatCount}`}
-          className={`hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded-lg border text-[11px] font-mono font-bold transition-all ${
+          className={`hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-mono font-bold transition-all ${
             repeatCount > 1 || repeatCount === Infinity
               ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/50 shadow-xs'
               : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -182,7 +182,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <Repeat className="w-3 h-3" />
           <span>
             {repeatCount === Infinity 
-              ? `∞ (${currentRepeat})` 
+              ? `∞` 
               : repeatCount > 1 
               ? `${currentRepeat}/${repeatCount}` 
               : '1x'}
@@ -192,22 +192,22 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         <button
           onClick={cycleSpeed}
           title="رفتار تلاوت (Speed)"
-          className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-[11px] font-mono font-bold transition-colors"
+          className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-[10px] font-mono font-bold transition-colors"
         >
           <Gauge className="w-3 h-3" />
           <span>{playbackRate}x</span>
         </button>
       </div>
 
-      {/* Left Side: Essential Global Study Tools (Bookmark, Notes, Search, Zen) */}
-      <div className="flex items-center gap-1.5 shrink-0">
+      {/* Left Side: Essential Global Study Tools (Bookmark, Notes, Zen) */}
+      <div className="flex items-center gap-1 shrink-0">
         <button
           onClick={onToggleBookmark}
           title={isBookmarked ? "محفوظ فہرست سے نکالیں" : "آیت محفوظ کریں"}
-          className={`p-1.5 rounded-lg border transition-all ${
+          className={`p-1.5 rounded-full transition-all ${
             isBookmarked
-              ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/50 text-amber-500'
-              : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+              ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-500'
+              : 'text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
           <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
@@ -216,27 +216,19 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         <button
           onClick={onOpenNoteDrawer}
           title="ذاتی تفسیری نوٹ"
-          className={`p-1.5 rounded-lg border transition-all ${
+          className={`p-1.5 rounded-full transition-all ${
             hasNote
-              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600'
-              : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800'
+              ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600'
+              : 'text-slate-400 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
           <FileText className="w-3.5 h-3.5" />
         </button>
 
         <button
-          onClick={onOpenSearch}
-          title="تلاش (Ctrl+K)"
-          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-        >
-          <Search className="w-3.5 h-3.5" />
-        </button>
-
-        <button
           onClick={onToggleZenMode}
           title="فوکس / زین موڈ (Z)"
-          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="p-1.5 rounded-full text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           <Maximize2 className="w-3.5 h-3.5" />
         </button>

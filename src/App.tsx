@@ -571,7 +571,7 @@ export const App: React.FC = () => {
       {/* ======================================================== */}
       {/* MAIN WORKSPACE CONTENT AREA                              */}
       {/* ======================================================== */}
-      <main className={`flex-1 ${isZenMode ? 'pt-2 pb-24' : 'pt-2 pb-14'}`}>
+      <main className={`flex-1 ${isZenMode ? 'pt-2 pb-24' : 'pt-2 pb-20'}`}>
         {loading ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-3 font-ibm">

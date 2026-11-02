@@ -314,8 +314,10 @@ html.theme-sepia .text-slate-400 {
 }
 html.theme-sepia header,
 html.theme-sepia nav,
+html.theme-sepia footer,
 html.theme-sepia .sticky {
   background-color: rgba(245, 237, 216, 0.95) !important;
+  border-color: #e5d7bc !important;
 }
 
 /* 2. OLED Pure Midnight Black (سیاہ ترین) */
@@ -340,6 +342,8 @@ html.theme-oled .border-slate-700 {
 }
 html.theme-oled header,
 html.theme-oled nav,
+html.theme-oled footer,
 html.theme-oled .sticky {
   background-color: rgba(5, 5, 5, 0.96) !important;
+  border-color: #1a1a1a !important;
 }
