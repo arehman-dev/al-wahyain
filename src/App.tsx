@@ -529,8 +529,8 @@ export const App: React.FC = () => {
           
           // Mushaf page controls
           activePage={activeMushafPage}
-          onPrevPage={() => setActiveMushafPage(p => Math.max(1, p - 1))}
-          onNextPage={() => setActiveMushafPage(p => Math.min(604, p + 1))}
+          onPrevPage={() => setActiveMushafPage(p => Math.max(1, overallReadingMode === 'book' ? p - 2 : p - 1))}
+          onNextPage={() => setActiveMushafPage(p => Math.min(604, overallReadingMode === 'book' ? p + 2 : p + 1))}
           onPageSelect={setActiveMushafPage}
           showTajweed={showTajweed}
           onToggleTajweed={() => setShowTajweed(prev => !prev)}
