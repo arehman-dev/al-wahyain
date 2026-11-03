@@ -145,7 +145,7 @@ const server = http.createServer(async (req, res) => {
     if ((req.method === 'GET' || req.method === 'HEAD') && fontMatch) {
       const fontFolder = fontMatch[1];
       const fileName = fontMatch[2];
-      const fontDir = path.join(__dirname, '..', 'public', 'fonts', fontFolder);
+      const fontDir = path.join(FONTS_DIR, fontFolder);
       const filePath = path.join(fontDir, fileName);
 
       try {

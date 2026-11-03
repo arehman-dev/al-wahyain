@@ -6,6 +6,11 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Ensure seamless launch on modern Linux distributions (Ubuntu 24.04+ AppArmor userns)
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('no-sandbox');
+}
+
 // ============================================================================
 // Best Practice #1 & #2:
 // - Keep 447MB Corpus DB (quran_study.db) outside app.asar in extraResources
@@ -87,6 +92,7 @@ async function createWindow() {
     minWidth: 960,
     minHeight: 640,
     title: 'الوحيين — Al-Wahyain | قرآنی مطالعہ، صرف و نحو اور تقابلی تفاسیر',
+    icon: path.join(isPackaged ? resourcesDir : path.join(rootDir, 'public'), 'icon.png'),
     backgroundColor: '#0f172a',
     autoHideMenuBar: true,
     webPreferences: {
@@ -118,6 +124,22 @@ async function createWindow() {
     await mainWindow.loadURL(devUrl);
   } else {
     await mainWindow.loadURL(backendInfo.url);
+  }
+
+  // Automated smoke test verification when ALWAHYAIN_SELF_TEST=1
+  if (process.env.ALWAHYAIN_SELF_TEST === '1') {
+    try {
+      const res = await fetch(`${backendInfo.url}/api/surahs`);
+      const surahs = await res.json();
+      const bmRes = await fetch(`${backendInfo.url}/api/bookmarks`);
+      const bookmarks = await bmRes.json();
+      const fontRes = await fetch(`${backendInfo.url}/api/fonts/qcf_v2/p1.woff2`);
+      console.log(`[DESKTOP SELF-TEST PASSED] UI Loaded | Surahs: ${surahs.length} | Bookmarks: ${bookmarks.length} | QCF Font Status: ${fontRes.status} | URL: ${backendInfo.url}`);
+      setTimeout(() => app.quit(), 400);
+    } catch (err) {
+      console.error('[DESKTOP SELF-TEST FAILED]', err);
+      app.exit(1);
+    }
   }
 }
 

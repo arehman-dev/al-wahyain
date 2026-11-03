@@ -22,8 +22,11 @@ extraResources:
     to: data/quran_study.db
   - from: public/fonts
     to: fonts
+  - from: public/icon.png
+    to: icon.png
 
 linux:
+  icon: public/icon.png
   target:
     - AppImage
     - deb
