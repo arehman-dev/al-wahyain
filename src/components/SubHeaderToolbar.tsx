@@ -161,9 +161,9 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   return (
     <div 
       dir="ltr" 
-      className="sticky top-12 z-30 w-full min-h-10 glass-bar border-b px-3 sm:px-6 py-1 font-ibm select-none transition-all"
+      className="sticky top-12 z-30 w-full h-10 glass-bar border-b px-3 sm:px-6 font-ibm select-none transition-all flex items-center"
     >
-      <div className="w-full h-full grid grid-cols-3 items-center gap-2">
+      <div className="w-full h-full grid grid-cols-[1fr_auto_1fr] items-center gap-2">
         
         {/* ======================================================== */}
         {/* LEFT SIDE: Only Bookmark & Note (Icon-Only, 2D Outline/Filled) */}
@@ -172,7 +172,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           {/* Bookmark Icon Button (No Label per 3.4) */}
           <button
             onClick={onToggleBookmark}
-            title={isBookmarked ? "بک مارک ختم کریں (B)" : "آیت بک مارک کریں (B)"}
             className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               isBookmarked
                 ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
@@ -189,7 +188,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           {/* Note Icon Button (No Label per 3.4) */}
           <button
             onClick={onOpenNoteDrawer}
-            title="آیت پر تحقیقی نوٹ لکھیں (N)"
             className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               hasNote
                 ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
@@ -214,7 +212,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onPrevSurah}
               disabled={currentSurahId <= 1}
-              title="پچھلی سورت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -236,7 +233,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onNextSurah}
               disabled={currentSurahId >= 114}
-              title="اگلی سورت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -248,7 +244,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onPrevAyah}
               disabled={currentSurahId === 1 && currentAyahNumber <= 1}
-              title="پچھلی آیت (Right Arrow)"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -270,7 +265,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onNextAyah}
               disabled={currentSurahId === 114 && currentAyahNumber >= versesCount}
-              title="اگلی آیت (Left Arrow)"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -285,7 +279,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               value={fastJumpText}
               onChange={(e) => setFastJumpText(e.target.value)}
               placeholder="2:255"
-              title="سورت:آیت (مثلاً 2:255) یا صفحہ نمبر لکھ کر Enter دبائیں"
               className={`w-20 bg-slate-200/65 dark:bg-slate-800/75 text-slate-800 dark:text-slate-100 text-xs rounded-xl pr-7 pl-5 py-1 border transition-all focus:w-28 focus:outline-none focus:bg-white dark:focus:bg-slate-900 font-app ${
                 fastJumpError
                   ? 'border-rose-500 ring-1 ring-rose-500/30'
@@ -295,7 +288,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             {fastJumpText && (
               <button
                 type="submit"
-                title="منتقل ہوں"
                 className="absolute left-1.5 text-emerald-600 hover:text-emerald-700"
               >
                 <CornerDownLeft className="w-3 h-3" strokeWidth={1.85} />
@@ -307,7 +299,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           {onToggleTajweed && (
             <button
               onClick={onToggleTajweed}
-              title={showTajweed ? "رنگین تجوید (QCF V4) بند کریں" : "رنگین تجوید (QCF V4) فعال کریں"}
               className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                 showTajweed
                   ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
@@ -323,7 +314,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         {/* ======================================================== */}
         {/* RIGHT SIDE: Mode-Specific Controls                       */}
         {/* ======================================================== */}
-        <div dir="rtl" className="flex items-center gap-2 justify-self-end flex-wrap">
+        <div dir="rtl" className="flex items-center gap-1.5 justify-self-end flex-nowrap">
           
           {/* 1. Mushaf Mode: Single Continuous Page Stepper (2-page mode removed per 2.1) */}
           {(activeMode === 'quran' || activeMode === 'mushaf') && (
@@ -331,7 +322,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <button
                 onClick={onPrevPage}
                 disabled={activePage <= 1}
-                title="پچھلا صفحہ ([)"
                 className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" strokeWidth={1.85} />
@@ -356,7 +346,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <button
                 onClick={onNextPage}
                 disabled={activePage >= 604}
-                title="اگلا صفحہ (])"
                 className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" strokeWidth={1.85} />
@@ -366,21 +355,24 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
           {/* 2. Translation Mode Controls */}
           {activeMode === 'translation' && (
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="flex items-center gap-1.5 flex-nowrap">
               {onSelectTranslationAuthor && (
-                <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl px-2.5 py-1 border border-slate-300/60 dark:border-slate-700/60">
+                <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl px-2 py-1 border border-slate-300/60 dark:border-slate-700/60">
                   <select
                     value={selectedTranslationAuthor}
                     onChange={(e) => onSelectTranslationAuthor(e.target.value)}
                     aria-label="Primary Translation"
-                    className="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+                    className="max-w-[115px] xl:max-w-[135px] truncate bg-transparent text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                   >
                     <option value="taqi_usmani" className="dark:bg-slate-900">مفتی تقی عثمانی</option>
                     <option value="maududi" className="dark:bg-slate-900">سید مودودی</option>
-                    <option value="jalandhry" className="dark:bg-slate-900">فتح محمد جالندھری</option>
                     <option value="junagarhi" className="dark:bg-slate-900">محمد جوناگڑھی</option>
+                    <option value="mahmud_hasan" className="dark:bg-slate-900">محمود الحسن</option>
                     <option value="israr_ahmad" className="dark:bg-slate-900">ڈاکٹر اسرار احمد</option>
-                    <option value="saheeh_international" className="dark:bg-slate-900">Saheeh International</option>
+                    <option value="jalandhari" className="dark:bg-slate-900">فتح محمد جالندھری</option>
+                    <option value="sahih_intl" className="dark:bg-slate-900">Saheeh Intl (EN)</option>
+                    <option value="taqi_usmani_en" className="dark:bg-slate-900">Taqi Usmani (EN)</option>
+                    <option value="abdel_haleem" className="dark:bg-slate-900">Abdel Haleem (EN)</option>
                   </select>
                 </div>
               )}
@@ -391,15 +383,18 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                     value={secondaryTranslationAuthor || ''}
                     onChange={(e) => onSelectSecondaryTranslationAuthor(e.target.value || null)}
                     aria-label="Secondary Translation"
-                    className="bg-transparent text-[11px] font-semibold text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer"
+                    className="max-w-[105px] xl:max-w-[125px] truncate bg-transparent text-[11px] font-semibold text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer"
                   >
                     <option value="" className="dark:bg-slate-900">+ تقابلی ترجمہ</option>
                     <option value="taqi_usmani" className="dark:bg-slate-900">مفتی تقی عثمانی</option>
                     <option value="maududi" className="dark:bg-slate-900">سید مودودی</option>
-                    <option value="jalandhry" className="dark:bg-slate-900">فتح محمد جالندھری</option>
                     <option value="junagarhi" className="dark:bg-slate-900">محمد جوناگڑھی</option>
+                    <option value="mahmud_hasan" className="dark:bg-slate-900">محمود الحسن</option>
                     <option value="israr_ahmad" className="dark:bg-slate-900">ڈاکٹر اسرار احمد</option>
-                    <option value="saheeh_international" className="dark:bg-slate-900">Saheeh International</option>
+                    <option value="jalandhari" className="dark:bg-slate-900">فتح محمد جالندھری</option>
+                    <option value="sahih_intl" className="dark:bg-slate-900">Saheeh Intl (EN)</option>
+                    <option value="taqi_usmani_en" className="dark:bg-slate-900">Taqi Usmani (EN)</option>
+                    <option value="abdel_haleem" className="dark:bg-slate-900">Abdel Haleem (EN)</option>
                   </select>
                 </div>
               )}
@@ -407,8 +402,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               {onToggleWordByWord && (
                 <button
                   onClick={onToggleWordByWord}
-                  title="لفظ بہ لفظ ترجمہ آن/آف کریں"
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                  className={`w-8 h-8 shrink-0 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                     showWordByWord
                       ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                       : 'border border-transparent text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
@@ -416,22 +410,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 >
                   <Languages className="w-4 h-4" strokeWidth={1.85} />
                 </button>
-              )}
-
-              {showWordByWord && onSelectWbwLanguage && (
-                <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl px-2 py-1 border border-slate-300/60 dark:border-slate-700/60">
-                  <select
-                    value={wbwLanguage}
-                    onChange={(e) => onSelectWbwLanguage(e.target.value as any)}
-                    className="bg-transparent text-[11px] font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
-                  >
-                    <option value="both" className="dark:bg-slate-900">اردو + Eng</option>
-                    <option value="ur" className="dark:bg-slate-900">حافظ نذر احمد</option>
-                    <option value="ur2" className="dark:bg-slate-900">حافظ صلاح الدین یوسف</option>
-                    <option value="en" className="dark:bg-slate-900">Sahih Intl WBW</option>
-                    <option value="en2" className="dark:bg-slate-900">Corpus Gloss</option>
-                  </select>
-                </div>
               )}
             </div>
           )}
@@ -443,7 +421,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               {onSelectTafsirLayoutMode && (
                 <button
                   onClick={() => onSelectTafsirLayoutMode(isFocusTafsir ? 'stacked' : 'focus')}
-                  title={isFocusTafsir ? "تمام تفاسیر ایک ساتھ دکھائیں (All Tafaseer)" : "صرف ایک تفسیر پر فوکس کریں (Focus Mode)"}
                   className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                     isFocusTafsir
                       ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
@@ -459,14 +436,12 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
                   <button
                     onClick={onExpandAllTafasir}
-                    title="تمام تفاسیر کھولیں"
                     className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer"
                   >
                     <ChevronsDown className="w-4 h-4" strokeWidth={1.85} />
                   </button>
                   <button
                     onClick={onCollapseAllTafasir}
-                    title="تمام تفاسیر سمیٹیں"
                     className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer"
                   >
                     <ChevronsUp className="w-4 h-4" strokeWidth={1.85} />
@@ -479,7 +454,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 <div className="hidden sm:flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
                   <button
                     onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
-                    title="فونٹ چھوٹا کریں"
                     className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer"
                   >
                     <ZoomOut className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -488,8 +462,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                     {fontSize}
                   </span>
                   <button
-                    onClick={() => onFontSizeChange(Math.min(26, fontSize + 1))}
-                    title="فونٹ بڑا کریں"
+                    onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
                     className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer"
                   >
                     <ZoomIn className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -501,7 +474,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               {onOpenTafsirSettings && (
                 <button
                   onClick={onOpenTafsirSettings}
-                  title="ترتیب و انتخابِ تفاسیر"
                   className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
                 >
                   <SlidersHorizontal className="w-4 h-4" strokeWidth={1.85} />

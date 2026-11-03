@@ -18,7 +18,15 @@ import {
   Volume2, 
   Database, 
   Globe,
-  Keyboard
+  Keyboard,
+  Type,
+  Minus,
+  Plus,
+  Code2,
+  Terminal,
+  Cpu,
+  User,
+  FolderGit2
 } from 'lucide-react';
 import { ReadingTheme, TafsirLayoutMode, OverallReadingMode } from '../types/quran';
 import { SidebarTab } from './Header';
@@ -278,7 +286,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
             {/* Brand Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center">
                   <BookOpen className="w-4 h-4" />
                 </div>
                 <div>
@@ -293,7 +301,6 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               <button
                 onClick={onClose}
-                title="سائیڈ بار بند کریں"
                 className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -304,10 +311,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
             <nav className="flex md:flex-col gap-1.5 overflow-x-auto">
               <button
                 onClick={() => onSelectTab('about')}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'about'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Info className="w-4 h-4 shrink-0" />
@@ -316,10 +323,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               <button
                 onClick={() => onSelectTab('preferences')}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'preferences'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Settings className="w-4 h-4 shrink-0" />
@@ -328,27 +335,56 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               <button
                 onClick={() => onSelectTab('references')}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'references'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 shrink-0" />
                 <span>مآخذ و مراجع (References)</span>
               </button>
+
+              <button
+                onClick={() => onSelectTab('docs')}
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
+                  activeTab === 'docs'
+                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Code2 className="w-4 h-4 shrink-0" />
+                <span>تکنیکی دستاویزات (Docs)</span>
+              </button>
             </nav>
           </div>
 
-          {/* Bottom Offline Database Status */}
-          <div className="hidden md:block pt-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 space-y-1">
-            <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
-              <Database className="w-3.5 h-3.5" />
-              <span>مکمل آف لائن انجن فعال</span>
+          {/* Bottom Offline Database Status & Developer Quick Links */}
+          <div className="hidden md:block pt-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 space-y-2.5">
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
+                <Database className="w-3.5 h-3.5" />
+                <span>مکمل آف لائن انجن فعال</span>
+              </div>
+              <p className="leading-relaxed font-ibm">
+                <span className="font-app font-semibold">604</span> صفحات • <span className="font-app font-semibold">6,236</span> آیات • <span className="font-app font-semibold">77,429</span> الفاظ • <span className="font-app font-semibold">6</span> تفاسیر
+              </p>
             </div>
-            <p className="leading-relaxed">
-              ۶۰۴ صفحات • ۶,۲۳۶ آیات • ۷۷,۴۲۹ الفاظ • ۶ تفاسیر
-            </p>
+
+            <div className="pt-2 border-t border-slate-200/70 dark:border-slate-800/70 space-y-1">
+              <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 font-app">
+                Developed by Abdul Rehman (@arehman-dev)
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-app" dir="ltr">
+                <a href="https://arehman-dev.github.io/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">Portfolio</a>
+                <span>•</span>
+                <a href="https://arehman-dev.github.io/me/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">Personal</a>
+                <span>•</span>
+                <a href="https://github.com/arehman-dev" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">GitHub</a>
+                <span>•</span>
+                <a href="https://x.com/arehman_dev" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">X</a>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -361,13 +397,13 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {activeTab === 'about' && (
             <div className="space-y-6 animate-fadeIn">
               <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold">
-                  ورژن 1.0 • علمی و تحقیقی مطالعہ قرآن اسٹیشن
+                <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
+                  ورژن <span className="font-app">1.0</span> • علمی و تحقیقی مطالعہ قرآن اسٹیشن
                 </span>
                 <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2">
                   الوحيين — قرآن مجید، صرف و نحو اور تقابلی تفاسیر کا جامع پلیٹ فارم
                 </h1>
-                <p className="urdu-nastaliq text-lg text-slate-700 dark:text-slate-300 mt-2 leading-[2.2]">
+                <p className="font-ibm text-base text-slate-700 dark:text-slate-300 mt-2 leading-[2.2]">
                   ’’الوحيين‘‘ ایک جدید، تیز رفتار اور مکمل طور پر آف لائن چلنے والا علمی اسٹیشن ہے جو قرآن کریم کی تلاوت، لفظی و بامحاورہ تراجم، عربی مادوں (Roots) کی تحقیق اور مستند اردو تفاسیر کے تقابلی مطالعے کے لیے تیار کیا گیا ہے۔
                 </p>
               </div>
@@ -448,6 +484,78 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* Developer & Architect Info + Direct Links */}
+              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/30 space-y-3.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                        عبد الرحمٰن (Abdul Rehman • <span className="font-app">@arehman-dev</span>)
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        معمار و مصنفِ سافٹ ویئر — Systems & Software Engineer • Digital Islamic Heritage Builder
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onSelectTab('docs')}
+                    className="px-3 py-1.5 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Code2 className="w-3.5 h-3.5" />
+                    <span>تکنیکی دستاویزات کھولیں</span>
+                  </button>
+                </div>
+
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  ’’الوحيين (Al-Wahyain)‘‘ کو علومِ قرآن و سنت کی ڈیجیٹل خدمت، تیز رفتار مقامی (Local-First) مطالعے اور اوپن سورس علمی تحقیق کے لیے ڈیزائن اور تعمیر کیا گیا ہے۔ دیگر علمی ذخائر جیسے <em>Islamic Classical Library</em>، <em>Library: The Golden Chain</em> اور <em>Library of Contemporary Scholars</em> سمیت مصنف کے تکنیکی پورٹ فولیو اور ذاتی تحریروں کے روابط ذیل میں موجود ہیں:
+                </p>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-xs" dir="ltr">
+                  <a
+                    href="https://arehman-dev.github.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
+                  >
+                    <span>Portfolio Site</span>
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  </a>
+
+                  <a
+                    href="https://arehman-dev.github.io/me/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
+                  >
+                    <span>Personal Site</span>
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  </a>
+
+                  <a
+                    href="https://github.com/arehman-dev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
+                  >
+                    <span>GitHub (@arehman-dev)</span>
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  </a>
+
+                  <a
+                    href="https://x.com/arehman_dev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
+                  >
+                    <span>X (@arehman_dev)</span>
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  </a>
+                </div>
+              </div>
             </div>
           )}
 
@@ -483,7 +591,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       onClick={() => onChangeThemeMode(t.id)}
                       className={`flex items-center justify-center gap-2 p-3 rounded-xl border font-bold transition-all cursor-pointer ${
                         themeMode === t.id
-                          ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 ring-1 ring-emerald-500'
+                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
                           : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
@@ -501,15 +609,15 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <MoveHorizontal className="w-4 h-4 text-emerald-600" />
                     <span>۲. دائیں اور بائیں حاشیہ سلائیڈر (Left & Right Content Padding)</span>
                   </h3>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
-                    {horizontalPadding}% حاشیہ
+                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-ibm text-xs font-bold">
+                    <span className="font-app">{horizontalPadding}%</span> حاشیہ
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   سلائیڈر کو کم کرنے سے دائیں اور بائیں جانب کا خالی حاشیہ کم ہو جائے گا اور متن کے لیے زیادہ جگہ ملے گی۔
                 </p>
                 <div className="flex items-center gap-4 pt-1">
-                  <span className="text-[11px] font-bold text-emerald-600 shrink-0">زیادہ جگہ (1%)</span>
+                  <span className="text-[11px] font-bold text-emerald-600 shrink-0">زیادہ جگہ (<span className="font-app">1%</span>)</span>
                   <input
                     type="range"
                     min={1}
@@ -519,7 +627,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     onChange={(e) => onChangeHorizontalPadding(Number(e.target.value))}
                     className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                   />
-                  <span className="text-[11px] font-bold text-slate-400 shrink-0">تنگ کالم (24%)</span>
+                  <span className="text-[11px] font-bold text-slate-400 shrink-0">تنگ کالم (<span className="font-app">24%</span>)</span>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
                   {[
@@ -531,10 +639,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <button
                       key={preset.val}
                       onClick={() => onChangeHorizontalPadding(preset.val)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
                         horizontalPadding === preset.val
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                          : 'border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                       }`}
                     >
                       {preset.label}
@@ -543,11 +651,76 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 </div>
               </div>
 
-              {/* 3. Mushaf & Tajweed Settings */}
+              {/* 3. Font Size Control (خط اور متن کا سائز) */}
+              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <Type className="w-4 h-4 text-emerald-600" />
+                    <span>۳. خط اور متن کا سائز (Font Size Control)</span>
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-ibm text-xs font-bold">
+                    <span className="font-app">{fontSize}px</span> (قرآنی خط: <span className="font-app">{Math.round(fontSize * 1.65)}px</span>)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  قرآنی آیات، تراجم اور تفاسیر کے متن کا سائز اپنی سہولت کے مطابق کم یا زیادہ کریں۔
+                </p>
+
+                <div className="flex items-center gap-3 pt-1">
+                  <button
+                    onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
+                    disabled={fontSize <= 14}
+                    className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+
+                  <input
+                    type="range"
+                    min={14}
+                    max={28}
+                    step={1}
+                    value={fontSize}
+                    onChange={(e) => onFontSizeChange(Number(e.target.value))}
+                    className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                  />
+
+                  <button
+                    onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
+                    disabled={fontSize >= 28}
+                    className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {[
+                    { val: 15, label: 'چھوٹا (15px)' },
+                    { val: 18, label: 'معیاری (18px)' },
+                    { val: 21, label: 'بڑا (21px)' },
+                    { val: 25, label: 'بہت بڑا (25px)' }
+                  ].map((preset) => (
+                    <button
+                      key={preset.val}
+                      onClick={() => onFontSizeChange(preset.val)}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
+                        fontSize === preset.val
+                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                          : 'border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. Mushaf & Tajweed Settings */}
               <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
                 <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <Palette className="w-4 h-4 text-emerald-600" />
-                  <span>۳. مصحف اور تجوید کے رنگ (QCF V2 & V4 Tajweed)</span>
+                  <span>۴. مصحف اور تجوید کے رنگ (QCF V2 & V4 Tajweed)</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -558,10 +731,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     </div>
                     <button
                       onClick={onToggleTajweed}
-                      className={`px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg border font-bold transition-colors cursor-pointer ${
                         showTajweed
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                          : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                       }`}
                     >
                       {showTajweed ? 'فعال (ON)' : 'غیر فعال (OFF)'}
@@ -575,10 +748,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     </div>
                     <button
                       onClick={() => onSelectTafsirLayoutMode(tafsirLayoutMode === 'focus' ? 'stacked' : 'focus')}
-                      className={`px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg border font-bold transition-colors cursor-pointer ${
                         tafsirLayoutMode === 'focus'
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                          : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                       }`}
                     >
                       {tafsirLayoutMode === 'focus' ? 'فوکس موڈ (ON)' : 'تمام تفاسیر (OFF)'}
@@ -587,11 +760,11 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 </div>
               </div>
 
-              {/* 4. Translation & Tafsir Preferences */}
+              {/* 5. Translation & Tafsir Preferences */}
               <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
                 <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <SlidersHorizontal className="w-4 h-4 text-emerald-600" />
-                  <span>۴. تراجم اور تفاسیر کی ترتیبات</span>
+                  <span>۵. تراجم اور تفاسیر کی ترتیبات</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -636,10 +809,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={onToggleWordByWord}
-                        className={`px-3 h-9 rounded-xl font-bold cursor-pointer ${
+                        className={`px-3 h-9 rounded-xl border font-bold cursor-pointer ${
                           showWordByWord
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                            : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                         }`}
                       >
                         {showWordByWord ? 'لفظی آن' : 'لفظی آف'}
@@ -649,36 +822,28 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         onChange={(e) => onSelectWbwLanguage(e.target.value as any)}
                         className="flex-1 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 font-semibold text-slate-800 dark:text-slate-100 outline-none cursor-pointer"
                       >
-                        <option value="both">اردو + English</option>
-                        <option value="ur">اردو 1 (نذر احمد)</option>
-                        <option value="ur2">اردو 2 (توسیعی)</option>
-                        <option value="en">English 1</option>
-                        <option value="en2">English 2</option>
+                        <option value="both">اردو + Eng</option>
+                        <option value="ur">حافظ نذر احمد (اردو 1)</option>
+                        <option value="ur2">حافظ صلاح الدین یوسف (اردو 2)</option>
+                        <option value="en">Sahih Intl WBW (EN 1)</option>
+                        <option value="en2">Corpus Gloss (EN 2)</option>
                       </select>
                     </div>
                   </div>
 
                   <div>
                     <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
-                      تفسیری متن کا سائز ({fontSize}px)
+                      منتخب تفاسیر اور ترتیب
                     </label>
                     <div className="flex items-center gap-3 h-9">
-                      <input
-                        type="range"
-                        min={14}
-                        max={26}
-                        value={fontSize}
-                        onChange={(e) => onFontSizeChange(Number(e.target.value))}
-                        className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-                      />
                       <button
                         onClick={() => {
                           onClose();
                           onOpenTafsirSettings();
                         }}
-                        className="px-3 h-9 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-colors cursor-pointer shrink-0"
+                        className="w-full px-3 h-9 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold hover:bg-emerald-500/20 transition-colors cursor-pointer"
                       >
-                        ترتیبِ تفاسیر
+                        ترتیب و انتخابِ تفاسیر کھولیں
                       </button>
                     </div>
                   </div>
@@ -735,7 +900,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                               href={item.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white text-[11px] font-bold transition-colors"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 text-[11px] font-bold transition-colors"
                             >
                               <span>ماخذ لنک</span>
                               <ExternalLink className="w-3 h-3" />
@@ -760,6 +925,115 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* PAGE 4: TECHNICAL DOCUMENTATION & ARCHITECTURE (دستاویزات) */}
+          {/* ======================================================== */}
+          {activeTab === 'docs' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
+                <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
+                  System Architecture • Data Pipelines • Desktop & Web Engine
+                </span>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-white mt-2 flex items-center gap-2">
+                  <Code2 className="w-5 h-5 text-emerald-600" />
+                  <span>مکمل تکنیکی دستاویزات، ڈیٹا بیس ساخت اور توسیعی رہنما (Architecture & Expansion Guide)</span>
+                </h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                  یہ صفحہ ’’الوحيين (Al-Wahyain)‘‘ کے اندرونی انجن، SQLite FTS5 ڈیٹا بیس، خطاطی گلفس (QCF V2/V4)، اسکرپٹس اور نئی تفاسیر و تراجم شامل کرنے کے مکمل طریقۂ کار کی وضاحت کرتا ہے۔ (مزید تفصیل کے لیے ریپوزٹری میں <code className="font-app">README.md</code> اور <code className="font-app">docs/ARCHITECTURE_AND_GUIDE.md</code> ملاحظہ کریں۔)
+                </p>
+              </div>
+
+              {/* 1. Core Architecture & Dual-DB Engine */}
+              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                  <Cpu className="w-4 h-4" />
+                  <span>۱. سسٹم آرکیٹیکچر اور دوہرا ڈیٹا بیس ماڈل (Dual-Database Architecture)</span>
+                </h2>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  ایپلیکیشن مکمل طور پر مقامی (Local-First) اصول پر کام کرتی ہے اور ویب براؤزر کے ساتھ ساتھ <strong>Electron Desktop App</strong> (Windows, macOS, Linux) دونوں میں یکساں چلتی ہے:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70 space-y-1">
+                    <div className="font-bold text-slate-900 dark:text-white font-app">1. Read-Only Corpus DB (data/quran_study.db — 447 MB)</div>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                      اس میں ۱۱۴ سورتیں، ۶,۲۳۶ آیات، ۷۷,۴۲۹ الفاظ کا صرفی و نحوی تجزیہ، ۹ تراجم اور ۶ مکمل اردو تفاسیر (۳۷,۴۱۶ تفسیری ریکارڈز بمعہ FTS5 انڈیکس) محفوظ ہیں۔ ڈیسک ٹاپ ایپ میں اسے <code className="font-app">extraResources</code> کے طور پر <code className="font-app">app.asar</code> سے باہر رکھا جاتا ہے تاکہ SQLite میموری میپنگ (<code className="font-app">mmap_size = 256MB</code>) کے ذریعے ملی سیکنڈز میں ڈیٹا فراہم کرے۔
+                    </p>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70 space-y-1">
+                    <div className="font-bold text-slate-900 dark:text-white font-app">2. Writable User Data DB (user_study.db via ATTACH DATABASE)</div>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                      قاری کے ذاتی بک مارکس (<code className="font-app">bookmarks</code>)، تحقیقی نوٹس (<code className="font-app">notes</code>) اور تفسیری ہائی لائٹس (<code className="font-app">highlights</code>) ایک الگ فائل <code className="font-app">user_study.db</code> میں محفوظ ہوتے ہیں جسے سرور اسٹارٹ ہوتے ہی <code className="font-app">ATTACH DATABASE ... AS user_db</code> کے ذریعے جوڑ لیا جاتا ہے۔ اس سے ایپ اپڈیٹ ہونے پر صارف کا ذاتی ڈیٹا کبھی ضائع نہیں ہوتا۔
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. QCF V2 & V4 Typography Engine */}
+              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                  <Type className="w-4 h-4" />
+                  <span>۲. مصحف مدینہ گلفس اور متحرک فونٹ لوڈر (QCF V2 & V4 COLRv1 Loader)</span>
+                </h2>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  عام یونی کوڈ عربی کے بجائے ہر قرآنی لفظ اپنے صفحہ نمبر (<code className="font-app">1..604</code>) کے مخصوص گلف کوڈ (<code className="font-app">code_v2</code>) اور آیت کے اختتامی نشان (<code className="font-app">end_code_v2</code>) سے رینڈر ہوتا ہے۔ <code className="font-app">src/utils/qcfFontLoader.ts</code> ہر صفحے کے لیے <code className="font-app">/fonts/qcf-v2/p&#123;page&#125;.woff2</code> (معیاری مصحف) یا <code className="font-app">/fonts/qcf-v4-tajweed/p&#123;page&#125;.woff2</code> (رنگین تجوید COLRv1) کو آن ڈیمانڈ براؤزر کے <code className="font-app">FontFace</code> API میں لوڈ کرتا ہے۔
+                </p>
+              </div>
+
+              {/* 3. Scripts & Data Fetching Pipelines */}
+              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                  <Terminal className="w-4 h-4" />
+                  <span>۳. ڈیٹا حصول، نارملائزیشن اور سیڈنگ اسکرپٹس (Data Pipelines in scripts/)</span>
+                </h2>
+                <div className="space-y-2 text-xs" dir="ltr">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_all_114_surahs.mjs & seed_word_lines.mjs & seed_ayah_end_glyphs.mjs</div>
+                    <p className="text-slate-600 dark:text-slate-300 mt-1">
+                      Fetches all 114 Surahs, 6,236 Ayahs, and 77,429 word tokens from Quran.com v4 API & Quranic Arabic Corpus, populating exact Madani page numbers (<code className="font-app">page_madani</code>), 15-line Mushaf line numbers (<code className="font-app">line_number</code>), QCF V2 glyph codes (<code className="font-app">code_v2</code>), and verse-end markers (<code className="font-app">end_code_v2</code>).
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_multi_translations.mjs & seed_audio_segments_114.mjs</div>
+                    <p className="text-slate-600 dark:text-slate-300 mt-1">
+                      Seeds 9 complete translations (6 Urdu + 3 English), 4 Word-by-Word gloss sets (<code className="font-app">ur</code>, <code className="font-app">ur2</code>, <code className="font-app">en</code>, <code className="font-app">en2</code>), and millisecond-level word-by-word audio timestamp segments for Mishary Rashid Alafasy.
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_bayan_ibnkathir_all.mjs, seed_eql_tafasir.mjs & seed_saadi_tafsir.mjs</div>
+                    <p className="text-slate-600 dark:text-slate-300 mt-1">
+                      Ingests and normalizes all 6 Urdu Tafaseer (<em>Bayan ul Quran</em>, <em>Tafheem ul Quran</em>, <em>Ma&apos;ariful Quran</em>, <em>Tafsir Ibn Kathir</em>, <em>Tafseer e Sa&apos;di</em>, and <em>Taisir ul Quran</em>) into clean per-ayah HTML records (6,236 rows each = 37,416 total rows), stripping embedded duplicate headers/translation wrappers in grouped commentaries like <em>Tafseer e Sa&apos;di</em>.
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/setup_fts5.mjs & download_qcf_v2_fonts.mjs</div>
+                    <p className="text-slate-600 dark:text-slate-300 mt-1">
+                      Builds the SQLite FTS5 virtual tables (<code className="font-app">ayahs_fts</code>, <code className="font-app">translations_fts</code>, <code className="font-app">tafasir_fts</code>) with <code className="font-app">unicode61 remove_diacritics 2</code> for instant Arabic/Urdu search, and downloads all 604 QCF V2 & V4 WOFF2 page fonts into <code className="font-app">public/fonts/</code>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. How to Expand the Setup */}
+              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                  <FolderGit2 className="w-4 h-4" />
+                  <span>۴. سسٹم میں توسیع کا طریقہ (How to Add New Tafaseer, Translations & Reciters)</span>
+                </h2>
+                <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed list-disc pr-5">
+                  <li>
+                    <strong>نئی تفسیر شامل کرنا (Adding a 7th+ Tafsir):</strong> ٹیبل <code className="font-app">tafasir</code> میں ہر آیت (<code className="font-app">ayah_id = 1..6236</code>) کے لیے نئی <code className="font-app">tafsir_slug</code>، <code className="font-app">tafsir_name</code>، <code className="font-app">author_name</code> اور <code className="font-app">content_html</code> درج کریں، پھر <code className="font-app">node scripts/setup_fts5.mjs</code> چلائیں اور <code className="font-app">src/App.tsx</code> میں <code className="font-app">DEFAULT_TAFSIR_ORDER</code> میں نیا سلگ شامل کر دیں۔
+                  </li>
+                  <li>
+                    <strong>نیا ترجمہ شامل کرنا (Adding a New Translation):</strong> ٹیبل <code className="font-app">translations</code> میں ۶,۲۳۶ آیات کے لیے نیا <code className="font-app">author_id</code> اور <code className="font-app">text</code> داخل کریں، <code className="font-app">node scripts/setup_fts5.mjs</code> چلائیں، اور <code className="font-app">SubHeaderToolbar.tsx</code> و <code className="font-app">SidebarDrawer.tsx</code> کے ڈراپ ڈاؤن میں آپشن کا اضافہ کریں۔
+                  </li>
+                  <li>
+                    <strong>ڈیسک ٹاپ ایپ بلڈ کرنا (Building Desktop Installers):</strong> کمانڈ <code className="font-app">npm run desktop:dev</code> سے ڈیسک ٹاپ موڈ میں ٹیسٹ کریں اور <code className="font-app">npm run desktop:build</code> کے ذریعے Windows (<code className="font-app">.exe</code>)، macOS (<code className="font-app">.dmg</code>) یا Linux (<code className="font-app">.AppImage</code> / <code className="font-app">.deb</code>) انسٹالر تیار کریں۔
+                  </li>
+                </ul>
+              </div>
             </div>
           )}
 

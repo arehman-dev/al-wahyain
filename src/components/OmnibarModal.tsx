@@ -132,7 +132,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       actions.push({
         id: `jump-${sId}-${aNum}`,
         type: 'jump',
-        title: `براہِ راست جمپ: سورة ${matchedSurah.name_arabic}، آیت ${toArabicDigits(aNum)}`,
+        title: `براہِ راست جمپ: سورة ${matchedSurah.name_arabic}، آیت ${aNum}`,
         subtitle: `${matchedSurah.name_simple} • ${sId}:${aNum}`,
         icon: <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
         badge: 'Enter',
@@ -152,8 +152,8 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       actions.push({
         id: `page-${pNum}`,
         type: 'page',
-        title: `مصحف صفحہ ${toArabicDigits(pNum)} پر جمپ کریں`,
-        subtitle: `صفحہ ${pNum} از ۶۰۴ صفحات`,
+        title: `مصحف صفحہ ${pNum} پر جمپ کریں`,
+        subtitle: `صفحہ ${pNum} از 604 صفحات`,
         icon: <BookOpen className="w-4 h-4 text-amber-500" />,
         badge: 'Enter',
         execute: () => {
@@ -182,9 +182,9 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
         id: `surah-${s.id}`,
         type: 'surah',
         title: `سورة ${s.name_arabic} (${s.name_simple})`,
-        subtitle: `${s.revelation_place === 'makkah' ? 'مکی' : 'مدنی'} • ${toArabicDigits(s.verses_count)} آیات • صفحہ ${toArabicDigits(s.page_start)}`,
+        subtitle: `${s.revelation_place === 'makkah' ? 'مکی' : 'مدنی'} • ${s.verses_count} آیات • صفحہ ${s.page_start}`,
         icon: <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
-        badge: `سورة ${toArabicDigits(s.id)}`,
+        badge: `سورة ${s.id}`,
         execute: () => {
           onSelectSurahAyah(s.id, 1);
           onClose();
@@ -219,16 +219,9 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     {
       keywords: ['tafsir', 'tafseer', 'تفسیر', 'تفاسیر', '4'],
       title: 'تقابلی تفاسیر موڈ (4)',
-      subtitle: 'بیان القرآن، تفہیم، معارف القرآن، ابن کثیر',
+      subtitle: 'بیان القرآن، تفہیم، معارف القرآن، ابن کثیر، السعدی، تیسیر القرآن',
       icon: <Library className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
       action: () => onChangeMode && onChangeMode('tafseer')
-    },
-    {
-      keywords: ['book', 'spread', 'دو ورقی', 'کتابی', 'ورق'],
-      title: 'دو ورقی کھلا مصحف (Book Spread)',
-      subtitle: 'حقیقی کتابی انداز میں دائیں بائیں صفحات',
-      icon: <Layers className="w-4 h-4 text-indigo-500" />,
-      action: () => onSelectReadingMode && onSelectReadingMode('book')
     },
     {
       keywords: ['zen', 'focus', 'زین', 'فوکس'],
@@ -452,10 +445,10 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
 
                   <div className="flex items-center gap-2 shrink-0">
                     {act.badge && (
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${
                         isSelected 
-                          ? 'bg-emerald-600 text-white' 
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10' 
+                          : 'border-transparent bg-slate-100 dark:bg-slate-800 text-slate-500'
                       }`}>
                         {act.badge}
                       </span>

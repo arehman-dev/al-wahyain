@@ -60,7 +60,7 @@ export function applyHighlightsToHtml(
     for (let i = 0; i < tokens.length; i += 2) {
       if (!tokens[i]) continue;
       tokens[i] = tokens[i].replace(regex, (match) => {
-        return `<mark data-highlight-id="${hl.id}" class="${style.mark} cursor-pointer transition-all hover:opacity-80" title="ہائی لائٹ حذف کرنے کے لیے کلک کریں">${match}</mark>`;
+        return `<mark data-highlight-id="${hl.id}" class="${style.mark} cursor-pointer transition-all hover:opacity-80">${match}</mark>`;
       });
     }
   }

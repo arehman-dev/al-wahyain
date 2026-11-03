@@ -3,9 +3,10 @@ node_modules/
 .pnp
 .pnp.js
 
-# Production build
+# Production build & Desktop installers
 dist/
 build/
+release/
 
 # SQLite database, temporary journal and WAL files
 data/*.db

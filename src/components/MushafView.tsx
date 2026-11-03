@@ -19,6 +19,7 @@ interface MushafViewProps {
   onSelectWordRoot?: (root: string) => void;
   activePage?: number;
   onPageChange?: (newPage: number) => void;
+  fontSize?: number;
 }
 
 export const MushafView: React.FC<MushafViewProps> = ({
@@ -32,7 +33,8 @@ export const MushafView: React.FC<MushafViewProps> = ({
   activePlayingWordIndex,
   onSelectWordRoot,
   activePage: externalActivePage,
-  onPageChange
+  onPageChange,
+  fontSize = 18
 }) => {
   const availablePages = Array.from(
     new Set(ayahs.map(a => a.page_madani).filter(Boolean))
@@ -66,6 +68,7 @@ export const MushafView: React.FC<MushafViewProps> = ({
         activePlayingWordIndex={activePlayingWordIndex}
         onSelectAyah={onSelectAyah}
         onSelectWordRoot={onSelectWordRoot}
+        fontSize={fontSize}
       />
     </div>
   );

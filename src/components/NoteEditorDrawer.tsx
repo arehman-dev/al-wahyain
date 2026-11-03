@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Trash2, FileText, Check } from 'lucide-react';
 import { Ayah } from '../types/quran';
 import { fetchNotes, saveNote, deleteNote } from '../services/api';
+import { loadQcfPageFont, getQcfFontFamily } from '../utils/qcfFontLoader';
+import { toArabicDigits } from '../utils/juzMapping';
 
 interface NoteEditorDrawerProps {
   isOpen: boolean;
@@ -22,6 +24,9 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
 
   useEffect(() => {
     if (!ayah || !isOpen) return;
+    if (ayah.page_madani) {
+      loadQcfPageFont(ayah.page_madani, false);
+    }
     setSavedSuccess(false);
     fetchNotes()
       .then(notes => {
@@ -93,9 +98,34 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
 
         {/* Ayah Snippet */}
         <div className="p-4 bg-emerald-50/40 dark:bg-emerald-950/20 border-b border-emerald-100 dark:border-emerald-900/40 space-y-1">
-          <p className="font-arabic text-base text-slate-900 dark:text-slate-100 leading-relaxed text-right">
-            {ayah.text_uthmani}
-          </p>
+          <div
+            className="font-qcf text-xl text-slate-900 dark:text-slate-100 leading-[2.3] text-right"
+            style={ayah.page_madani ? { fontFamily: getQcfFontFamily(ayah.page_madani, false) } : undefined}
+          >
+            {ayah.words && ayah.words.length > 0 ? (
+              <>
+                {ayah.words.map(w => (
+                  <span
+                    key={w.id}
+                    className="inline-block mx-0.5 font-qcf"
+                    style={w.page_number ? { fontFamily: getQcfFontFamily(w.page_number, false) } : undefined}
+                    dangerouslySetInnerHTML={{ __html: w.code_v2 || w.text_uthmani }}
+                  />
+                ))}
+                {ayah.end_code_v2 ? (
+                  <span
+                    className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle text-emerald-700 dark:text-emerald-400"
+                    style={ayah.page_madani ? { fontFamily: getQcfFontFamily(ayah.page_madani, false) } : undefined}
+                    dangerouslySetInnerHTML={{ __html: ayah.end_code_v2 }}
+                  />
+                ) : (
+                  <span className="ayah-end-num select-none mr-1.5">﴿{toArabicDigits(ayah.ayah_number)}﴾</span>
+                )}
+              </>
+            ) : (
+              <span>{ayah.text_uthmani}</span>
+            )}
+          </div>
         </div>
 
         {/* Text Area */}
@@ -135,11 +165,11 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
             <button
               onClick={handleSave}
               disabled={saving || !noteText.trim()}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+              className="px-5 py-2 border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-50 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
             >
               {savedSuccess ? (
                 <>
-                  <Check className="w-4 h-4 text-white" />
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>محفوظ ہو گیا!</span>
                 </>
               ) : (

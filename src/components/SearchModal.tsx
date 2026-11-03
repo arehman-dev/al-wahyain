@@ -176,10 +176,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-2.5 py-1 rounded-lg font-medium transition-all whitespace-nowrap ${
+                className={`px-2.5 py-1 rounded-lg font-medium border transition-all whitespace-nowrap ${
                   selectedCategory === cat
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
                 }`}
               >
                 {cat === 'all' ? 'تمام موضوعات' : cat}
@@ -272,7 +272,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       {item.verse_key}
                     </span>
                   </div>
-                  <p className="font-uthmani text-xl sm:text-2xl leading-relaxed text-slate-900 dark:text-slate-100 mb-1.5">
+                  <p className="font-qcf text-xl sm:text-2xl leading-relaxed text-slate-900 dark:text-slate-100 mb-1.5">
                     {highlightMatch(item.text_uthmani, query)}
                   </p>
                   <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">

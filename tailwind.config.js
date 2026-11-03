@@ -8,12 +8,15 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        app: ['"Montserrat"', 'system-ui', 'sans-serif'],
-        ibm: ['"IBM Plex Sans Arabic"', 'sans-serif'],
-        indopak: ['"Al Qalam Quran Publisher"', '"AlQalamQuranPublisher"', '"Jameel Noori Nastaleeq"', 'serif'],
-        uthmani: ['"KFGQPC HAFS Uthmanic Script"', '"QPC V2"', '"QCF V2"', '"KFGQPC Uthman Taha Naskh"', '"KFGQPC Uthmanic Script HAFS"', '"Amiri Quran"', 'serif'],
-        arabic: ['"KFGQPC HAFS Uthmanic Script"', '"QPC V2"', '"KFGQPC Uthman Taha Naskh"', '"Amiri Quran"', '"Scheherazade New"', 'serif'],
-        urdu: ['"Jameel Noori Nastaleeq"', '"Noto Nastaliq Urdu"', 'serif'],
+        sans: ['"IBM Plex Sans Arabic"', '"Montserrat"', 'sans-serif'],
+        mono: ['"Montserrat"', '"IBM Plex Sans Arabic"', 'monospace'],
+        app: ['"Montserrat"', '"IBM Plex Sans Arabic"', 'sans-serif'],
+        ibm: ['"IBM Plex Sans Arabic"', '"Montserrat"', 'sans-serif'],
+        qcf: ['"KFGQPC HAFS Uthmanic Script"', '"QCF V2"', '"QPC V2"', '"IBM Plex Sans Arabic"', 'serif'],
+        indopak: ['"KFGQPC HAFS Uthmanic Script"', '"QCF V2"', '"QPC V2"', '"IBM Plex Sans Arabic"', 'serif'],
+        uthmani: ['"KFGQPC HAFS Uthmanic Script"', '"QCF V2"', '"QPC V2"', '"IBM Plex Sans Arabic"', 'serif'],
+        arabic: ['"KFGQPC HAFS Uthmanic Script"', '"QCF V2"', '"QPC V2"', '"IBM Plex Sans Arabic"', 'serif'],
+        urdu: ['"IBM Plex Sans Arabic"', '"Montserrat"', 'sans-serif'],
       },
       colors: {
         tajweed: {

@@ -40,9 +40,16 @@ export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = (
     {
       title: 'eQuran Library & Easy Quran wa Hadees',
       organization: 'eQuranLibrary / Easy Quran wa Hadees Software',
-      purpose: 'معارف القرآن (مفتی محمد شفیع) اور تیسیر القرآن (مولانا عبدالرحمٰن کیلانی) کا مستند ذخیرہ',
+      purpose: 'معارف القرآن (مفتی محمد شفیع)، تفسیر السعدی (شیخ عبدالرحمٰن بن ناصر السعدی) اور تیسیر القرآن (مولانا عبدالرحمٰن کیلانی) کا مستند ذخیرہ',
       url: 'https://www.equranlibrary.com',
       license: 'Digital Islamic Archive'
+    },
+    {
+      title: 'تفسیر السعدی (تیسیر الکریم الرحمٰن)',
+      organization: 'شیخ عبدالرحمٰن بن ناصر السعدیؒ — دارالسلام و ای قرآن لائبریری',
+      purpose: 'قرآنی آیات کی جامع، سہل اور مستند اردو تفسیر السعدی کا مکمل ذخیرہ',
+      url: 'https://www.equranlibrary.com/tafseer/saadi',
+      license: 'Authenticated Scholarly Edition'
     },
     {
       title: 'بیان القرآن — ڈاکٹر اسرار احمد',
@@ -81,8 +88,8 @@ export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = (
         </div>
 
         {/* Sources List */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-urdu leading-relaxed">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 font-ibm">
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-ibm leading-relaxed">
             یہ ایپلیکیشن خالصتاً غیر تجارتی اور علمی مطالعہ کے لیے بنائی گئی ہے۔ تمام قرآنی نصوص، اعراب، صوتی تلاوت اور اردو تفاسیر درج ذیل مستند اور تصدیق شدہ اداروں کے مآخذ سے حاصل کی گئی ہیں:
           </p>
 

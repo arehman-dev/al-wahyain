@@ -1,154 +1,113 @@
-# Al-Wahyain (الوحيين) — Quran & Islamic Study Station
+# الوحيين — Al-Wahyain (`v1.0.0`)
 
-A desktop-first, offline-capable study station designed for comparative reading of the Holy Quran, classical Urdu Tafasir, linguistic morphology, and the foundations of Islamic scholarship.
+**Offline-First Quranic Study, Lexical Morphology & Comparative Urdu Tafaseer Workstation**
 
----
+> **الوحيين (Al-Wahyain)** is a fast, 100% local-first scholarly workstation for studying the Noble Qur'an across **604 authentic Medina Mushaf pages (QCF V2 & V4 COLRv1 Tajweed)**, **77,429 morphologically analyzed words**, **9 translations (6 Urdu + 3 English)**, **4 word-by-word interlinear glosses**, and **6 complete classical & contemporary Urdu Tafaseer (37,416 indexed commentary entries)**—running seamlessly both in the browser and as a cross-platform Desktop Application.
 
-## 🌟 Key Features
-
-### 1. Stacked & Comparative Multi-Tafsir Reader
-* **Ayah Pinned at Top**: Arabic text (*Madani* or *Indo-Pak* script) paired with authentic Urdu translation (*Mufti Muhammad Taqi Usmani*).
-* **4 Vertically Stacked & 2-Column Comparative Tafasir**:
-  1. **تفہیم القرآن** (*Tafheem-ul-Quran* — مولانا سید ابوالاعلیٰ مودودی)
-  2. **معارف القرآن** (*Maarif-ul-Quran* — مفتی محمد شفیع عثمانی)
-  3. **تفسیر ابنِ کثیر** (*Tafsir Ibn Kathir Urdu* — حافظ عماد الدین ابنِ کثیر)
-  4. **تیسیر القرآن** (*Tayseer-ul-Quran* — مولانا عبدالرحمٰن کیلانی)
-* **Custom Reading Experience**:
-  * Real-time **Font Scaler** (`A-` / `17px` / `A+`).
-  * Typography toggle: **IBM Plex Sans Arabic** vs. **Noto Nastaliq Urdu**.
-  * View toggle: **عمودی (1-Column Stacked)** vs. **تقابلی (2-Column Side-by-Side Grid)** on desktop.
-
-### 2. Authentic 15-Line Mushaf Mode
-* **True 15-Line Page View**: Authentic page frame with ornate borders, Juz headers, and page stepping.
-* **Dual Script Support**: Toggle between **Madani (604-page King Fahd Complex standard)** and **Indo-Pak (15-line Pakistani standard)**.
-* **Tajweed Color-Coding**: Real-time color-coded rules with interactive rules modal guide.
-* **Continuous Scroll Mode**: For uninterrupted recitation with inline translations.
-
-### 3. Word-by-Word Morphology (Quranic Corpus)
-* **Interlinear Grammar Cards**: Arabic word, Urdu translation, and English meaning.
-* **Traditional Arabic Grammar**: Grammatical classification (اسم، فعل، فاعل، مفعول، مبتدأ، خبر، مجرور، منصوب، مرفوع، صیغہ، وزن).
-* **Root & Lemma Concordance**: Click any root (e.g. `ع - ل - م`) to explore total Quranic occurrences and jump to all verses containing that root.
-
-### 4. Global Search System (`Ctrl + K` / `Cmd + K`)
-* **Quran Verses & Translations**: Search in Urdu or Arabic (*"صبر"*, *"تقویٰ"*, *"جنت"*).
-* **4 Tafasir Content Search**: Full-text keyword search across all 3,488 commentary records with context snippets and query highlighting.
-
-### 5. Personal Study Suite: Bookmarks & Reflections
-* **One-Click Bookmark Ribbon (`B`)**: Star favorite verses.
-* **Personal Study Notes (`N`)**: Jot down reflections, cross-references, or lecture notes, persisted in local SQLite.
-* **Study Notebook Modal**: Browse, review, or delete saved verses and notes.
-
-### 6. Synchronized Audio Recitation Hub
-* **Reciter**: Mishary Rashid Alafasy.
-* **Playback Controls**: Play/Pause (`Space`), Repeat loop (`1x`, `3x`, `5x`, `∞`), Playback speed (`0.75x` to `1.5x`).
-* **Real-Time Karaoke Highlighting**: Words highlight in sync with recitation.
-
-### 7. Export & Sharing Hub
-* **WhatsApp Card**: Formatted for instant sharing with Arabic, translation, and reference.
-* **Academic Citation**: Arabic verse + translation + selected Tafsir snippet + author attribution & source link.
-* **Markdown Export**: Formatted blockquotes ready for note-taking apps.
+- **Developer & Architect**: **Abdul Rehman (`@arehman-dev`)**
+  - 🌐 **Portfolio Site**: [https://arehman-dev.github.io/](https://arehman-dev.github.io/)
+  - ✍️ **Personal Editorial Site**: [https://arehman-dev.github.io/me/](https://arehman-dev.github.io/me/)
+  - 💻 **GitHub**: [https://github.com/arehman-dev](https://github.com/arehman-dev) • [Repository](https://github.com/arehman-dev/al-wahyain)
+  - 🐦 **X (Twitter)**: [https://x.com/arehman_dev](https://x.com/arehman_dev)
+- 📖 **Deep Technical & Expansion Documentation**: See **[`docs/ARCHITECTURE_AND_GUIDE.md`](./docs/ARCHITECTURE_AND_GUIDE.md)** (also accessible in-app via **Sidebar → تکنیکی دستاویزات (Docs)**).
 
 ---
 
-## 🗺️ Project Roadmap & Version Milestones
+## 🌟 Core Pillars & Capabilities
 
-Our development is strictly purpose-built for deep, distraction-free Quranic study, adhering to the core philosophy: **personal study utility first, open-source community asset second, zero bloat**.
-
-```
-v0.5 (Foundation) ──► v0.6 (Deep UX) ──► v0.7 (15-Line Mushaf) ──► v0.8 (PWA) ──► v0.9 (114 Surahs) ──► v1.0 (Stable) ──► v2.0 (Hadith Library) ──► v3.0 (Personal Maktabah: PDF & MD)
-```
-
-### ✅ v0.5 — Core Foundation (Completed)
-- [x] Multi-Tafsir Reader with 4 classical Urdu commentaries (Tafheem, Maarif, Ibn Kathir, Tayseer).
-- [x] Dual Layouts: Stacked 1-Column and Comparative 2-Column Desktop Grid.
-- [x] Word-by-Word Morphology engine with Arabic roots concordance explorer.
-- [x] Edge-to-edge full-width layout with unified Top Bar, Sub-Header Toolbar, and Bottom Dock.
-- [x] Full-text search across Quran verses and 3,488 Tafasir records.
-- [x] Local SQLite persistence for Bookmarks, Notes, and Study Notebook.
-
-### ✅ v0.6 — Study Tooling & Deep UX (Completed)
-- [x] **Bundled Offline Typography**: Self-hosted local Arabic & Urdu fonts (`Amiri`, `IBM Plex Sans Arabic`, `Noto Nastaliq Urdu`, `Scheherazade New`) for 100% offline readability.
-- [x] **Interactive Word Hover & Tap Inspection**: Immediate word-by-word meaning, grammatical category (اسم / فعل / حرف), and root popup in Tafsir & Mushaf view without having to leave the page.
-- [x] **Tafsir Cross-Reference Auto-linking**: Smart regex parser detecting Quran citations (e.g. `[البقرۃ: 255]`, `(2:255)`, `سورہ ۲ آیت ۱۰`) and turning them into 1-click jump links.
-- [x] **Tafsir Study Highlighter Pen**: Interactive multi-color highlighter (Yellow, Green, Sky Blue, Lavender) for commentary passages, persisted locally and cataloged in the Study Notebook.
-- [x] **Intelligent Session Resume & History**: Instant "Continue where you left off" indicator and recent verse navigation history.
-
-### ✅ v0.7 — 15-Line Mushaf Precision & Alignment (Completed)
-- [x] **Authentic Pakistani 15-Line Page View**: Double ornamental Islamic border frame, authentic line balancing, and traditional corner brackets.
-- [x] **Full Margin Ornaments (حواشی و علامات)**: Side margin indicators with calligraphic Ruku medallions (`ع`), Rub' al-Hizb seals (`۞`), and Sajdah ribbons (`۩ سجدہ تلاوت`).
-- [x] **Dual-Page Open Book Spread (دو طرفہ مصحف)**: Desktop toggle allowing readers to view facing pages side-by-side like a physical printed Quran.
-- [x] **Fast Page Steppers & Jump**: Keyboard navigation (`PageUp`, `PageDown`, `[`, `]`) and direct page number jumper input.
-- [x] **Tafsir Accordion Hotkeys (`1` to `4`)**: Direct keyboard toggles for all 4 Urdu commentaries (1: Tafheem, 2: Maarif, 3: Ibn Kathir, 4: Tayseer).
-
-### ⏳ v0.8 — Offline Standalone & Desktop Polish (Next Milestone)
-- [ ] Progressive Web App (PWA) manifest with service worker caching for 100% offline desktop experience.
-- [ ] Comprehensive Study Notebook export (PDF generation, formatted Markdown journal bundle).
-- [ ] Auto-backup and restore of personal study data (bookmarks, notes, highlights).
-
-### ⏳ v0.9 — Full Quran Data Ingestion
-- [ ] Systematic ingestion of all remaining Surahs (Surah 5 to Surah 54, Surah 58 to 114) to reach complete 114 Surahs and 6,236 Ayahs.
-- [ ] Full ingestion of all ~25,000 commentary chapters for Maududi, Maarif-ul-Quran, Ibn Kathir, and Tayseer.
-- [ ] SQLite FTS5 (Full-Text Search 5) index optimization for sub-millisecond search across the entire scripture and library.
-
-### ⏳ v1.0 — Stable Production Release
-- [ ] Polished UI/UX, cross-platform verified keyboard ergonomics, and final community release.
-
-### ⏳ v2.0 — Hadith Library Expansion (*Al-Wahyain* — The Two Divine Revelations)
-- [ ] Secondary expansion phase integrating the Sunnah: Sahih al-Bukhari and Sahih Muslim with Urdu translations.
-- [ ] Cross-referencing Hadith narrations with corresponding Quranic Ayahs in the Tafsir study view.
-
-### ⏳ v3.0 — Personal Digital Maktabah (مکتبہ ذاتیہ) — Islamic PDF & Markdown Scholar Station
-- [ ] Built-in offline PDF reader for classical Islamic books, treatises, and personal study libraries.
-- [ ] Scholarly Markdown (.md) reader and journal manager with auto-detection of Quranic references.
-- [ ] Split-view study: Read personal PDF books and research notes side-by-side with the Quran & Tafsir workspace.
-- [ ] Direct citation clipper: Clip excerpts from personal books into Ayah notes with automatic academic attribution.
+1. **Authentic Medina Mushaf Typography (`QCF V2` & `QCF V4 COLRv1 Tajweed`)**:
+   - Every Quranic word across the entire application—including the 15-line Continuous Mushaf, Translation view, Word-by-Word interlinear cards, Morphology Syntactic Tree, Root Explorer modal, Quick-Peek drawer, and Notes—renders using authentic **King Fahd Glorious Quran Printing Complex (KFGQPC) QCF V2 page-specific glyphs** (`p1.woff2` – `p604.woff2`).
+   - One-click **QCF V4 COLRv1 Tajweed mode** dynamically switches to Quran Foundation color-layer vector fonts with theme-aware CSS `font-palette` (`--Light`, `--Dark`, `--Sepia`).
+2. **4 Integrated Study Modes (`1` – `4` Hotkeys)**:
+   - **`1` — قرآن (Mushaf Mode)**: Continuous 604-page, 15-line Medina Mushaf with page-accurate headers, Juz/Hizb/Ruku/Sajdah markers, word-level hover glosses, and synchronized audio highlighting.
+   - **`2` — ترجمہ (Translation & Interlinear WBW Mode)**: Side-by-side primary and comparative secondary translations (6 Urdu + 3 English) with toggleable classical interlinear Word-by-Word (`الترجمة السطرية`) boxes.
+   - **`3` — صرف و نحو (Morphology & Lexical Concordance Mode)**: Complete morphological breakdown of all 77,429 Quranic words (Root, Lemma, POS, Gender/Number/Person/Case/Mood, Decomposed Morpheme Syntactic Graph, and full Quranic Root Concordance).
+   - **`4` — تفسیر (Comparative Tafaseer Mode)**: Study 6 complete Urdu Tafaseer in either **Single-Author Focus Mode** or **Stacked Comparative Mode** with custom ordering, persistent 3-color text highlighting (`Yellow`, `Sky Blue`, `Light Green`), and interactive cross-reference verse popovers.
+3. **Dual-Database Local Engine (`quran_study.db` + `user_study.db`)**:
+   - Powered by Node.js native `node:sqlite` (`DatabaseSync`) with SQLite FTS5 full-text search (`unicode61 remove_diacritics 2`).
+   - Separates the **447 MB read-only scholarly corpus** (`data/quran_study.db`) from the **writable user database** (`user_study.db` via `ATTACH DATABASE ... AS user_db`), ensuring personal bookmarks, notes, and Tafsir highlights are never overwritten during application updates.
 
 ---
 
-## ⌨️ Power-User Keyboard Shortcuts
+## 📚 Bundled Offline Corpus Summary
 
-| Shortcut | Description |
-| :--- | :--- |
-| **`Space`** | Play / Pause recitation audio |
-| **`Ctrl + K`** / **`⌘ + K`** | Open global search (Quran verses & 4 Tafasir) |
-| **`←` / `→`** (or **`J` / `K`**) | Step to next / previous Ayah |
-| **`PageUp` / `PageDown`** (or **`[` / `]`**) | Step to previous / next Mushaf page |
-| **`1` / `2` / `3` / `4`** | Toggle individual commentary in Tafsir view (1: Tafheem, 2: Maarif, 3: Ibn Kathir, 4: Tayseer) |
-| **`Shift + 1 / 2 / 3`** | Switch study workspace mode (1: Tafsir, 2: Mushaf, 3: Morphology) |
-| **`B`** | Toggle bookmark on active Ayah |
-| **`N`** | Open personal study note drawer |
-| **`Z`** | Toggle Zen / Focus mode (collapses toolbars for distraction-free reading) |
-| **`?`** | Open interactive shortcuts cheat sheet modal |
-| **`Esc`** | Close any open drawer or modal |
+| Dataset Category | Included Works / Count | Details |
+| :--- | :--- | :--- |
+| **Quranic Script & Pages** | **114 Surahs • 6,236 Ayahs • 604 Pages** | Uthmani script, Indopak script, QCF V2 glyph codes (`code_v2`), verse-end markers (`end_code_v2`), and 15-line Mushaf layout coordinates. |
+| **Morphology & Roots** | **77,429 Words • 1,648 Roots** | University of Leeds Quranic Arabic Corpus morphology, Arabic grammar templates, and root concordance. |
+| **Urdu Translations (6)** | **37,416 Verse Translations** | 1. Mufti Muhammad Taqi Usmani (`taqi_usmani`)<br>2. Sayyid Abul Ala Maududi (`maududi`)<br>3. Maulana Muhammad Junagarhi (`junagarhi`)<br>4. Shaykh al-Hind Mahmud al-Hasan (`mahmud_hasan`)<br>5. Dr. Israr Ahmad (`israr_ahmad`)<br>6. Fateh Muhammad Jalandhari (`jalandhari`) |
+| **English Translations (3)** | **18,708 Verse Translations** | 1. Saheeh International (`sahih_intl`)<br>2. Mufti Taqi Usmani English (`taqi_usmani_en`)<br>3. Prof. M.A.S. Abdel Haleem (`abdel_haleem`) |
+| **Word-by-Word Glosses (4)** | **309,716 Word Glosses** | 1. Hafiz Nazar Ahmad Urdu WBW (`ur`)<br>2. Hafiz Salahuddin Yusuf Extended Urdu WBW (`ur2`)<br>3. Saheeh International English WBW (`en`)<br>4. Quranic Corpus English Gloss (`en2`) |
+| **Complete Urdu Tafaseer (6)** | **37,416 Per-Ayah Commentaries** | 1. **بیان القرآن** — Dr. Israr Ahmad (`bayan`)<br>2. **تفہیم القرآن** — Sayyid Abul Ala Maududi (`tafheem`)<br>3. **معارف القرآن** — Mufti Muhammad Shafi Usmani (`maarifulquran`)<br>4. **تفسیر ابن کثیر** — Hafiz Ibn Kathir / Maulana Junagarhi (`ibnkathir`)<br>5. **تفسیر السعدی** — Shaykh Abdur-Rahman al-Sa'di (`saadi`)<br>6. **تیسیر القرآن** — Maulana Abdur-Rahman Kilani (`taisirulquran`) |
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Web & Desktop Workflows)
 
-### 1. Launch the Application
+### 1. Web Application Workflow (Default)
 ```bash
+# Install dependencies
+npm install
+
+# Start both the Node.js SQLite Backend (port 3001) and Vite Frontend (port 5173)
 npm run start
 ```
-* **Frontend**: `http://localhost:5173`
-* **Local SQLite API**: `http://localhost:3001`
+- **Frontend UI**: `http://localhost:5173`
+- **Backend SQLite API**: `http://localhost:3001/api/...`
 
-### 2. Available Seeded Chapters
-The local SQLite database (`data/quran_study.db`) comes pre-seeded with:
-* **All 114 Surahs metadata**
-* **Surah 1 (*Al-Fatihah*)** — 7 verses
-* **Surah 2 (*Al-Baqarah*)** — 286 verses
-* **Surah 3 (*Ali 'Imran*)** — 200 verses
-* **Surah 4 (*An-Nisa*)** — 176 verses
-* **Surah 55 (*Ar-Rahman*)** — 78 verses
-* **Surah 56 (*Al-Waqi'ah*)** — 96 verses
-* **Surah 57 (*Al-Hadid*)** — 29 verses
-* **Total: 872 Ayahs with complete words, translations, and all 4 classical Urdu Tafasir (3,488 records)**.
+### 2. Desktop Application Workflow (Electron + `electron-builder`)
+The desktop runtime uses `electron/main.mjs`, `electron/preload.cjs`, and `electron-builder.yml` without altering the web workflow:
+```bash
+# Install Electron & electron-builder (first time only when packaging desktop builds)
+npm install -D electron electron-builder
+
+# Launch the compiled Desktop App locally
+npm run desktop:start
+
+# Package unpacked desktop directory for testing
+npm run desktop:pack
+
+# Build distributable installers (.AppImage / .deb on Linux, .exe on Windows, .dmg on macOS)
+npm run desktop:build
+```
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 🗂️ Repository Structure
 
-* **Database**: Embedded local SQLite (`data/quran_study.db`)
-* **Backend**: Node.js built-in `node:sqlite` (zero external C++ dependencies)
-* **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS + Lucide Icons
-* **Typography**: Google Fonts (*IBM Plex Sans Arabic*, *Noto Nastaliq Urdu*, *Amiri*, *Scheherazade New*)
+```text
+al-wahyain/
+├── data/
+│   ├── quran_study.db            # 447 MB Read-Only Scholarly Corpus SQLite + FTS5 Database
+│   └── user_study.db             # Auto-created Writable User DB (Bookmarks, Notes, Highlights)
+├── docs/
+│   └── ARCHITECTURE_AND_GUIDE.md # Deep Technical Architecture, Scripts, Schema & Expansion Guide
+├── electron/
+│   ├── main.mjs                  # Electron Main Process (Dual-DB paths, ephemeral loopback port, window state)
+│   └── preload.cjs               # Secure ContextBridge (window.electronAPI)
+├── public/
+│   └── fonts/                    # 100 MB Offline Fonts (604 QCF V2 + 604 QCF V4 Tajweed + IBM Plex Sans Arabic)
+├── scripts/                      # 12 Data Fetching, Normalization, Seeding & FTS5 Indexing Scripts
+├── server/
+│   ├── index.mjs                 # Zero-dependency Node.js HTTP + node:sqlite API & Static Server
+│   └── start.mjs                 # Unified Launcher for Web Dev (spawns API server + Vite)
+├── src/
+│   ├── components/               # 19 Modular React UI Components (3-Bar Glassmorphic System, Views, Modals)
+│   ├── types/                    # TypeScript Interfaces (quran.ts)
+│   ├── utils/                    # QCF Font Loader, Mushaf Layout Metadata, Morphological Parser
+│   ├── App.tsx                   # Central State, Keyboard Hotkeys, Cross-View Synchronization
+│   └── index.css                 # Typography Rules, Glassmorphic Bars, COLRv1 Palettes & 4 Themes
+├── electron-builder.yml          # Desktop Packaging Config (extraResources outside app.asar)
+├── tailwind.config.js            # Unified Font Stacks (IBM Plex Sans Arabic, Montserrat, QCF V2)
+└── package.json                  # Web & Desktop Scripts
+```
+
+---
+
+## 🔗 Connect with the Developer
+
+Built and maintained by **Abdul Rehman (`@arehman-dev`)**:
+- **Engineering Portfolio**: [https://arehman-dev.github.io/](https://arehman-dev.github.io/)
+- **Personal Editorial Space**: [https://arehman-dev.github.io/me/](https://arehman-dev.github.io/me/)
+- **GitHub**: [https://github.com/arehman-dev](https://github.com/arehman-dev)
+- **X (Twitter)**: [https://x.com/arehman_dev](https://x.com/arehman_dev)

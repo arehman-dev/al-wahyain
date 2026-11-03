@@ -1,0 +1,49 @@
+appId: io.github.arehman_dev.alwahyain
+productName: Al-Wahyain
+copyright: Copyright © 2026 Abdul Rehman (@arehman-dev)
+asar: true
+
+directories:
+  output: release
+  buildResources: public
+
+files:
+  - dist/**/*
+  - electron/**/*
+  - server/**/*
+  - package.json
+  - "!dist/fonts/**/*"
+  - "!data/**/*"
+
+# Best Practice #2: Keep the 447MB SQLite database and 163MB QCF font packs
+# unpacked outside app.asar so SQLite mmap_size works with zero-copy speed.
+extraResources:
+  - from: data/quran_study.db
+    to: data/quran_study.db
+  - from: public/fonts
+    to: fonts
+
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Education
+  synopsis: Al-Wahyain (الوحيين) — Offline Quran, Morphology & Comparative Urdu Tafaseer Station
+  maintainer: Abdul Rehman <arehman-dev@users.noreply.github.com>
+
+win:
+  target:
+    - nsis
+    - portable
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+mac:
+  target:
+    - dmg
+    - zip
+  category: public.app-category.reference

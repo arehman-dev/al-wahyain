@@ -1,6 +1,7 @@
 import React from 'react';
 import { Word } from '../types/quran';
-import { GitBranch, Layers, Sparkles, BookOpen, Compass, ArrowDown } from 'lucide-react';
+import { GitBranch, ArrowDown } from 'lucide-react';
+import { getQcfFontFamily } from '../utils/qcfFontLoader';
 
 interface MorphologyGraphProps {
   word: Word;
@@ -133,11 +134,19 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
         {/* Top Node: Complete Word Compound */}
         <div className="relative flex flex-col items-center">
           <div className="px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border-2 border-emerald-500 shadow-md flex flex-col items-center">
-            <span className="text-xs text-slate-400 font-medium mb-1">المركب اللفظي الكامل (Word Token)</span>
-            <span className="text-3xl font-bold font-uthmani text-slate-900 dark:text-white">
-              {word.text_uthmani}
-            </span>
-            <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mt-1">
+            <span className="text-xs text-slate-400 font-medium mb-1 font-ibm">المركب اللفظي الكامل (Word Token)</span>
+            {word.code_v2 && word.page_number ? (
+              <span
+                className="text-3xl font-bold font-qcf text-slate-900 dark:text-white"
+                style={{ fontFamily: getQcfFontFamily(word.page_number, false) }}
+                dangerouslySetInnerHTML={{ __html: word.code_v2 }}
+              />
+            ) : (
+              <span className="text-3xl font-bold font-qcf text-slate-900 dark:text-white">
+                {word.text_uthmani}
+              </span>
+            )}
+            <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mt-1 font-ibm">
               {word.translation_ur || word.translation_en || '—'}
             </span>
           </div>
@@ -171,10 +180,18 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
 
                 {/* Node Main Glyph / Morpheme */}
                 <div className="py-2 text-center">
-                  <div className="text-2xl font-bold font-uthmani tracking-wide">
-                    {node.content}
-                  </div>
-                  <div className="text-xs font-semibold mt-1 opacity-90">
+                  {node.type === 'stem' && !cleanLemma && word.code_v2 && word.page_number ? (
+                    <div
+                      className="text-2xl font-bold font-qcf tracking-wide"
+                      style={{ fontFamily: getQcfFontFamily(word.page_number, false) }}
+                      dangerouslySetInnerHTML={{ __html: word.code_v2 }}
+                    />
+                  ) : (
+                    <div className="text-xl font-bold font-ibm tracking-wide">
+                      {node.content}
+                    </div>
+                  )}
+                  <div className="text-xs font-semibold mt-1 opacity-90 font-ibm">
                     {node.title_ur}
                   </div>
                 </div>
@@ -188,7 +205,7 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
                   {node.type === 'root' && word.root && onSelectRoot && (
                     <button
                       onClick={() => onSelectRoot(word.root!)}
-                      className="mt-2 block w-full py-1 text-center text-xs font-bold rounded-lg bg-rose-600 text-white hover:bg-rose-700 shadow-2xs transition-colors"
+                      className="mt-2 block w-full py-1 text-center text-xs font-bold rounded-lg border border-rose-500 text-rose-700 dark:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 transition-colors cursor-pointer"
                     >
                       مادہ &quot;{word.root}&quot; کا مکمل جدول دیکھیں ←
                     </button>

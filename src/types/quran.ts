@@ -74,7 +74,7 @@ export interface Ayah {
 
 export interface TafsirEntry {
   id: number;
-  tafsir_slug: 'tafheem' | 'maarif' | 'ibn_kathir' | 'tayseer';
+  tafsir_slug: 'bayan_ul_quran' | 'tafheem' | 'maarif' | 'ibn_kathir' | 'saadi' | 'tayseer';
   tafsir_name: string;
   author_name: string;
   surah_id: number;
@@ -99,6 +99,10 @@ export interface RootDetail {
     ayah_number: number;
     text_uthmani: string;
     word_text: string;
+    page_madani?: number;
+    end_code_v2?: string;
+    word_code_v2?: string;
+    qcf_v2_text?: string;
   }[];
 }
 

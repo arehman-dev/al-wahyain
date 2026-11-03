@@ -116,7 +116,6 @@ export const TafsirSettingsModal: React.FC<TafsirSettingsModalProps> = ({
                   <button
                     onClick={() => handleMove(idx, 'up')}
                     disabled={idx === 0}
-                    title="اوپر کریں"
                     className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
                   >
                     <ArrowUp className="w-3.5 h-3.5" />
@@ -124,7 +123,6 @@ export const TafsirSettingsModal: React.FC<TafsirSettingsModalProps> = ({
                   <button
                     onClick={() => handleMove(idx, 'down')}
                     disabled={idx === tafsirOrder.length - 1}
-                    title="نیچے کریں"
                     className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
                   >
                     <ArrowDown className="w-3.5 h-3.5" />
@@ -147,7 +145,7 @@ export const TafsirSettingsModal: React.FC<TafsirSettingsModalProps> = ({
 
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-xs transition-colors"
+            className="px-4 py-2 border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl font-bold transition-colors cursor-pointer"
           >
             مکمل ہو گیا
           </button>

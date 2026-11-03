@@ -6,14 +6,35 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DB_PATH = path.join(__dirname, '..', 'data', 'quran_study.db');
+const DB_PATH = process.env.CORPUS_DB_PATH || path.join(__dirname, '..', 'data', 'quran_study.db');
+const USER_DB_PATH = process.env.USER_DB_PATH || path.join(__dirname, '..', 'data', 'user_study.db');
+const STATIC_DIR = process.env.STATIC_DIR || path.join(__dirname, '..', 'dist');
+const FONTS_DIR = process.env.FONTS_DIR || path.join(__dirname, '..', 'public', 'fonts');
+
+// Ensure parent directory for writable user_study.db exists
+fs.mkdirSync(path.dirname(USER_DB_PATH), { recursive: true });
 
 const db = new DatabaseSync(DB_PATH);
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT !== undefined ? Number(process.env.PORT) : 3001;
 
-// Initialize bookmarks and notes tables
+// Best Practice #2: Memory-mapped I/O & in-memory temp store for 447MB corpus DB
+try {
+  db.exec(`
+    PRAGMA mmap_size = 268435456;
+    PRAGMA temp_store = MEMORY;
+    PRAGMA cache_size = -64000;
+  `);
+} catch (err) {
+  console.warn('SQLite PRAGMA tuning warning:', err.message);
+}
+
+// Best Practice #1: Attach separate writable user database (user_study.db)
+// so app updates to quran_study.db never overwrite user bookmarks, notes, or highlights.
+const escapedUserDbPath = USER_DB_PATH.replace(/'/g, "''");
+db.exec(`ATTACH DATABASE '${escapedUserDbPath}' AS user_db;`);
+
 db.exec(`
-  CREATE TABLE IF NOT EXISTS bookmarks (
+  CREATE TABLE IF NOT EXISTS user_db.bookmarks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     surah_id INTEGER NOT NULL,
     ayah_number INTEGER NOT NULL,
@@ -22,7 +43,7 @@ db.exec(`
     UNIQUE(surah_id, ayah_number)
   );
 
-  CREATE TABLE IF NOT EXISTS notes (
+  CREATE TABLE IF NOT EXISTS user_db.notes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     surah_id INTEGER NOT NULL,
     ayah_number INTEGER NOT NULL,
@@ -33,7 +54,7 @@ db.exec(`
     UNIQUE(surah_id, ayah_number)
   );
 
-  CREATE TABLE IF NOT EXISTS highlights (
+  CREATE TABLE IF NOT EXISTS user_db.highlights (
     id TEXT PRIMARY KEY,
     surah_id INTEGER NOT NULL,
     ayah_number INTEGER NOT NULL,
@@ -44,6 +65,24 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `);
+
+// Seamless one-time migration of any legacy rows stored in main.bookmarks / notes / highlights
+try {
+  const hasMainBookmarks = db.prepare("SELECT name FROM main.sqlite_master WHERE type='table' AND name='bookmarks'").get();
+  if (hasMainBookmarks) {
+    db.exec(`INSERT OR IGNORE INTO user_db.bookmarks (surah_id, ayah_number, verse_key, created_at) SELECT surah_id, ayah_number, verse_key, created_at FROM main.bookmarks;`);
+  }
+  const hasMainNotes = db.prepare("SELECT name FROM main.sqlite_master WHERE type='table' AND name='notes'").get();
+  if (hasMainNotes) {
+    db.exec(`INSERT OR IGNORE INTO user_db.notes (surah_id, ayah_number, verse_key, note_text, tags, updated_at) SELECT surah_id, ayah_number, verse_key, note_text, tags, updated_at FROM main.notes;`);
+  }
+  const hasMainHighlights = db.prepare("SELECT name FROM main.sqlite_master WHERE type='table' AND name='highlights'").get();
+  if (hasMainHighlights) {
+    db.exec(`INSERT OR IGNORE INTO user_db.highlights (id, surah_id, ayah_number, verse_key, tafsir_slug, text, color, created_at) SELECT id, surah_id, ayah_number, verse_key, tafsir_slug, text, color, created_at FROM main.highlights;`);
+  }
+} catch (migErr) {
+  console.warn('Legacy user data migration notice:', migErr.message);
+}
 
 function jsonResponse(res, data, statusCode = 200) {
   res.writeHead(statusCode, {
@@ -276,7 +315,24 @@ const server = http.createServer(async (req, res) => {
       const rootRow = db.prepare('SELECT * FROM roots WHERE root = ? OR root_arabic = ?').get(rootQuery, rootQuery);
       
       const verses = db.prepare(`
-        SELECT w.surah_id, s.name_urdu as surah_name_urdu, w.ayah_number, a.text_uthmani, w.text_uthmani as word_text
+        SELECT 
+          w.surah_id, 
+          s.name_urdu as surah_name_urdu, 
+          w.ayah_number, 
+          a.text_uthmani, 
+          w.text_uthmani as word_text,
+          a.page_madani,
+          a.end_code_v2,
+          w.code_v2 as word_code_v2,
+          (
+            SELECT GROUP_CONCAT(code_v2, ' ')
+            FROM (
+              SELECT code_v2
+              FROM words w2
+              WHERE w2.surah_id = w.surah_id AND w2.ayah_number = w.ayah_number
+              ORDER BY w2.position ASC
+            )
+          ) as qcf_v2_text
         FROM words w
         JOIN surahs s ON w.surah_id = s.id
         JOIN ayahs a ON (w.surah_id = a.surah_id AND w.ayah_number = a.ayah_number)
@@ -436,7 +492,7 @@ const server = http.createServer(async (req, res) => {
       return jsonResponse(res, results);
     }
 
-    // 9. BOOKMARKS API
+    // 9. BOOKMARKS API (Stored in attached user_db)
     // GET /api/bookmarks
     if (req.method === 'GET' && pathname === '/api/bookmarks') {
       const bookmarks = db.prepare(`
@@ -450,7 +506,7 @@ const server = http.createServer(async (req, res) => {
           a.text_uthmani, 
           a.text_indopak,
           (SELECT text FROM translations t WHERE t.surah_id = b.surah_id AND t.ayah_number = b.ayah_number AND t.author_id = 'taqi_usmani' LIMIT 1) as translation_text
-        FROM bookmarks b
+        FROM user_db.bookmarks b
         JOIN surahs s ON b.surah_id = s.id
         JOIN ayahs a ON (b.surah_id = a.surah_id AND b.ayah_number = a.ayah_number)
         ORDER BY b.id DESC
@@ -467,7 +523,7 @@ const server = http.createServer(async (req, res) => {
       }
       const vk = verse_key || `${surah_id}:${ayah_number}`;
       db.prepare(`
-        INSERT OR IGNORE INTO bookmarks (surah_id, ayah_number, verse_key)
+        INSERT OR IGNORE INTO user_db.bookmarks (surah_id, ayah_number, verse_key)
         VALUES (?, ?, ?)
       `).run(surah_id, ayah_number, vk);
       return jsonResponse(res, { success: true, surah_id, ayah_number });
@@ -478,11 +534,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'DELETE' && delBmMatch) {
       const sId = parseInt(delBmMatch[1], 10);
       const aNum = parseInt(delBmMatch[2], 10);
-      db.prepare('DELETE FROM bookmarks WHERE surah_id = ? AND ayah_number = ?').run(sId, aNum);
+      db.prepare('DELETE FROM user_db.bookmarks WHERE surah_id = ? AND ayah_number = ?').run(sId, aNum);
       return jsonResponse(res, { success: true });
     }
 
-    // 10. NOTES API
+    // 10. NOTES API (Stored in attached user_db)
     // GET /api/notes
     if (req.method === 'GET' && pathname === '/api/notes') {
       const notes = db.prepare(`
@@ -496,7 +552,7 @@ const server = http.createServer(async (req, res) => {
           n.tags, 
           n.updated_at, 
           a.text_uthmani
-        FROM notes n
+        FROM user_db.notes n
         JOIN surahs s ON n.surah_id = s.id
         JOIN ayahs a ON (n.surah_id = a.surah_id AND n.ayah_number = a.ayah_number)
         ORDER BY n.updated_at DESC
@@ -513,7 +569,7 @@ const server = http.createServer(async (req, res) => {
       }
       const vk = verse_key || `${surah_id}:${ayah_number}`;
       db.prepare(`
-        INSERT INTO notes (surah_id, ayah_number, verse_key, note_text, tags, updated_at)
+        INSERT INTO user_db.notes (surah_id, ayah_number, verse_key, note_text, tags, updated_at)
         VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
         ON CONFLICT(surah_id, ayah_number) DO UPDATE SET 
           note_text = excluded.note_text, 
@@ -528,11 +584,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'DELETE' && delNoteMatch) {
       const sId = parseInt(delNoteMatch[1], 10);
       const aNum = parseInt(delNoteMatch[2], 10);
-      db.prepare('DELETE FROM notes WHERE surah_id = ? AND ayah_number = ?').run(sId, aNum);
+      db.prepare('DELETE FROM user_db.notes WHERE surah_id = ? AND ayah_number = ?').run(sId, aNum);
       return jsonResponse(res, { success: true });
     }
 
-    // 11. HIGHLIGHTS API
+    // 11. HIGHLIGHTS API (Stored in attached user_db)
     // GET /api/highlights
     if (req.method === 'GET' && pathname === '/api/highlights') {
       const highlights = db.prepare(`
@@ -546,7 +602,7 @@ const server = http.createServer(async (req, res) => {
           h.text, 
           h.color, 
           h.created_at
-        FROM highlights h
+        FROM user_db.highlights h
         JOIN surahs s ON h.surah_id = s.id
         ORDER BY h.created_at DESC
       `).all();
@@ -562,7 +618,7 @@ const server = http.createServer(async (req, res) => {
       }
       const vk = verse_key || `${surah_id}:${ayah_number}`;
       db.prepare(`
-        INSERT OR REPLACE INTO highlights (id, surah_id, ayah_number, verse_key, tafsir_slug, text, color, created_at)
+        INSERT OR REPLACE INTO user_db.highlights (id, surah_id, ayah_number, verse_key, tafsir_slug, text, color, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
       `).run(id, surah_id, ayah_number, vk, tafsir_slug || 'general', text, color || 'yellow');
       return jsonResponse(res, { success: true, id });
@@ -572,8 +628,41 @@ const server = http.createServer(async (req, res) => {
     const delHlMatch = pathname.match(/^\/api\/highlights\/(.+)$/);
     if (req.method === 'DELETE' && delHlMatch) {
       const hlId = decodeURIComponent(delHlMatch[1]);
-      db.prepare('DELETE FROM highlights WHERE id = ?').run(hlId);
+      db.prepare('DELETE FROM user_db.highlights WHERE id = ?').run(hlId);
       return jsonResponse(res, { success: true });
+    }
+
+    // 12. STATIC ASSET FALLBACK FOR PRODUCTION & ELECTRON DESKTOP RUNTIME
+    if (req.method === 'GET' && !pathname.startsWith('/api/')) {
+      const MIME_TYPES = {
+        '.html': 'text/html; charset=utf-8',
+        '.js': 'application/javascript; charset=utf-8',
+        '.css': 'text/css; charset=utf-8',
+        '.json': 'application/json; charset=utf-8',
+        '.woff2': 'font/woff2',
+        '.ttf': 'font/ttf',
+        '.otf': 'font/opentype',
+        '.svg': 'image/svg+xml',
+        '.png': 'image/png',
+        '.ico': 'image/x-icon'
+      };
+
+      const safeRelPath = decodeURIComponent(pathname === '/' ? '/index.html' : pathname).replace(/\.\./g, '');
+      let candidatePath = path.join(STATIC_DIR, safeRelPath);
+
+      if (!fs.existsSync(candidatePath) && safeRelPath.startsWith('/fonts/')) {
+        candidatePath = path.join(FONTS_DIR, safeRelPath.replace(/^\/fonts\//, ''));
+      }
+
+      if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
+        const ext = path.extname(candidatePath).toLowerCase();
+        res.writeHead(200, {
+          'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': ext === '.woff2' || ext === '.ttf' ? 'public, max-age=31536000, immutable' : 'no-cache'
+        });
+        return fs.createReadStream(candidatePath).pipe(res);
+      }
     }
 
     // 404
@@ -584,6 +673,25 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Quran Study App Backend API running on http://localhost:${PORT}`);
-});
+export function startServer(port = PORT, host = '127.0.0.1') {
+  return new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(port, host, () => {
+      const address = server.address();
+      const actualPort = typeof address === 'object' && address ? address.port : port;
+      console.log(`Al-Wahyain Backend API running on http://${host}:${actualPort}`);
+      console.log(`  • Corpus DB : ${DB_PATH}`);
+      console.log(`  • User DB   : ${USER_DB_PATH}`);
+      resolve({ server, port: actualPort, host, url: `http://${host}:${actualPort}` });
+    });
+  });
+}
+
+// Auto-start when run directly via `node server/index.mjs` (Web Workflow)
+if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
+  server.listen(PORT, () => {
+    console.log(`Quran Study App Backend API running on http://localhost:${PORT}`);
+    console.log(`  • Corpus DB : ${DB_PATH}`);
+    console.log(`  • User DB   : ${USER_DB_PATH}`);
+  });
+}

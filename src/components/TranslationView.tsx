@@ -26,6 +26,7 @@ interface TranslationViewProps {
   isAyahBookmarked?: (ayahNumber: number) => boolean;
   onToggleBookmark?: (ayah: Ayah) => void;
   onSelectWordRoot?: (root: string) => void;
+  fontSize?: number;
 }
 
 export const TranslationView: React.FC<TranslationViewProps> = ({
@@ -41,7 +42,8 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
   isPlaying,
   activePlayingAyah,
   activePlayingWordIndex,
-  onSelectWordRoot
+  onSelectWordRoot,
+  fontSize = 18
 }) => {
   const isInitialOrSurahChange = useRef(true);
   const prevSurahIdRef = useRef<number | undefined>(currentSurah?.id);
@@ -118,7 +120,6 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
 
                   {rukuEnd && (
                     <span 
-                      title={`رکوع ${rukuEnd.surahRuku}`}
                       className="px-2 py-0.5 rounded-md bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold text-[10px]"
                     >
                       ع {toArabicDigits(rukuEnd.surahRuku)}
@@ -127,7 +128,6 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
 
                   {quarter && (
                     <span 
-                      title={quarter.labelUrdu}
                       className="px-2 py-0.5 rounded-md bg-amber-100/70 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold text-[10px]"
                     >
                       ۞ {quarter.labelUrdu.split(':')[0]}
@@ -136,7 +136,6 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
 
                   {sajdah && (
                     <span 
-                      title="سجدہ تلاوت"
                       className="px-2 py-0.5 rounded-md bg-purple-100/70 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 font-bold text-[10px]"
                     >
                       ۩ سجدہ
@@ -179,8 +178,8 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                       >
                         {/* Arabic QCF V2 / V4 Token (Hand Icon on Hover, Color Change Only) */}
                         <span 
-                          className={`text-2xl sm:text-[29px] leading-normal transition-colors font-qcf cursor-pointer ${wordColorClass}`}
-                          style={fontStyle}
+                          className={`leading-normal transition-colors font-qcf cursor-pointer ${wordColorClass}`}
+                          style={{ ...fontStyle, fontSize: `${Math.round(fontSize * 1.65)}px` }}
                           dangerouslySetInnerHTML={{ __html: displayText || '' }}
                         />
 
@@ -225,7 +224,8 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
               ) : (
                 /* Continuous Majestic Flow (When Word-by-Word is Off) — Pure QCF V2 / V4, No Boxes */
                 <div 
-                  className={`text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.85] my-3 cursor-pointer transition-colors ${
+                  style={{ fontSize: `${Math.round(fontSize * 1.65)}px` }}
+                  className={`text-right leading-[2.6] sm:leading-[2.85] my-3 cursor-pointer transition-colors ${
                     isSelected || isAyahPlaying
                       ? showTajweed
                         ? 'qcf-tajweed-verse-selected'
@@ -272,14 +272,15 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
               {activeTr && (
                 <div className="mt-3.5 pt-2 text-right">
                   <p 
+                    style={{ fontSize: `${fontSize}px` }}
                     className={`select-text transition-colors ${
                       isSelected
                         ? 'text-slate-950 dark:text-white'
                         : 'text-slate-800 dark:text-slate-200'
                     } ${
                       activeTr.language === 'en' 
-                        ? 'font-serif text-base sm:text-lg leading-relaxed text-left' 
-                        : 'urdu-nastaliq text-xl sm:text-2xl leading-[2.3]'
+                        ? 'font-app leading-relaxed text-left' 
+                        : 'urdu-nastaliq leading-[2.3]'
                     }`}
                     dir={activeTr.language === 'en' ? 'ltr' : 'rtl'}
                   >
@@ -300,10 +301,11 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                     {secondaryTr.author_name}:
                   </span>
                   <p 
+                    style={{ fontSize: `${Math.max(13, fontSize - 1)}px` }}
                     className={`text-slate-700 dark:text-slate-300 select-text ${
                       secondaryTr.language === 'en' 
-                        ? 'font-serif text-sm sm:text-base leading-relaxed text-left' 
-                        : 'urdu-nastaliq text-lg sm:text-xl leading-[2.2]'
+                        ? 'font-app leading-relaxed text-left' 
+                        : 'urdu-nastaliq leading-[2.2]'
                     }`}
                     dir={secondaryTr.language === 'en' ? 'ltr' : 'rtl'}
                   >

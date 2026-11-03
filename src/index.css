@@ -70,16 +70,6 @@
        url('/fonts/uthmanic_hafs_v22.ttf') format('truetype');
 }
 
-/* 4. Urdu Translation Typography: Jameel Noori Nastaleeq */
-@font-face {
-  font-family: 'Jameel Noori Nastaleeq';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/Jameel Noori Nastaleeq Regular.ttf') format('truetype'),
-       url('/fonts/noto-nastaliq-urdu-400.woff2') format('woff2');
-}
-
 /* ======================================================== */
 /* Glassmorphic 3-Bar System (Distinct from Background)      */
 /* ======================================================== */
@@ -169,7 +159,7 @@ html.theme-oled {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: 'KFGQPC HAFS Uthmanic Script', 'QCF V2', 'Amiri', serif;
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'QCF V2', 'IBM Plex Sans Arabic', serif;
   font-size: 0.85em;
   color: #059669;
   margin: 0 0.35rem;
@@ -183,7 +173,7 @@ html.theme-oled {
 .font-uthmani,
 .font-indopak,
 .font-arabic {
-  font-family: 'KFGQPC HAFS Uthmanic Script', 'QCF V2', 'QPC V2', 'Amiri', serif;
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'QCF V2', 'QPC V2', 'IBM Plex Sans Arabic', serif;
   line-height: 2.35;
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv01", "cv02", "calt", "liga";
@@ -201,13 +191,13 @@ html.theme-oled {
 }
 
 .urdu-nastaliq {
-  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'IBM Plex Sans Arabic', serif;
+  font-family: 'IBM Plex Sans Arabic', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 2.2;
   text-rendering: optimizeLegibility;
 }
 
 .font-urdu {
-  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'IBM Plex Sans Arabic', serif;
+  font-family: 'IBM Plex Sans Arabic', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 2.0;
 }
 

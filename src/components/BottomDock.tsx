@@ -137,7 +137,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           {/* 1. Zen Mode (Icon-only per 3.4) */}
           <button
             onClick={onToggleZenMode}
-            title={isZenMode ? "نارمل موڈ (Z)" : "فوکس / زین موڈ (Z)"}
             className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               isZenMode
                 ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
@@ -150,7 +149,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           {/* 2. Search (Icon-only per 3.4) */}
           <button
             onClick={onOpenSearch}
-            title="تلاش (Ctrl+K)"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <Search className="w-4 h-4" strokeWidth={1.85} />
@@ -160,7 +158,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           {onOpenExportModal && (
             <button
               onClick={onOpenExportModal}
-              title="اقتباس شیئر یا ایکسپورٹ کریں"
               className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
             >
               <Share2 className="w-4 h-4" strokeWidth={1.85} />
@@ -173,7 +170,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <div className="flex items-center gap-1.5 bg-slate-200/65 dark:bg-slate-800/75 rounded-xl px-2 py-1 border border-slate-300/60 dark:border-slate-700/60">
             <button
               onClick={() => setShowPaddingSlider(prev => !prev)}
-              title="دائیں اور بائیں حاشیہ (Padding Slider)"
               className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer flex items-center"
             >
               <MoveHorizontal className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -187,7 +183,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
                   step={1}
                   value={horizontalPadding}
                   onChange={(e) => onChangeHorizontalPadding(Number(e.target.value))}
-                  title={`صفحہ کا حاشیہ: ${horizontalPadding}%`}
                   className="w-16 md:w-20 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
                 <span className="text-[10px] font-app font-bold text-slate-600 dark:text-slate-300 min-w-[24px] text-right">
@@ -204,7 +199,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         <div dir="rtl" className="flex items-center justify-center gap-1.5 justify-self-center">
           <button
             onClick={onPrevAyah}
-            title="پچھلی آیت"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <SkipForward className="w-4 h-4" strokeWidth={1.85} />
@@ -212,7 +206,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={() => isPlaying ? onPause() : onPlay()}
-            title={isPlaying ? "تلاوت موقوف کریں (Space)" : "تلاوت شروع کریں (Space)"}
             className="w-8 h-8 rounded-xl border border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center justify-center active:scale-95 transition-all cursor-pointer"
           >
             {isPlaying ? (
@@ -224,7 +217,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={onNextAyah}
-            title="اگلی آیت"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <SkipBack className="w-4 h-4" strokeWidth={1.85} />
@@ -232,7 +224,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={cycleRepeat}
-            title={repeatCount === 1 ? "تکرار برائے حفظ (Repeat Loop)" : `دور تکرار: ${currentRepeat} از ${repeatCount === Infinity ? 'لامحدود' : repeatCount}`}
             className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-all cursor-pointer ${
               repeatCount > 1 || repeatCount === Infinity
                 ? 'border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
@@ -251,7 +242,6 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={cycleSpeed}
-            title="رفتار تلاوت (Speed)"
             className="hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 text-[11px] font-app font-bold transition-colors cursor-pointer"
           >
             <Gauge className="w-3.5 h-3.5" strokeWidth={1.85} />

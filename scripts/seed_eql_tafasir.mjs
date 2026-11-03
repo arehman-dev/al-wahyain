@@ -31,6 +31,14 @@ const CONFIGS = [
     source: 'Idara Tarjuman-ul-Islam & eQuranLibrary',
     source_url: 'https://www.equranlibrary.com',
     eql_slug: 'taiseerulquran'
+  },
+  {
+    slug: 'saadi',
+    name: 'تفسیر السعدی',
+    author: 'شیخ عبدالرحمٰن بن ناصر السعدی',
+    source: 'دارالسلام و ای قرآن لائبریری (eQuranLibrary)',
+    source_url: 'https://www.equranlibrary.com',
+    eql_slug: 'saadi'
   }
 ];
 

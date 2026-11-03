@@ -144,21 +144,18 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
         {/* 1. Yellow */}
         <button
           onClick={() => handleColorClick('yellow')}
-          title="Yellow (زرد ہائی لائٹ)"
           className="w-5 h-5 rounded-full bg-yellow-300 hover:scale-115 active:scale-95 transition-transform border border-yellow-400 shadow-xs cursor-pointer"
         />
 
         {/* 2. Sky Blue */}
         <button
           onClick={() => handleColorClick('blue')}
-          title="Sky Blue (آسمانی نیلا ہائی لائٹ)"
           className="w-5 h-5 rounded-full bg-sky-400 hover:scale-115 active:scale-95 transition-transform border border-sky-500 shadow-xs cursor-pointer"
         />
 
         {/* 3. Light Green */}
         <button
           onClick={() => handleColorClick('green')}
-          title="Light Green (ہلکا سبز ہائی لائٹ)"
           className="w-5 h-5 rounded-full bg-emerald-300 hover:scale-115 active:scale-95 transition-transform border border-emerald-400 shadow-xs cursor-pointer"
         />
       </div>
@@ -166,7 +163,6 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
       {/* Copy selection */}
       <button
         onClick={handleCopy}
-        title="منتخب تفسیری متن کاپی کریں"
         className="p-1 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
       >
         {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -175,7 +171,6 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
       {/* Close tooltip */}
       <button
         onClick={handleDismiss}
-        title="بند کریں"
         className="p-1 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
       >
         <X className="w-3.5 h-3.5" />

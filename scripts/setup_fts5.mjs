@@ -78,10 +78,10 @@ db.exec('COMMIT');
 console.log(`✓ Populated tafasir_fts with ${tCount} commentary entries.`);
 
 console.log('\nTesting FTS5 queries...');
-const sampleAyah = db.prepare('SELECT verse_key, snippet(ayahs_fts, 3, \"<b>\", \"</b>\", \"...\", 10) as snip FROM ayahs_fts WHERE ayahs_fts MATCH ? LIMIT 2').all('الرحمن');
+const sampleAyah = db.prepare("SELECT verse_key, snippet(ayahs_fts, 3, '<b>', '</b>', '...', 10) as snip FROM ayahs_fts WHERE ayahs_fts MATCH ? LIMIT 2").all('"الرحمن"');
 console.log('Ayah search for الرحمن:', sampleAyah);
 
-const sampleTafsir = db.prepare('SELECT surah_id, ayah_from, tafsir_name, snippet(tafasir_fts, 6, \"<b>\", \"</b>\", \"...\", 12) as snip FROM tafasir_fts WHERE tafasir_fts MATCH ? LIMIT 2').all('توحید');
+const sampleTafsir = db.prepare("SELECT surah_id, ayah_from, tafsir_name, snippet(tafasir_fts, 6, '<b>', '</b>', '...', 12) as snip FROM tafasir_fts WHERE tafasir_fts MATCH ? LIMIT 2").all('"توحید"');
 console.log('Tafsir search for توحید:', sampleTafsir);
 
 console.log('🎉 FTS5 setup completed successfully!');

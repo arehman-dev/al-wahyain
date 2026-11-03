@@ -34,16 +34,16 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
     const ref = `[سورۃ ${ayah.verse_key}]`;
 
     if (format === 'whatsapp') {
-      return `🕋 *${arabic}* ﴿${ayah.ayah_number}﴾\n\n📖 *ترجمہ:* ${trans}\n\n📌 ${ref}\n\n— مطالعہ قرآن و تقابلی تفاسیر اسٹیشن`;
+      return `🕋 *${arabic}* ﴿${ayah.ayah_number}﴾\n\n📖 *ترجمہ:* ${trans}\n\n📌 ${ref}\n\n— الوحيين (Al-Wahyain) • قرآنی مطالعہ و تقابلی تفاسیر`;
     }
 
     if (format === 'academic') {
       const tafsirSnippet = chosenTafsir ? cleanTafsirText(chosenTafsir.content_html).slice(0, 350) + '...' : '';
-      return `قال الله تعالى:\n"${arabic}" ﴿${ayah.verse_key}﴾\n\nترجمہ (مفتی محمد تقی عثمانی):\n"${trans}"\n\nتفسیر (${chosenTafsir?.tafsir_name || 'تفسیر'} — ${chosenTafsir?.author_name || ''}):\n"${tafsirSnippet}"\n\nماخذ: ${chosenTafsir?.source_attribution || 'eQuranLibrary'} (${chosenTafsir?.source_url || ''})`;
+      return `قال الله تعالى:\n"${arabic}" ﴿${ayah.verse_key}﴾\n\nترجمہ (مفتی محمد تقی عثمانی):\n"${trans}"\n\nتفسیر (${chosenTafsir?.tafsir_name || 'تفسیر'} — ${chosenTafsir?.author_name || ''}):\n"${tafsirSnippet}"\n\nماخذ: ${chosenTafsir?.source_attribution || 'eQuranLibrary'} (${chosenTafsir?.source_url || ''})\nبذریعہ: الوحيين (Al-Wahyain)`;
     }
 
     if (format === 'markdown') {
-      return `### آیت مبارکہ ${ayah.verse_key}\n\n> **${arabic}**\n>\n> *${trans}*\n> — *ترجمہ: ${urduTranslation?.author_name || ''}*\n\n---\n\n#### اقتباس از ${chosenTafsir?.tafsir_name || ''}\n\n${chosenTafsir ? cleanTafsirText(chosenTafsir.content_html).slice(0, 400) + '...' : ''}\n\n*ماخذ: [${chosenTafsir?.source_attribution}](${chosenTafsir?.source_url})*`;
+      return `### آیت مبارکہ ${ayah.verse_key}\n\n> **${arabic}**\n>\n> *${trans}*\n> — *ترجمہ: ${urduTranslation?.author_name || ''}*\n\n---\n\n#### اقتباس از ${chosenTafsir?.tafsir_name || ''}\n\n${chosenTafsir ? cleanTafsirText(chosenTafsir.content_html).slice(0, 400) + '...' : ''}\n\n*ماخذ: [${chosenTafsir?.source_attribution}](${chosenTafsir?.source_url}) • بذریعہ الوحيين (Al-Wahyain)*`;
     }
 
     return '';
@@ -71,7 +71,7 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-white">آیت و تفاسیر برآمد کریں (Export & Share)</h3>
-              <p className="text-xs text-slate-400 font-mono">حوالہ: {ayah.verse_key}</p>
+              <p className="text-xs text-slate-400 font-ibm">حوالہ: <span className="font-app font-bold">{ayah.verse_key}</span></p>
             </div>
           </div>
           <button
@@ -86,9 +86,9 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
         <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-950/30 flex gap-2 text-xs font-semibold">
           <button
             onClick={() => setFormat('whatsapp')}
-            className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               format === 'whatsapp'
-                ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold'
+                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -97,9 +97,9 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
           </button>
           <button
             onClick={() => setFormat('academic')}
-            className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               format === 'academic'
-                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-bold'
+                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -108,9 +108,9 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
           </button>
           <button
             onClick={() => setFormat('markdown')}
-            className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               format === 'markdown'
-                ? 'border-cyan-600 bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 font-bold'
+                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -150,7 +150,7 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
           </span>
           <button
             onClick={handleCopy}
-            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2"
+            className="px-5 py-2.5 border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
           >
             {copied ? (
               <>

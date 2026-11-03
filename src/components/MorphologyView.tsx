@@ -17,6 +17,7 @@ interface MorphologyViewProps {
   onPlayAyah?: (ayah: Ayah) => void;
   onPauseAyah?: () => void;
   onOpenTafsir?: (ayahNumber: number) => void;
+  fontSize?: number;
 }
 
 export const MorphologyView: React.FC<MorphologyViewProps> = ({
@@ -24,7 +25,8 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
   showTajweed = false,
   onSelectWordRoot,
   isPlaying,
-  activePlayingWordIndex
+  activePlayingWordIndex,
+  fontSize = 18
 }) => {
   const [selectedWord, setSelectedWord] = useState<Word | null>(
     currentAyah.words && currentAyah.words.length > 0 ? currentAyah.words[0] : null
@@ -69,7 +71,10 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
         </div>
 
         {/* Full Ayah Arabic Text with Clickable Interactive Words (Pure QCF V2 / V4, No Boxes) */}
-        <div className="text-right text-2xl sm:text-3xl leading-[2.6] sm:leading-[2.85] my-3 text-slate-900 dark:text-white cursor-pointer">
+        <div
+          style={{ fontSize: `${Math.round(fontSize * 1.65)}px` }}
+          className="text-right leading-[2.6] sm:leading-[2.85] my-3 text-slate-900 dark:text-white cursor-pointer"
+        >
           {currentAyah.words?.map((w, wIdx) => {
             const isWordActive = isPlaying && activePlayingWordIndex === wIdx;
             const isWordSelected = selectedWord?.id === w.id;
@@ -113,7 +118,10 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
         {/* Translation */}
         {urduTranslation && (
           <div className="mt-3 text-right">
-            <p className="urdu-nastaliq text-xl sm:text-2xl leading-[2.4] text-slate-800 dark:text-slate-200">
+            <p
+              style={{ fontSize: `${fontSize}px` }}
+              className="urdu-nastaliq leading-[2.4] text-slate-800 dark:text-slate-200"
+            >
               {urduTranslation.text}
             </p>
             <span className="text-[11px] text-slate-400 dark:text-slate-500 font-ibm mt-1 block">
@@ -187,8 +195,7 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
                     <span className="text-xs text-slate-500">الجذر (Root):</span>
                     <button
                       onClick={() => onSelectWordRoot(selectedWord.root!)}
-                      className="px-2.5 py-0.5 rounded-lg bg-emerald-700 text-white text-xs font-bold shadow-2xs hover:bg-emerald-600 transition-colors cursor-pointer"
-                      title="قرآن میں اس مادہ کے تمام مقامات دیکھیں"
+                      className="px-2.5 py-0.5 rounded-lg border border-emerald-500 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 text-xs font-bold hover:bg-emerald-500/20 transition-colors cursor-pointer"
                     >
                       {selectedWord.root} 🔍
                     </button>

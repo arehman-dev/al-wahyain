@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { AppMode, ReadingTheme } from '../types/quran';
 
-export type SidebarTab = 'about' | 'preferences' | 'references';
+export type SidebarTab = 'about' | 'preferences' | 'references' | 'docs';
 
 interface HeaderProps {
   activeMode: AppMode;
@@ -79,7 +79,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 1. Zen Mode */}
           <button
             onClick={onToggleZenMode}
-            title={isZenMode ? "نارمل موڈ پر واپس آئیں (Z)" : "فوکس / زین موڈ (Z)"}
             className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               isZenMode 
                 ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' 
@@ -92,7 +91,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 2. Theme Toggler */}
           <button
             onClick={cycleTheme}
-            title={themeLabels[themeMode]}
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             {themeMode === 'light' && <Sun className="w-4 h-4 text-amber-500" strokeWidth={1.85} />}
@@ -104,7 +102,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 3. All Bookmarks (Study Suite) — With Name */}
           <button
             onClick={onOpenStudySuite}
-            title="محفوظ آیات، نوٹس اور ہائی لائٹس"
             className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800/70 hover:bg-amber-500/15 text-slate-700 dark:text-slate-200 hover:text-amber-600 dark:hover:text-amber-400 border border-slate-300/60 dark:border-slate-700/60 text-xs font-semibold transition-all cursor-pointer"
           >
             <Bookmark 
@@ -123,7 +120,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 4. Search (Ctrl+K) — With Name */}
           <button
             onClick={onOpenSearch}
-            title="جامع تلاش و کمانڈ پیلیٹ (Ctrl + K)"
             className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800/70 hover:bg-emerald-500/15 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300/60 dark:border-slate-700/60 text-xs font-semibold transition-all cursor-pointer"
           >
             <Search className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" strokeWidth={1.85} />
@@ -140,7 +136,6 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <button
             onClick={() => onChangeMode('quran')}
-            title="خالص عثمانی مصحف و تلاوت (1)"
             className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
               activeMode === 'quran' || activeMode === 'mushaf'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
@@ -153,7 +148,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('translation')}
-            title="بامحاورہ و لفظی ترجمہ (2)"
             className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
               activeMode === 'translation'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
@@ -166,7 +160,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('sarf')}
-            title="صرف، نحو و لغت (3)"
             className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
               activeMode === 'sarf' || activeMode === 'morphology'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
@@ -179,7 +172,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('tafseer')}
-            title="تقابلی تفاسیر (4)"
             className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
               activeMode === 'tafseer' || activeMode === 'tafsir'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
@@ -198,7 +190,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Reference / Data Sources */}
           <button
             onClick={() => onOpenSidebar('references')}
-            title="مآخذ و مصادر (References)"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4" strokeWidth={1.85} />
@@ -207,7 +198,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Preferences */}
           <button
             onClick={() => onOpenSidebar('preferences')}
-            title="ترجیحات و ترتیبات (Preferences)"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <SlidersHorizontal className="w-4 h-4" strokeWidth={1.85} />
@@ -216,7 +206,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Keyboard Shortcuts */}
           <button
             onClick={onOpenShortcuts}
-            title="کی بورڈ شارٹ کٹس (?)"
             className="hidden sm:flex w-8 h-8 rounded-xl items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <Keyboard className="w-4 h-4" strokeWidth={1.85} />
@@ -228,7 +217,6 @@ export const Header: React.FC<HeaderProps> = ({
           <div 
             onClick={() => onOpenSidebar('about')}
             className="hidden sm:flex items-center gap-2 cursor-pointer group px-1.5 py-1 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
-            title="الوحیین — تعارف (About)"
           >
             <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
               الوحيين
@@ -246,7 +234,6 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Sidebar Drawer Menu Button */}
           <button
             onClick={() => onOpenSidebar('about')}
-            title="سائیڈ بار مینو (تعارف، ترجیحات اور مآخذ)"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all cursor-pointer"
           >
             <Menu className="w-4 h-4" strokeWidth={1.85} />

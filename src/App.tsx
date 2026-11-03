@@ -113,9 +113,13 @@ export const App: React.FC = () => {
   }, [horizontalPadding]);
 
   // Power User Customization State
-  const [fontSize, setFontSize] = useState<number>(() => {
-    return Number(localStorage.getItem('qs_font_size')) || 17;
+  const [fontSize, setFontSizeState] = useState<number>(() => {
+    return Number(localStorage.getItem('qs_font_size')) || 18;
   });
+  const setFontSize = (size: number) => {
+    setFontSizeState(size);
+    localStorage.setItem('qs_font_size', String(size));
+  };
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
 
   // Active Mushaf Page (604 page standard)
@@ -696,6 +700,7 @@ export const App: React.FC = () => {
                 onSelectWordRoot={(root) => setSelectedRoot(root)}
                 activePage={activeMushafPage}
                 onPageChange={setActiveMushafPage}
+                fontSize={fontSize}
               />
             )}
 
@@ -711,6 +716,7 @@ export const App: React.FC = () => {
                 selectedTranslationAuthor={selectedTranslationAuthor}
                 secondaryTranslationAuthor={secondaryTranslationAuthor}
                 wbwLanguage={wbwLanguage}
+                fontSize={fontSize}
                 onSelectAyah={handleSelectAyah}
                 onOpenMorphology={(num) => {
                   setCurrentAyahNumber(num);
@@ -746,6 +752,7 @@ export const App: React.FC = () => {
                 currentAyah={currentAyah}
                 scriptMode={scriptMode}
                 showTajweed={showTajweed}
+                fontSize={fontSize}
                 onPrevAyah={handlePrevAyah}
                 onNextAyah={handleNextAyah}
                 onSelectWordRoot={(root) => setSelectedRoot(root)}

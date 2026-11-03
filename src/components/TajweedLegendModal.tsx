@@ -95,11 +95,11 @@ export const TajweedLegendModal: React.FC<TajweedLegendModalProps> = ({ isOpen, 
                 </span>
               </div>
 
-              <div className="text-right text-lg font-arabic font-bold my-1" style={{ color: r.color }}>
+              <div className="text-right text-lg font-qcf font-bold my-1" style={{ color: r.color }}>
                 مثال: {r.example}
               </div>
 
-              <p className="text-xs text-slate-600 dark:text-slate-400 urdu-nastaliq">
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-ibm">
                 {r.desc}
               </p>
             </div>

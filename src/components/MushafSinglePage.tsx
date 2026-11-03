@@ -31,7 +31,8 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
   activePlayingAyah,
   activePlayingWordIndex,
   onSelectAyah,
-  onSelectWordRoot
+  onSelectWordRoot,
+  fontSize = 18
 }) => {
   const [pageData, setPageData] = useState<PageData | null>(null);
 
@@ -127,13 +128,12 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
             {pageRukus.map((item: any, idx) => (
               <div
                 key={`ruku-${idx}`}
-                title={`رکوع ${item.ruku.surahRuku} • آیات: ${item.ruku.count}`}
                 className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/90 border-2 border-emerald-600 dark:border-emerald-400 flex flex-col items-center justify-center text-emerald-900 dark:text-emerald-200 shadow-md cursor-help"
               >
                 <span className="text-[8px] font-mono font-bold leading-none -mb-0.5">
                   {toArabicDigits(item.ruku.surahRuku)}
                 </span>
-                <span className="text-xs font-bold leading-none font-arabic">
+                <span className="text-xs font-bold leading-none font-ibm">
                   ع
                 </span>
                 <span className="text-[8px] font-mono leading-none -mt-0.5 opacity-80">
@@ -145,7 +145,6 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
             {pageQuarters.map((item: any, idx) => (
               <div
                 key={`quarter-${idx}`}
-                title={item.quarter.labelUrdu}
                 className="px-2 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/80 border border-amber-500 text-amber-900 dark:text-amber-200 text-[10px] font-bold text-center shadow-xs flex items-center gap-1 font-ibm"
               >
                 <span>۞</span>
@@ -156,7 +155,6 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
             {pageSajdahs.map((item: any, idx) => (
               <div
                 key={`sajdah-${idx}`}
-                title="سجدہ تلاوت"
                 className="px-2 py-1 rounded-xl bg-purple-100 dark:bg-purple-950/80 border border-purple-500 text-purple-900 dark:text-purple-200 text-[10px] font-bold text-center shadow-xs flex items-center gap-1 font-ibm"
               >
                 <span>۩</span>
@@ -168,10 +166,11 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
 
         {/* Continuous Justified Mushaf Flow (QCF V2 & QCF V4 Tajweed COLRv1) */}
         <div 
-          className="text-justify text-2xl sm:text-[29px] leading-[2.85] sm:leading-[3.1] text-slate-900 dark:text-slate-100 cursor-pointer"
+          className="text-justify leading-[2.85] sm:leading-[3.1] text-slate-900 dark:text-slate-100 cursor-pointer"
           style={{ 
             textJustify: 'inter-word',
-            fontFamily: getQcfFontFamily(pageNumber, showTajweed)
+            fontFamily: getQcfFontFamily(pageNumber, showTajweed),
+            fontSize: `${Math.round(fontSize * 1.65)}px`
           }}
         >
           {activeVerses.map((ayah: any) => {
@@ -193,7 +192,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                     </div>
 
                     {ayah.surah_id !== 1 && ayah.surah_id !== 9 && (
-                      <div className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-200 mt-3 mb-2 font-uthmani">
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-200 mt-3 mb-2 font-qcf">
                         بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
                       </div>
                     )}
@@ -250,7 +249,6 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
 
                   {hasRukuEnd && (
                     <span 
-                      title="ختم رکوع"
                       className="inline-flex items-center justify-center w-5 h-5 mx-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-[10px] text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-500/40 select-none align-middle font-ibm"
                     >
                       ع
@@ -259,7 +257,6 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
 
                   {hasSajdah && (
                     <span 
-                      title="سجدہ تلاوت"
                       className="inline-flex items-center justify-center px-1.5 mx-0.5 rounded bg-purple-100 dark:bg-purple-950 text-[10px] text-purple-800 dark:text-purple-300 font-bold border border-purple-500/40 select-none align-middle font-ibm"
                     >
                       ۩ سجدہ

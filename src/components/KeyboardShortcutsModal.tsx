@@ -18,7 +18,6 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
     { key: '← / → (یا J / K)', desc: 'اگلی / پچھلی آیت پر جائیں (Next / Prev Ayah)' },
     { key: 'PageUp / PageDown (یا [ / ])', desc: 'مصحف کا پچھلا / اگلا صفحہ (Prev / Next Page)' },
     { key: '1 / 2 / 3 / 4', desc: 'مطالعہ موڈز تبدیل کریں (1: قرآن، 2: ترجمہ، 3: صرف، 4: تفسیر)' },
-    { key: 'Shift + 1 / 2 / 3 / 4 / 5', desc: 'تفسیر موڈ میں تفاسیر کھولیں/بند کریں (1: بیان القرآن، 2: تفہیم، 3: معارف، 4: ابن کثیر، 5: تیسیر)' },
     { key: 'B', desc: 'آیت کو محفوظ کریں (Toggle Bookmark)' },
     { key: 'N', desc: 'ذاتی تفسیری نوٹ لکھیں (Add / Edit Note)' },
     { key: 'Z', desc: 'زین موڈ (Toggle Focus / Zen Mode)' },
