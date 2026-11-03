@@ -1,4 +1,4 @@
-# الوحيين — Al-Wahyain (`v1.0.0`)
+# الوحيين — Al-Wahyain (`v1.0.1`)
 
 **Offline-First Quranic Study, Lexical Morphology & Comparative Urdu Tafaseer Workstation**
 

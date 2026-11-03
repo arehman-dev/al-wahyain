@@ -18,25 +18,42 @@ async function downloadFile(surahId, ayahNumber) {
   const filePath = path.join(audioDir, fileName);
 
   if (fs.existsSync(filePath)) {
-    return { skipped: true, fileName };
+    try {
+      const stats = fs.statSync(filePath);
+      if (stats.size > 1024) {
+        return { skipped: true, fileName, bytes: stats.size };
+      }
+    } catch {}
   }
 
   const urls = [
-    `https://everyayah.com/data/Alafasy_128kbps/${fileName}`,
-    `https://verses.quran.com/Alafasy/mp3/${fileName}`
+    `https://verses.quran.com/Alafasy/mp3/${fileName}`,
+    `https://everyayah.com/data/Alafasy_128kbps/${fileName}`
   ];
 
-  for (const url of urls) {
-    try {
-      const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-      if (res.ok) {
-        const buffer = Buffer.from(await res.arrayBuffer());
-        fs.writeFileSync(filePath, buffer);
-        return { success: true, fileName, bytes: buffer.length };
+  for (let attempt = 0; attempt < 3; attempt++) {
+    for (const url of urls) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        const res = await fetch(url, { 
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AlWahyain/1.0.1)' },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const buffer = Buffer.from(await res.arrayBuffer());
+          if (buffer.length > 500) {
+            fs.writeFileSync(filePath, buffer);
+            return { success: true, fileName, bytes: buffer.length };
+          }
+        }
+      } catch {
+        // Retry or fallback
       }
-    } catch {
-      // Try next CDN
     }
+    await new Promise(r => setTimeout(r, 600));
   }
 
   return { failed: true, fileName };
@@ -57,24 +74,59 @@ async function showStatus() {
   console.log(`  • Location     : ${audioDir}\n`);
 }
 
-async function cacheSurah(surahId) {
-  const surah = db.prepare('SELECT id, name_arabic, name_urdu, verses_count FROM surahs WHERE id = ?').get(surahId);
-  if (!surah) {
-    console.error(`Surah ${surahId} not found.`);
-    return;
-  }
-
-  console.log(`📥 Caching Surah ${surah.id}: ${surah.name_arabic} (${surah.verses_count} ayahs)...`);
+async function downloadBatch(items, concurrency = 8) {
+  let completed = 0;
   let downloaded = 0;
-  let cached = 0;
+  let skipped = 0;
+  let failed = 0;
+  const failedItems = [];
+  const total = items.length;
+  let cursor = 0;
 
-  for (let a = 1; a <= surah.verses_count; a++) {
-    const res = await downloadFile(surah.id, a);
-    if (res.success) downloaded++;
-    if (res.skipped) cached++;
-    process.stdout.write(`\r  Ayah ${a}/${surah.verses_count} (${res.success ? 'Downloaded' : 'Cached'})`);
+  console.log(`⚡ Processing ${total} Ayahs with concurrency = ${concurrency}...`);
+  const startTime = Date.now();
+
+  const workers = Array.from({ length: concurrency }, async () => {
+    while (cursor < items.length) {
+      const idx = cursor++;
+      const item = items[idx];
+      try {
+        const res = await downloadFile(item.surahId, item.ayahNumber);
+        if (res.success) downloaded++;
+        else if (res.skipped) skipped++;
+        else if (res.failed) {
+          failed++;
+          failedItems.push(item);
+        }
+      } catch {
+        failed++;
+        failedItems.push(item);
+      }
+      completed++;
+
+      if (completed % 10 === 0 || completed === total) {
+        const pct = ((completed / total) * 100).toFixed(1);
+        const elapsedSec = ((Date.now() - startTime) / 1000).toFixed(0);
+        process.stdout.write(`\r  [${pct}%] ${completed}/${total} | ↓ ${downloaded} dl | ⏩ ${skipped} cached | ⚠️ ${failed} err (${elapsedSec}s)`);
+      }
+    }
+  });
+
+  await Promise.all(workers);
+
+  // Retry any failed items
+  if (failedItems.length > 0) {
+    console.log(`\n🔄 Retrying ${failedItems.length} failed Ayahs...`);
+    for (const item of failedItems) {
+      const res = await downloadFile(item.surahId, item.ayahNumber);
+      if (res.success) {
+        downloaded++;
+        failed--;
+      }
+    }
   }
-  console.log(`\n  Done: ${downloaded} downloaded, ${cached} already cached.\n`);
+
+  console.log(`\n✅ Batch completed in ${((Date.now() - startTime) / 1000).toFixed(1)}s (Downloaded: ${downloaded}, Cached: ${skipped}, Failed: ${failed})\n`);
 }
 
 async function main() {
@@ -85,26 +137,49 @@ async function main() {
     return;
   }
 
+  let concurrency = 8;
+  const concIdx = args.indexOf('--concurrency');
+  if (concIdx !== -1 && args[concIdx + 1]) {
+    concurrency = parseInt(args[concIdx + 1], 10) || 8;
+  }
+
   const surahArgIdx = args.indexOf('--surah');
   if (surahArgIdx !== -1 && args[surahArgIdx + 1]) {
     const val = args[surahArgIdx + 1];
+    let surahsToProcess = [];
     if (val.includes('-')) {
       const [start, end] = val.split('-').map(Number);
-      for (let s = start; s <= end; s++) {
-        await cacheSurah(s);
-      }
+      for (let s = start; s <= end; s++) surahsToProcess.push(s);
     } else {
-      await cacheSurah(Number(val));
+      surahsToProcess.push(Number(val));
     }
+
+    const items = [];
+    for (const sId of surahsToProcess) {
+      const row = db.prepare('SELECT verses_count FROM surahs WHERE id = ?').get(sId);
+      if (row) {
+        for (let a = 1; a <= row.verses_count; a++) {
+          items.push({ surahId: sId, ayahNumber: a });
+        }
+      }
+    }
+
+    await downloadBatch(items, concurrency);
     await showStatus();
     return;
   }
 
   if (args.includes('--all')) {
-    console.log(`🚀 Starting full offline audio cache for all 114 Surahs...`);
-    for (let s = 1; s <= 114; s++) {
-      await cacheSurah(s);
+    console.log(`🚀 Starting full offline audio cache for all 114 Surahs (6,236 Ayahs)...`);
+    const surahs = db.prepare('SELECT id, verses_count FROM surahs ORDER BY id ASC').all();
+    const items = [];
+    for (const s of surahs) {
+      for (let a = 1; a <= s.verses_count; a++) {
+        items.push({ surahId: s.id, ayahNumber: a });
+      }
     }
+
+    await downloadBatch(items, concurrency);
     await showStatus();
     return;
   }

@@ -66,7 +66,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
   return (
     <div 
       dir="rtl"
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 sm:gap-3 px-4 py-2 rounded-2xl bg-slate-900/85 hover:bg-slate-900 text-white backdrop-blur-xl border border-slate-700/80 shadow-2xl transition-all duration-200 font-ibm text-xs"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 sm:gap-3 px-4 py-2 rounded-2xl bg-slate-900/96 hover:bg-slate-900 text-white backdrop-blur-xl border border-slate-700/80 shadow-2xl transition-all duration-200 font-ibm text-xs"
     >
       {/* 1. Surah & Ayah / Page Pill */}
       <div className="flex items-center gap-1.5 font-bold border-l border-slate-700 pl-3">

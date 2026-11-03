@@ -331,7 +331,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     الوحيين
                   </h2>
                   <p className="text-[10px] text-slate-400 font-sans">
-                    Al-Wahyain v1.0
+                    Al-Wahyain v1.0.1
                   </p>
                 </div>
               </div>
