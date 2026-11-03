@@ -2,6 +2,7 @@ appId: io.github.arehman_dev.alwahyain
 productName: Al-Wahyain
 copyright: Copyright © 2026 Abdul Rehman (@arehman-dev)
 asar: true
+afterPack: electron/afterPack.cjs
 
 directories:
   output: release
