@@ -21,8 +21,11 @@ const viteProcess = spawn('npx', ['vite', '--host'], {
   stdio: 'inherit'
 });
 
-process.on('SIGINT', () => {
-  apiProcess.kill();
-  viteProcess.kill();
-  process.exit();
-});
+function cleanup() {
+  try { apiProcess.kill('SIGTERM'); } catch {}
+  try { viteProcess.kill('SIGTERM'); } catch {}
+  process.exit(0);
+}
+
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);

@@ -10,9 +10,11 @@ const DB_PATH = process.env.CORPUS_DB_PATH || path.join(__dirname, '..', 'data',
 const USER_DB_PATH = process.env.USER_DB_PATH || path.join(__dirname, '..', 'data', 'user_study.db');
 const STATIC_DIR = process.env.STATIC_DIR || path.join(__dirname, '..', 'dist');
 const FONTS_DIR = process.env.FONTS_DIR || path.join(__dirname, '..', 'public', 'fonts');
+const AUDIO_DIR = process.env.AUDIO_DIR || path.join(__dirname, '..', 'data', 'audio');
 
-// Ensure parent directory for writable user_study.db exists
+// Ensure parent directories exist
 fs.mkdirSync(path.dirname(USER_DB_PATH), { recursive: true });
+fs.mkdirSync(path.join(AUDIO_DIR, 'alafasy'), { recursive: true });
 
 const db = new DatabaseSync(DB_PATH);
 const PORT = process.env.PORT !== undefined ? Number(process.env.PORT) : 3001;
@@ -126,6 +128,11 @@ function extractSnippet(html, query, len = 200) {
   return snippet;
 }
 
+function getLocalAudioUrl(surahId, ayahNumber) {
+  const file = `${String(surahId).padStart(3, '0')}${String(ayahNumber).padStart(3, '0')}.mp3`;
+  return `/api/audio/alafasy/${file}`;
+}
+
 const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
@@ -183,6 +190,147 @@ const server = http.createServer(async (req, res) => {
       return res.end('Font not found');
     }
 
+    // 0.1 Serve or cache offline Audio files (/api/audio/:reciter/:filename or /api/audio/:filename)
+    const audioMatch = pathname.match(/^\/api\/audio\/(?:([a-zA-Z0-9_-]+)\/)?(\d{6}\.mp3)$/);
+    if ((req.method === 'GET' || req.method === 'HEAD') && audioMatch) {
+      const reciter = audioMatch[1] || 'alafasy';
+      const fileName = audioMatch[2];
+      const audioDir = path.join(AUDIO_DIR, reciter);
+      const filePath = path.join(audioDir, fileName);
+
+      try {
+        if (!fs.existsSync(filePath)) {
+          // Fetch from EveryAyah CDN / Quran.com CDN and save locally
+          const urls = [
+            `https://everyayah.com/data/Alafasy_128kbps/${fileName}`,
+            `https://verses.quran.com/Alafasy/mp3/${fileName}`
+          ];
+          let buffer = null;
+          for (const url of urls) {
+            try {
+              const fetchRes = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+              if (fetchRes.ok) {
+                const arrayBuffer = await fetchRes.arrayBuffer();
+                buffer = Buffer.from(arrayBuffer);
+                break;
+              }
+            } catch {
+              // Try next CDN
+            }
+          }
+
+          if (buffer) {
+            if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
+            fs.writeFileSync(filePath, buffer);
+          }
+        }
+
+        if (fs.existsSync(filePath)) {
+          const stat = fs.statSync(filePath);
+          const range = req.headers.range;
+
+          if (req.method === 'HEAD') {
+            res.writeHead(200, {
+              'Content-Type': 'audio/mpeg',
+              'Content-Length': stat.size,
+              'Accept-Ranges': 'bytes',
+              'Access-Control-Allow-Origin': '*'
+            });
+            return res.end();
+          }
+
+          if (range) {
+            const parts = range.replace(/bytes=/, "").split("-");
+            const start = parseInt(parts[0], 10);
+            const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+            const chunkSize = (end - start) + 1;
+            const fileStream = fs.createReadStream(filePath, { start, end });
+            res.writeHead(206, {
+              'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+              'Accept-Ranges': 'bytes',
+              'Content-Length': chunkSize,
+              'Content-Type': 'audio/mpeg',
+              'Access-Control-Allow-Origin': '*'
+            });
+            return fileStream.pipe(res);
+          } else {
+            res.writeHead(200, {
+              'Content-Length': stat.size,
+              'Content-Type': 'audio/mpeg',
+              'Accept-Ranges': 'bytes',
+              'Access-Control-Allow-Origin': '*',
+              'Cache-Control': 'public, max-age=31536000, immutable'
+            });
+            return fs.createReadStream(filePath).pipe(res);
+          }
+        }
+      } catch (err) {
+        console.error('Error serving/caching audio:', err.message);
+      }
+      res.writeHead(404, { 'Access-Control-Allow-Origin': '*' });
+      return res.end('Audio not found');
+    }
+
+    // 0.2 Audio Cache Status
+    if (req.method === 'GET' && pathname === '/api/audio/status') {
+      const reciter = parsedUrl.searchParams.get('reciter') || 'alafasy';
+      const audioDir = path.join(AUDIO_DIR, reciter);
+      let count = 0;
+      let totalBytes = 0;
+      if (fs.existsSync(audioDir)) {
+        const files = fs.readdirSync(audioDir);
+        for (const f of files) {
+          if (f.endsWith('.mp3')) {
+            count++;
+            try {
+              totalBytes += fs.statSync(path.join(audioDir, f)).size;
+            } catch {}
+          }
+        }
+      }
+      return jsonResponse(res, {
+        reciter,
+        cachedCount: count,
+        totalAyahs: 6236,
+        cachedBytes: totalBytes,
+        isFullyCached: count >= 6236
+      });
+    }
+
+    // 0.3 Pre-Cache Entire Surah Audio
+    if (req.method === 'POST' && pathname === '/api/audio/cache-surah') {
+      const body = await parseBody(req);
+      const surahId = parseInt(body.surah_id, 10);
+      if (!surahId || surahId < 1 || surahId > 114) {
+        return jsonResponse(res, { error: 'Invalid surah_id' }, 400);
+      }
+      const surah = db.prepare('SELECT verses_count FROM surahs WHERE id = ?').get(surahId);
+      if (!surah) return jsonResponse(res, { error: 'Surah not found' }, 404);
+
+      const reciter = body.reciter || 'alafasy';
+      const audioDir = path.join(AUDIO_DIR, reciter);
+      if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
+
+      // Background caching task
+      (async () => {
+        for (let a = 1; a <= surah.verses_count; a++) {
+          const fileName = `${String(surahId).padStart(3, '0')}${String(a).padStart(3, '0')}.mp3`;
+          const filePath = path.join(audioDir, fileName);
+          if (fs.existsSync(filePath)) continue;
+          try {
+            const url = `https://everyayah.com/data/Alafasy_128kbps/${fileName}`;
+            const fRes = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+            if (fRes.ok) {
+              const buf = Buffer.from(await fRes.arrayBuffer());
+              fs.writeFileSync(filePath, buf);
+            }
+          } catch {}
+        }
+      })().catch(console.error);
+
+      return jsonResponse(res, { success: true, message: `Caching started for Surah ${surahId}` });
+    }
+
     // 1. GET /api/surahs
     if (req.method === 'GET' && pathname === '/api/surahs') {
       const rows = db.prepare('SELECT * FROM surahs ORDER BY id ASC').all();
@@ -222,6 +370,7 @@ const server = http.createServer(async (req, res) => {
 
       const fullAyahs = ayahs.map(a => ({
         ...a,
+        audio_url: getLocalAudioUrl(a.surah_id, a.ayah_number),
         audio_segments: a.audio_segments ? JSON.parse(a.audio_segments) : [],
         words: wordsByAyah[a.ayah_number] || [],
         translations: transByAyah[a.ayah_number] || []
@@ -244,6 +393,7 @@ const server = http.createServer(async (req, res) => {
 
       return jsonResponse(res, {
         ...ayah,
+        audio_url: getLocalAudioUrl(ayah.surah_id, ayah.ayah_number),
         audio_segments: ayah.audio_segments ? JSON.parse(ayah.audio_segments) : [],
         words,
         translations
@@ -282,6 +432,7 @@ const server = http.createServer(async (req, res) => {
 
       const verses = rawVerses.map(v => ({
         ...v,
+        audio_url: getLocalAudioUrl(v.surah_id, v.ayah_number),
         words: wordsByVerseKey[`${v.surah_id}:${v.ayah_number}`] || []
       }));
 

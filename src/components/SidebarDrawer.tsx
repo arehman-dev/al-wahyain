@@ -26,7 +26,9 @@ import {
   Terminal,
   Cpu,
   User,
-  FolderGit2
+  FolderGit2,
+  Download,
+  RefreshCw
 } from 'lucide-react';
 import { ReadingTheme, TafsirLayoutMode, OverallReadingMode } from '../types/quran';
 import { SidebarTab } from './Header';
@@ -88,6 +90,41 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
   onChangeReadingMode,
   onOpenTafsirSettings
 }) => {
+  const [audioCacheStatus, setAudioCacheStatus] = React.useState<{ cachedCount: number; cachedBytes: number } | null>(null);
+  const [cachingSurahLoading, setCachingSurahLoading] = React.useState(false);
+
+  const refreshAudioCache = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/audio/status');
+      if (res.ok) {
+        const data = await res.json();
+        setAudioCacheStatus(data);
+      }
+    } catch {}
+  }, []);
+
+  React.useEffect(() => {
+    if (isOpen && activeTab === 'preferences') {
+      refreshAudioCache();
+    }
+  }, [isOpen, activeTab, refreshAudioCache]);
+
+  const handlePrecacheSurah = async (surahId: number) => {
+    setCachingSurahLoading(true);
+    try {
+      await fetch('/api/audio/cache-surah', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ surah_id: surahId })
+      });
+      setTimeout(refreshAudioCache, 2000);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setCachingSurahLoading(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   const referenceCategories = [
@@ -846,6 +883,48 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         ترتیب و انتخابِ تفاسیر کھولیں
                       </button>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 6. Offline Audio Recitation Cache */}
+              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-emerald-600" />
+                    <span>۶. خودکار آف لائن آڈیو تلاوت (Automatic Audio Caching)</span>
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-ibm text-xs font-bold">
+                    <span className="font-app">{audioCacheStatus?.cachedCount ?? '...'}</span> / 6,236 آیات کیش شدہ
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  جب بھی آپ براؤزر میں کوئی آیت سنتے ہیں، وہ خود بخود آپ کی مقامی ڈسک (<code className="font-app">data/audio/alafasy</code>) میں مستقل محفوظ ہو جاتی ہے تاکہ آئندہ انٹرنیٹ کے بغیر 100% آف لائن سنی جا سکے۔
+                </p>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-xs">
+                  <div>
+                    <div className="font-bold text-slate-800 dark:text-slate-100">قاری: مشاری راشد العفاسی (Alafasy 128kbps)</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5 font-app">
+                      مقامی ڈسک حجم: {audioCacheStatus ? (audioCacheStatus.cachedBytes / (1024 * 1024)).toFixed(2) : '0'} MB
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handlePrecacheSurah(1)}
+                      disabled={cachingSurahLoading}
+                      className="px-3 py-1.5 rounded-lg border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>{cachingSurahLoading ? 'ڈاؤنلوڈ ہو رہی ہے...' : 'سورۃ الفاتحہ کیش کریں'}</span>
+                    </button>
+                    <button
+                      onClick={refreshAudioCache}
+                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer"
+                      title="اسٹیٹس ریفریش کریں"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               </div>
