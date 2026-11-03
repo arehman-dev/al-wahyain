@@ -115,8 +115,64 @@ export interface SearchResultQuran {
   verse_key: string;
   text_uthmani: string;
   text_indopak: string;
+  text_clean?: string;
   translation_text: string;
   author_name: string;
+  matched_positions?: number[];
+  page_madani?: number;
+}
+
+export interface SurahDispersion {
+  surah_id: number;
+  name_arabic: string;
+  name_urdu: string;
+  name_simple: string;
+  revelation_place: string;
+  match_count: number;
+}
+
+export interface LexicalSearchResponse {
+  query: string;
+  spec?: {
+    type: string;
+    root?: string;
+    lemma?: string;
+    pattern?: string;
+    phrase?: string;
+    rawQuery: string;
+  };
+  total: number;
+  results: SearchResultQuran[];
+  dispersion: SurahDispersion[];
+}
+
+export interface AutocompleteItemRoot {
+  root: string;
+  root_arabic: string;
+  occurrences_count: number;
+}
+
+export interface AutocompleteItemWord {
+  token_clean: string;
+  token_uthmani: string;
+  root?: string;
+  lemma?: string;
+  occurrences_count: number;
+}
+
+export interface AutocompleteItemSurah {
+  id: number;
+  name_arabic: string;
+  name_urdu: string;
+  name_simple: string;
+  revelation_place: string;
+  verses_count: number;
+}
+
+export interface AutocompleteResponse {
+  surahs: AutocompleteItemSurah[];
+  roots: AutocompleteItemRoot[];
+  words: AutocompleteItemWord[];
 }
 
 export interface SearchResultTafsir {

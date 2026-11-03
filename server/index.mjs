@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseLexicalQuery, executeLexicalSearch, getAutocompleteSuggestions } from './lexicalSearch.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -497,6 +498,36 @@ const server = http.createServer(async (req, res) => {
         root: rootRow || { root: rootQuery, root_arabic: rootQuery, occurrences_count: verses.length },
         verses
       });
+    }
+
+    // 6.5. GET /api/search/lexical?q=...&strict=0|1&limit=60&offset=0
+    if (req.method === 'GET' && pathname === '/api/search/lexical') {
+      const q = (parsedUrl.searchParams.get('q') || '').trim();
+      const strict = parsedUrl.searchParams.get('strict') === '1';
+      const limit = Math.min(100, Math.max(1, parseInt(parsedUrl.searchParams.get('limit') || '60', 10)));
+      const offset = Math.max(0, parseInt(parsedUrl.searchParams.get('offset') || '0', 10));
+
+      if (!q) {
+        return jsonResponse(res, { total: 0, results: [], dispersion: [] });
+      }
+
+      const parsedSpec = parseLexicalQuery(q, strict);
+      const searchResult = executeLexicalSearch(db, parsedSpec, limit, offset);
+      return jsonResponse(res, {
+        query: q,
+        spec: parsedSpec,
+        ...searchResult
+      });
+    }
+
+    // 6.6. GET /api/search/autocomplete?q=...
+    if (req.method === 'GET' && pathname === '/api/search/autocomplete') {
+      const q = (parsedUrl.searchParams.get('q') || '').trim();
+      if (!q) {
+        return jsonResponse(res, { surahs: [], roots: [], words: [] });
+      }
+      const suggestions = getAutocompleteSuggestions(db, q, 8);
+      return jsonResponse(res, suggestions);
     }
 
     // 7. GET /api/search/quran?q=...

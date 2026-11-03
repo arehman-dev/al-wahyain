@@ -21,7 +21,7 @@ import {
   FileText
 } from 'lucide-react';
 import { Surah, AppMode, ReadingTheme, OverallReadingMode, SearchResultQuran, SearchResultTafsir } from '../types/quran';
-import { searchQuran, searchTafsir } from '../services/api';
+import { searchLexical, searchTafsir } from '../services/api';
 import { THEMATIC_TOPICS, ThematicItem } from '../data/thematicIndex';
 import { toArabicDigits } from '../utils/juzMapping';
 
@@ -102,7 +102,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     const timer = setTimeout(async () => {
       try {
         const [qRes, tRes] = await Promise.all([
-          searchQuran(trimmed).catch(() => []),
+          searchLexical(trimmed).then(res => res.results).catch(() => []),
           searchTafsir(trimmed).catch(() => [])
         ]);
         setQuranResults(qRes.slice(0, 10));

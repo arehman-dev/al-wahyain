@@ -8,10 +8,36 @@ import {
   Bookmark, 
   AyahNote,
   TafsirHighlight,
-  PageData 
+  PageData,
+  LexicalSearchResponse,
+  AutocompleteResponse
 } from '../types/quran';
 
 const BASE_URL = '/api';
+
+export async function searchLexical(
+  query: string, 
+  strict: boolean = false, 
+  limit: number = 60, 
+  offset: number = 0
+): Promise<LexicalSearchResponse> {
+  if (!query || !query.trim()) {
+    return { query, total: 0, results: [], dispersion: [] };
+  }
+  const strictParam = strict ? '&strict=1' : '';
+  const res = await fetch(`${BASE_URL}/search/lexical?q=${encodeURIComponent(query.trim())}${strictParam}&limit=${limit}&offset=${offset}`);
+  if (!res.ok) throw new Error('Failed to execute lexical search');
+  return res.json();
+}
+
+export async function fetchAutocomplete(prefix: string): Promise<AutocompleteResponse> {
+  if (!prefix || !prefix.trim()) {
+    return { surahs: [], roots: [], words: [] };
+  }
+  const res = await fetch(`${BASE_URL}/search/autocomplete?q=${encodeURIComponent(prefix.trim())}`);
+  if (!res.ok) throw new Error('Failed to fetch autocomplete suggestions');
+  return res.json();
+}
 
 export async function fetchSurahs(): Promise<Surah[]> {
   const res = await fetch(`${BASE_URL}/surahs`);
