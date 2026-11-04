@@ -15,7 +15,8 @@ import {
   Eye, 
   Menu,
   SlidersHorizontal,
-  ShieldCheck
+  ShieldCheck,
+  ScrollText
 } from 'lucide-react';
 import { AppMode, ReadingTheme } from '../types/quran';
 
@@ -180,6 +181,19 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Library className="w-3.5 h-3.5" strokeWidth={1.85} />
             <span>تفسیر</span>
+          </button>
+
+          <button
+            onClick={() => onChangeMode('hadith')}
+            title="حدیث مطالعہ (Mode 5)"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+              activeMode === 'hadith'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+            }`}
+          >
+            <ScrollText className="w-3.5 h-3.5" strokeWidth={1.85} />
+            <span>حدیث</span>
           </button>
         </nav>
 

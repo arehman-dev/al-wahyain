@@ -18,10 +18,11 @@ import {
   Palette, 
   Bookmark, 
   Loader2,
-  FileText
+  FileText,
+  ScrollText
 } from 'lucide-react';
-import { Surah, AppMode, ReadingTheme, OverallReadingMode, SearchResultQuran, SearchResultTafsir } from '../types/quran';
-import { searchLexical, searchTafsir } from '../services/api';
+import { Surah, AppMode, ReadingTheme, OverallReadingMode, SearchResultQuran, SearchResultTafsir, HadithSearchResult } from '../types/quran';
+import { searchLexical, searchTafsir, searchHadith } from '../services/api';
 import { THEMATIC_TOPICS, ThematicItem } from '../data/thematicIndex';
 import { toArabicDigits } from '../utils/juzMapping';
 
@@ -30,6 +31,7 @@ interface OmnibarModalProps {
   onClose: () => void;
   surahs: Surah[];
   onSelectSurahAyah: (surahId: number, ayahNumber: number) => void;
+  onSelectHadith?: (bookSlug: string, hadithNumber: number) => void;
   onSelectPage?: (page: number) => void;
   onChangeMode?: (mode: AppMode) => void;
   onChangeTheme?: (theme: ReadingTheme) => void;
@@ -41,7 +43,7 @@ interface OmnibarModalProps {
 
 interface OmnibarAction {
   id: string;
-  type: 'jump' | 'surah' | 'page' | 'command' | 'quran' | 'tafsir' | 'thematic';
+  type: 'jump' | 'surah' | 'page' | 'command' | 'quran' | 'tafsir' | 'thematic' | 'hadith';
   title: string;
   subtitle?: string;
   icon?: React.ReactNode;
@@ -54,6 +56,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
   onClose,
   surahs,
   onSelectSurahAyah,
+  onSelectHadith,
   onSelectPage,
   onChangeMode,
   onChangeTheme,
@@ -65,6 +68,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [quranResults, setQuranResults] = useState<SearchResultQuran[]>([]);
+  const [hadithResults, setHadithResults] = useState<HadithSearchResult[]>([]);
   const [tafsirResults, setTafsirResults] = useState<SearchResultTafsir[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -75,16 +79,18 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       setQuery('');
       setSelectedIndex(0);
       setQuranResults([]);
+      setHadithResults([]);
       setTafsirResults([]);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen]);
 
-  // Debounced API Search for Quran & Tafsir
+  // Debounced API Search for Quran, Hadith & Tafsir
   useEffect(() => {
     const trimmed = query.trim();
     if (!trimmed || trimmed.length < 2) {
       setQuranResults([]);
+      setHadithResults([]);
       setTafsirResults([]);
       setLoading(false);
       return;
@@ -93,6 +99,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     // Skip API search if it's purely a direct jump format like 55:13
     if (/^\d+[:\s]+\d+$/.test(trimmed)) {
       setQuranResults([]);
+      setHadithResults([]);
       setTafsirResults([]);
       setLoading(false);
       return;
@@ -101,12 +108,14 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     setLoading(true);
     const timer = setTimeout(async () => {
       try {
-        const [qRes, tRes] = await Promise.all([
+        const [qRes, hRes, tRes] = await Promise.all([
           searchLexical(trimmed).then(res => res.results).catch(() => []),
+          searchHadith(trimmed, null, 6).then(res => res.results).catch(() => []),
           searchTafsir(trimmed).catch(() => [])
         ]);
-        setQuranResults(qRes.slice(0, 10));
-        setTafsirResults(tRes.slice(0, 8));
+        setQuranResults(qRes.slice(0, 8));
+        setHadithResults(hRes.slice(0, 6));
+        setTafsirResults(tRes.slice(0, 6));
       } finally {
         setLoading(false);
       }
@@ -224,6 +233,13 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       action: () => onChangeMode && onChangeMode('tafseer')
     },
     {
+      keywords: ['hadith', 'hadees', 'حدیث', 'احادیث', 'بخاری', 'مسلم', '5'],
+      title: 'حدیث مطالعہ موڈ (5)',
+      subtitle: '۸ مستند کتبِ احادیث مبارکہ (صحیحین، سنن اربعہ، مؤطا، مشکوٰۃ)',
+      icon: <ScrollText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      action: () => onChangeMode && onChangeMode('hadith')
+    },
+    {
       keywords: ['zen', 'focus', 'زین', 'فوکس'],
       title: 'زین فوکس موڈ (Zen Focus HUD)',
       subtitle: 'تمام ٹول بار چھپا کر مکمل یکسوئی',
@@ -325,7 +341,27 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     });
   });
 
-  // 7. Tafsir Search Results
+  // 7. Hadith Search Results
+  hadithResults.forEach(hr => {
+    actions.push({
+      id: `hadith-${hr.book_slug}-${hr.hadith_number}`,
+      type: 'hadith',
+      title: `${hr.book_name_urdu} — حدیث #${hr.hadith_number}`,
+      subtitle: hr.urdu_text || hr.english_text || hr.arabic_text,
+      icon: <ScrollText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      badge: hr.book_name_urdu,
+      execute: () => {
+        if (onSelectHadith) {
+          onSelectHadith(hr.book_slug, hr.hadith_number);
+        } else if (onChangeMode) {
+          onChangeMode('hadith');
+        }
+        onClose();
+      }
+    });
+  });
+
+  // 8. Tafsir Search Results
   tafsirResults.forEach(tr => {
     actions.push({
       id: `tafsir-${tr.surah_id}-${tr.ayah_from}-${tr.tafsir_slug}`,

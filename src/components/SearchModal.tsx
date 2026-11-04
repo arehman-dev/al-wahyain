@@ -11,15 +11,17 @@ import {
   Bookmark,
   Check,
   Hash,
-  Filter
+  Filter,
+  ScrollText
 } from 'lucide-react';
 import { 
   SearchResultQuran, 
   SearchResultTafsir, 
   SurahDispersion,
-  AutocompleteResponse 
+  AutocompleteResponse,
+  HadithSearchResult
 } from '../types/quran';
-import { searchLexical, searchTafsir, fetchAutocomplete } from '../services/api';
+import { searchLexical, searchTafsir, fetchAutocomplete, searchHadith } from '../services/api';
 import { THEMATIC_TOPICS } from '../data/thematicIndex';
 import { SurahDispersionHeatmap } from './SurahDispersionHeatmap';
 
@@ -27,15 +29,17 @@ interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectResult: (surahId: number, ayahNumber: number) => void;
+  onSelectHadithResult?: (bookSlug: string, hadithNumber: number) => void;
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({
   isOpen,
   onClose,
-  onSelectResult
+  onSelectResult,
+  onSelectHadithResult
 }) => {
   const [query, setQuery] = useState('');
-  const [searchTab, setSearchTab] = useState<'lexical' | 'tafsir' | 'thematic'>('lexical');
+  const [searchTab, setSearchTab] = useState<'lexical' | 'hadith' | 'tafsir' | 'thematic'>('lexical');
   const [strictDiacritics, setStrictDiacritics] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -44,6 +48,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const [totalMatches, setTotalMatches] = useState(0);
   const [dispersion, setDispersion] = useState<SurahDispersion[]>([]);
   const [activeSurahFilter, setActiveSurahFilter] = useState<number | null>(null);
+
+  // Hadith Search State
+  const [hadithResults, setHadithResults] = useState<HadithSearchResult[]>([]);
+  const [hadithBookFilter, setHadithBookFilter] = useState<string>('all');
+  const [hadithTotal, setHadithTotal] = useState(0);
 
   // Autocomplete State
   const [autocomplete, setAutocomplete] = useState<AutocompleteResponse | null>(null);
@@ -110,6 +119,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       setTotalMatches(0);
       setDispersion([]);
       setTafsirResults([]);
+      setHadithResults([]);
+      setHadithTotal(0);
       return;
     }
 
@@ -124,6 +135,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             setLoading(false);
           })
           .catch(() => setLoading(false));
+      } else if (searchTab === 'hadith') {
+        searchHadith(query, hadithBookFilter === 'all' ? null : hadithBookFilter, 60)
+          .then(res => {
+            setHadithResults(res.results);
+            setHadithTotal(res.total);
+            setLoading(false);
+          })
+          .catch(() => setLoading(false));
       } else {
         searchTafsir(query)
           .then(res => {
@@ -135,7 +154,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     }, 280);
 
     return () => clearTimeout(timer);
-  }, [query, searchTab, strictDiacritics]);
+  }, [query, searchTab, strictDiacritics, hadithBookFilter]);
 
   if (!isOpen) return null;
 
@@ -200,6 +219,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             placeholder={
               searchTab === 'lexical'
                 ? "لفظی تلاش (مثلاً: كتب، root:رحم، مس*ون، \"رسول الله\"، كتاب | ميزان)..."
+                : searchTab === 'hadith'
+                ? "۸ کتبِ حدیث میں تلاش (عربی، اردو، یا English)..."
                 : searchTab === 'tafsir'
                 ? "۵ مستند تفاسیر میں تلاش کریں..."
                 : "مضامینِ قرآن میں تلاش کریں..."
@@ -366,6 +387,17 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               <span>لفظی و صرفی تلاش {totalMatches > 0 ? `(${totalMatches})` : ''}</span>
             </button>
             <button
+              onClick={() => setSearchTab('hadith')}
+              className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
+                searchTab === 'hadith'
+                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+            >
+              <ScrollText className="w-4 h-4" />
+              <span>۸ کتبِ حدیث {hadithTotal > 0 ? `(${hadithTotal})` : ''}</span>
+            </button>
+            <button
               onClick={() => setSearchTab('tafsir')}
               className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
                 searchTab === 'tafsir'
@@ -399,6 +431,36 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               activeSurahFilter={activeSurahFilter}
               onSelectSurahFilter={(sId) => setActiveSurahFilter(sId)}
             />
+          </div>
+        )}
+
+        {/* Hadith Book Filter Bar */}
+        {searchTab === 'hadith' && (
+          <div className="flex items-center gap-1.5 px-4 py-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/30 overflow-x-auto text-xs select-none">
+            <span className="text-[11px] text-slate-400 font-bold shrink-0 ml-1">کتاب فلٹر:</span>
+            {[
+              { slug: 'all', label: 'تمام کتب (All 8 Books)' },
+              { slug: 'bukhari', label: 'صحیح بخاری' },
+              { slug: 'muslim', label: 'صحیح مسلم' },
+              { slug: 'abudawud', label: 'سنن ابو داؤد' },
+              { slug: 'tirmidhi', label: 'جامع ترمذی' },
+              { slug: 'nasai', label: 'سنن نسائی' },
+              { slug: 'ibnmajah', label: 'سنن ابن ماجہ' },
+              { slug: 'malik', label: 'موطا مالک' },
+              { slug: 'mishkat', label: 'مشکوٰۃ' }
+            ].map((b) => (
+              <button
+                key={b.slug}
+                onClick={() => setHadithBookFilter(b.slug)}
+                className={`px-2.5 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  hadithBookFilter === b.slug
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+                }`}
+              >
+                {b.label}
+              </button>
+            ))}
           </div>
         )}
 
@@ -469,6 +531,66 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       {item.translation_text}
                     </p>
                   )}
+                </div>
+              ))
+            )
+          )}
+
+          {/* HADITH RESULTS */}
+          {searchTab === 'hadith' && (
+            hadithResults.length === 0 ? (
+              <div className="py-14 text-center text-slate-400">
+                {query.trim() 
+                  ? "کتبِ حدیث میں اس لفظ یا عبارت کا اندراج نہیں ملا۔" 
+                  : "کتبِ حدیث میں تلاش کے لیے الفاظ (عربی، اردو یا انگریزی) درج فرمائیں۔"}
+              </div>
+            ) : (
+              hadithResults.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    onSelectHadithResult?.(item.book_slug, item.hadith_number);
+                    onClose();
+                  }}
+                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-emerald-200 dark:hover:border-slate-700/60 group"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                        {item.book_name_urdu}
+                      </span>
+                      {item.chapter_title_arabic && (
+                        <span dir="rtl" className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-medium truncate max-w-xs">
+                          {item.chapter_title_arabic}
+                        </span>
+                      )}
+                    </div>
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
+                      حدیث #{item.hadith_number}
+                    </span>
+                  </div>
+
+                  {item.snippet_ar && (
+                    <p 
+                      dir="rtl"
+                      dangerouslySetInnerHTML={{ __html: item.snippet_ar }}
+                      className="text-sm font-amiri text-slate-900 dark:text-slate-100 leading-relaxed mb-1.5 text-right"
+                    />
+                  )}
+
+                  {item.snippet_ur ? (
+                    <p 
+                      dir="rtl"
+                      dangerouslySetInnerHTML={{ __html: item.snippet_ur }}
+                      className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-nastaliq leading-[2.2]"
+                    />
+                  ) : item.snippet_en ? (
+                    <p 
+                      dir="ltr"
+                      dangerouslySetInnerHTML={{ __html: item.snippet_en }}
+                      className="text-xs text-slate-600 dark:text-slate-400 font-app leading-relaxed"
+                    />
+                  ) : null}
                 </div>
               ))
             )

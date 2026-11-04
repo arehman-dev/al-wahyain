@@ -12,7 +12,12 @@ import {
   LexicalSearchResponse,
   AutocompleteResponse,
   AyahTreebankResponse,
-  UrduIrabResponse
+  UrduIrabResponse,
+  HadithBook,
+  HadithChapter,
+  HadithItem,
+  HadithListResponse,
+  HadithSearchResult
 } from '../types/quran';
 
 const BASE_URL = '/api';
@@ -171,4 +176,58 @@ export async function deleteHighlight(id: string): Promise<void> {
     method: 'DELETE'
   });
   if (!res.ok) throw new Error('Failed to delete highlight');
+}
+
+// ========================================================
+// HADITH API CALLS (8 Canonical Collections)
+// ========================================================
+
+export async function fetchHadithBooks(): Promise<HadithBook[]> {
+  const res = await fetch(`${BASE_URL}/hadith/books`);
+  if (!res.ok) throw new Error('Failed to fetch hadith books');
+  return res.json();
+}
+
+export async function fetchHadithChapters(bookSlug: string): Promise<{ book: HadithBook; chapters: HadithChapter[] }> {
+  const res = await fetch(`${BASE_URL}/hadith/${encodeURIComponent(bookSlug)}/chapters`);
+  if (!res.ok) throw new Error(`Failed to fetch chapters for ${bookSlug}`);
+  return res.json();
+}
+
+export async function fetchHadithList(
+  bookSlug: string, 
+  chapterId?: number | 'all', 
+  page: number = 1, 
+  limit: number = 25
+): Promise<HadithListResponse> {
+  let url = `${BASE_URL}/hadith/${encodeURIComponent(bookSlug)}/list?page=${page}&limit=${limit}`;
+  if (chapterId !== undefined && chapterId !== null && chapterId !== 'all') {
+    url += `&chapterId=${chapterId}`;
+  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch hadiths for ${bookSlug}`);
+  return res.json();
+}
+
+export async function fetchHadithByNumber(bookSlug: string, hadithNumber: number): Promise<{ book: HadithBook; hadith: HadithItem }> {
+  const res = await fetch(`${BASE_URL}/hadith/${encodeURIComponent(bookSlug)}/${hadithNumber}`);
+  if (!res.ok) throw new Error(`Failed to fetch hadith ${bookSlug} #${hadithNumber}`);
+  return res.json();
+}
+
+export async function searchHadith(
+  query: string, 
+  bookSlug: string | null = null, 
+  limit: number = 30
+): Promise<{ query: string; results: HadithSearchResult[]; total: number }> {
+  if (!query || !query.trim()) {
+    return { query, results: [], total: 0 };
+  }
+  let url = `${BASE_URL}/hadith/search?q=${encodeURIComponent(query.trim())}&limit=${limit}`;
+  if (bookSlug && bookSlug !== 'all') {
+    url += `&book=${encodeURIComponent(bookSlug)}`;
+  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to search hadiths');
+  return res.json();
 }

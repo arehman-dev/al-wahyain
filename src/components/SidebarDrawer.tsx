@@ -331,7 +331,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     الوحيين
                   </h2>
                   <p className="text-[10px] text-slate-400 font-sans">
-                    Al-Wahyain v1.2.0
+                    Al-Wahyain v1.3.1
                   </p>
                 </div>
               </div>
@@ -1102,6 +1102,12 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_ahmedyar_irab.mjs & server/corpusTreebank.mjs (v1.2)</div>
                     <p className="text-slate-600 dark:text-slate-300 mt-1">
                       Ingests all 340 complete passages of Professor Hafiz Ahmed Yar&#39;s monumental Urdu grammatical treatise (<code className="font-app">urdu_irab_ahmedyar</code>: <em>لغات، اعراب و رسمِ قرآن</em>) and powers the interactive SVG Dependency Treebank (<code className="font-app">corpus.quran.com</code> style) with sub-word morphemes and 10 Classical Sarf Verb Forms (الأوزان العشرة).
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_hadith_database.mjs & data/hadith.db (v1.3.1)</div>
+                    <p className="text-slate-600 dark:text-slate-300 mt-1">
+                      Populates 40,591 authentic hadiths across all 8 canonical collections (Sahih al-Bukhari, Sahih Muslim, Sunan Abi Dawud, Jami` at-Tirmidhi, Sunan an-Nasa&#39;i, Sunan Ibn Majah, Muwatta Malik, Mishkat al-Masabih) with complete Arabic text, authentic Urdu Nastaliq translations, English commentary, and unified FTS5 search.
                     </p>
                   </div>
                 </div>

@@ -15,7 +15,7 @@ import {
   Focus,
   Languages
 } from 'lucide-react';
-import { Surah, AppMode, TafsirLayoutMode } from '../types/quran';
+import { Surah, AppMode, TafsirLayoutMode, HadithBook, HadithChapter } from '../types/quran';
 
 interface SubHeaderToolbarProps {
   surahs: Surah[];
@@ -28,6 +28,19 @@ interface SubHeaderToolbarProps {
   onPrevAyah: () => void;
   onNextAyah: () => void;
   activeMode: AppMode;
+
+  // Hadith Mode Specific
+  hadithBooks?: HadithBook[];
+  currentHadithBook?: string;
+  onSelectHadithBook?: (slug: string) => void;
+  hadithChapters?: HadithChapter[];
+  currentHadithChapterId?: number | 'all';
+  onSelectHadithChapter?: (chapterId: number | 'all') => void;
+  onPrevHadithChapter?: () => void;
+  onNextHadithChapter?: () => void;
+  onJumpToHadithNumber?: (num: number) => void;
+  hadithViewLang?: 'all' | 'ur' | 'ar' | 'en';
+  onSelectHadithViewLang?: (lang: 'all' | 'ur' | 'ar' | 'en') => void;
 
   // Bookmark & Note (Placed at Left of Sub-Header per 3.2 & 3.4)
   isBookmarked: boolean;
@@ -74,6 +87,17 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   onPrevAyah,
   onNextAyah,
   activeMode,
+  hadithBooks = [],
+  currentHadithBook = 'bukhari',
+  onSelectHadithBook,
+  hadithChapters = [],
+  currentHadithChapterId = 'all',
+  onSelectHadithChapter,
+  onPrevHadithChapter,
+  onNextHadithChapter,
+  onJumpToHadithNumber,
+  hadithViewLang = 'all',
+  onSelectHadithViewLang,
   isBookmarked,
   onToggleBookmark,
   hasNote,
@@ -111,6 +135,19 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
     e.preventDefault();
     const raw = fastJumpText.trim();
     if (!raw) return;
+
+    if (activeMode === 'hadith') {
+      const hNum = parseInt(raw, 10);
+      if (!isNaN(hNum) && hNum > 0) {
+        onJumpToHadithNumber?.(hNum);
+        setFastJumpText('');
+        setFastJumpError(false);
+        return;
+      }
+      setFastJumpError(true);
+      setTimeout(() => setFastJumpError(false), 1500);
+      return;
+    }
 
     const matchKey = raw.match(/^(\d{1,3})[:\-/.\s](\d{1,3})$/);
     if (matchKey) {
@@ -203,113 +240,221 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         </div>
 
         {/* ======================================================== */}
-        {/* CENTER (Screen-Centered): Surah (with Prev/Next Surah) + Ayah (with Prev/Next Ayah) + Fast Jump */}
+        {/* CENTER (Screen-Centered): Surah / Hadith Selectors + Fast Jump */}
         {/* ======================================================== */}
-        <div dir="rtl" className="flex items-center justify-center gap-2 justify-self-center">
-          
-          {/* 1. Surah Selector with Prev/Next Surah Icons */}
-          <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
-            <button
-              onClick={onPrevSurah}
-              disabled={currentSurahId <= 1}
-              className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-            >
-              <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
-            </button>
-
-            <select
-              value={currentSurahId}
-              onChange={(e) => onSelectSurah(Number(e.target.value))}
-              aria-label="سورت منتخب کریں"
-              className="bg-transparent text-slate-800 dark:text-slate-100 font-bold text-xs px-1.5 py-0.5 focus:outline-none cursor-pointer"
-            >
-              {surahs.map((s) => (
-                <option key={s.id} value={s.id} className="dark:bg-slate-900">
-                  {s.id}. سورة {s.name_arabic}
-                </option>
-              ))}
-            </select>
-
-            <button
-              onClick={onNextSurah}
-              disabled={currentSurahId >= 114}
-              className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
-            </button>
-          </div>
-
-          {/* 2. Ayah Selector with Prev/Next Ayah Icons */}
-          <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
-            <button
-              onClick={onPrevAyah}
-              disabled={currentSurahId === 1 && currentAyahNumber <= 1}
-              className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-            >
-              <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
-            </button>
-
-            <select
-              value={currentAyahNumber}
-              onChange={(e) => onSelectAyah(Number(e.target.value))}
-              aria-label="آیت منتخب کریں"
-              className="bg-transparent text-slate-800 dark:text-slate-100 text-xs font-bold px-1.5 py-0.5 focus:outline-none cursor-pointer"
-            >
-              {ayahNumbers.map((num) => (
-                <option key={num} value={num} className="dark:bg-slate-900">
-                  آیت {num}
-                </option>
-              ))}
-            </select>
-
-            <button
-              onClick={onNextAyah}
-              disabled={currentSurahId === 114 && currentAyahNumber >= versesCount}
-              className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
-            </button>
-          </div>
-
-          {/* 3. Fast Jump Input (e.g. 2:255) */}
-          <form onSubmit={handleFastJumpSubmit} className="relative hidden xl:flex items-center">
-            <Compass className="w-3.5 h-3.5 text-slate-400 absolute right-2 pointer-events-none" strokeWidth={1.85} />
-            <input
-              type="text"
-              value={fastJumpText}
-              onChange={(e) => setFastJumpText(e.target.value)}
-              placeholder="2:255"
-              className={`w-20 bg-slate-200/65 dark:bg-slate-800/75 text-slate-800 dark:text-slate-100 text-xs rounded-xl pr-7 pl-5 py-1 border transition-all focus:w-28 focus:outline-none focus:bg-white dark:focus:bg-slate-900 font-app ${
-                fastJumpError
-                  ? 'border-rose-500 ring-1 ring-rose-500/30'
-                  : 'border-slate-300/60 dark:border-slate-700/60 focus:border-emerald-500'
-              }`}
-            />
-            {fastJumpText && (
+        {activeMode === 'hadith' ? (
+          <div dir="rtl" className="flex items-center justify-center gap-1.5 sm:gap-2 justify-self-center">
+            
+            {/* 1. Hadith Book Selector with Prev/Next Book Icons */}
+            <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
               <button
-                type="submit"
-                className="absolute left-1.5 text-emerald-600 hover:text-emerald-700"
+                onClick={() => {
+                  const idx = hadithBooks.findIndex(b => b.slug === currentHadithBook);
+                  if (idx > 0) onSelectHadithBook?.(hadithBooks[idx - 1].slug);
+                }}
+                disabled={hadithBooks.findIndex(b => b.slug === currentHadithBook) <= 0}
+                title="پچھلی کتاب"
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
               >
-                <CornerDownLeft className="w-3 h-3" strokeWidth={1.85} />
+                <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+
+              <select
+                value={currentHadithBook}
+                onChange={(e) => onSelectHadithBook?.(e.target.value)}
+                aria-label="حدیث کی کتاب منتخب کریں"
+                className="bg-transparent text-slate-800 dark:text-slate-100 font-bold text-xs px-1.5 py-0.5 focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[170px] truncate"
+              >
+                {hadithBooks.map((b) => (
+                  <option key={b.slug} value={b.slug} className="dark:bg-slate-900">
+                    {b.name_urdu} ({b.name_english})
+                  </option>
+                ))}
+              </select>
+
+              <button
+                onClick={() => {
+                  const idx = hadithBooks.findIndex(b => b.slug === currentHadithBook);
+                  if (idx >= 0 && idx < hadithBooks.length - 1) onSelectHadithBook?.(hadithBooks[idx + 1].slug);
+                }}
+                disabled={hadithBooks.findIndex(b => b.slug === currentHadithBook) >= hadithBooks.length - 1}
+                title="اگلی کتاب"
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+            </div>
+
+            {/* 2. Chapter Selector with Prev/Next Chapter Icons */}
+            <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+              <button
+                onClick={onPrevHadithChapter}
+                disabled={currentHadithChapterId === 'all' || currentHadithChapterId === 1 || currentHadithChapterId === 0}
+                title="پچھلا باب"
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+
+              <select
+                value={currentHadithChapterId ?? 'all'}
+                onChange={(e) => {
+                  const val = e.target.value === 'all' ? 'all' : Number(e.target.value);
+                  onSelectHadithChapter?.(val);
+                }}
+                aria-label="باب منتخب کریں"
+                className="bg-transparent text-slate-800 dark:text-slate-100 font-bold text-xs px-1.5 py-0.5 focus:outline-none cursor-pointer max-w-[140px] sm:max-w-[200px] truncate"
+              >
+                <option value="all" className="dark:bg-slate-900">تمام ابواب (All Chapters)</option>
+                {hadithChapters.map((c) => (
+                  <option key={c.id} value={c.chapter_number} className="dark:bg-slate-900">
+                    {c.chapter_number}. {c.title_arabic || c.title_english}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                onClick={onNextHadithChapter}
+                disabled={currentHadithChapterId === 'all'}
+                title="اگلا باب"
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+            </div>
+
+            {/* 3. Hadith Fast Jump Input */}
+            <form onSubmit={handleFastJumpSubmit} className="relative hidden xl:flex items-center">
+              <Compass className="w-3.5 h-3.5 text-slate-400 absolute right-2 pointer-events-none" strokeWidth={1.85} />
+              <input
+                type="text"
+                value={fastJumpText}
+                onChange={(e) => setFastJumpText(e.target.value)}
+                placeholder="حدیث #"
+                className={`w-20 bg-slate-200/65 dark:bg-slate-800/75 text-slate-800 dark:text-slate-100 text-xs rounded-xl pr-7 pl-5 py-1 border transition-all focus:w-24 focus:outline-none focus:bg-white dark:focus:bg-slate-900 font-app ${
+                  fastJumpError
+                    ? 'border-rose-500 ring-1 ring-rose-500/30'
+                    : 'border-slate-300/60 dark:border-slate-700/60 focus:border-emerald-500'
+                }`}
+              />
+              {fastJumpText && (
+                <button
+                  type="submit"
+                  className="absolute left-1.5 text-emerald-600 hover:text-emerald-700"
+                >
+                  <CornerDownLeft className="w-3 h-3" strokeWidth={1.85} />
+                </button>
+              )}
+            </form>
+
+          </div>
+        ) : (
+          <div dir="rtl" className="flex items-center justify-center gap-2 justify-self-center">
+            
+            {/* 1. Surah Selector with Prev/Next Surah Icons */}
+            <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+              <button
+                onClick={onPrevSurah}
+                disabled={currentSurahId <= 1}
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+
+              <select
+                value={currentSurahId}
+                onChange={(e) => onSelectSurah(Number(e.target.value))}
+                aria-label="سورت منتخب کریں"
+                className="bg-transparent text-slate-800 dark:text-slate-100 font-bold text-xs px-1.5 py-0.5 focus:outline-none cursor-pointer"
+              >
+                {surahs.map((s) => (
+                  <option key={s.id} value={s.id} className="dark:bg-slate-900">
+                    {s.id}. سورة {s.name_arabic}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                onClick={onNextSurah}
+                disabled={currentSurahId >= 114}
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+            </div>
+
+            {/* 2. Ayah Selector with Prev/Next Ayah Icons */}
+            <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+              <button
+                onClick={onPrevAyah}
+                disabled={currentSurahId === 1 && currentAyahNumber <= 1}
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+
+              <select
+                value={currentAyahNumber}
+                onChange={(e) => onSelectAyah(Number(e.target.value))}
+                aria-label="آیت منتخب کریں"
+                className="bg-transparent text-slate-800 dark:text-slate-100 text-xs font-bold px-1.5 py-0.5 focus:outline-none cursor-pointer"
+              >
+                {ayahNumbers.map((num) => (
+                  <option key={num} value={num} className="dark:bg-slate-900">
+                    آیت {num}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                onClick={onNextAyah}
+                disabled={currentSurahId === 114 && currentAyahNumber >= versesCount}
+                className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
+              </button>
+            </div>
+
+            {/* 3. Fast Jump Input (e.g. 2:255) */}
+            <form onSubmit={handleFastJumpSubmit} className="relative hidden xl:flex items-center">
+              <Compass className="w-3.5 h-3.5 text-slate-400 absolute right-2 pointer-events-none" strokeWidth={1.85} />
+              <input
+                type="text"
+                value={fastJumpText}
+                onChange={(e) => setFastJumpText(e.target.value)}
+                placeholder="2:255"
+                className={`w-20 bg-slate-200/65 dark:bg-slate-800/75 text-slate-800 dark:text-slate-100 text-xs rounded-xl pr-7 pl-5 py-1 border transition-all focus:w-28 focus:outline-none focus:bg-white dark:focus:bg-slate-900 font-app ${
+                  fastJumpError
+                    ? 'border-rose-500 ring-1 ring-rose-500/30'
+                    : 'border-slate-300/60 dark:border-slate-700/60 focus:border-emerald-500'
+                }`}
+              />
+              {fastJumpText && (
+                <button
+                  type="submit"
+                  className="absolute left-1.5 text-emerald-600 hover:text-emerald-700"
+                >
+                  <CornerDownLeft className="w-3 h-3" strokeWidth={1.85} />
+                </button>
+              )}
+            </form>
+
+            {/* 4. Left-Most in Center Group: Global Tajweed V4 COLRv1 Icon Toggle */}
+            {onToggleTajweed && (
+              <button
+                onClick={onToggleTajweed}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                  showTajweed
+                    ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+                    : 'border border-transparent text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+                }`}
+              >
+                <Palette className="w-4 h-4" strokeWidth={1.85} />
               </button>
             )}
-          </form>
 
-          {/* 4. Left-Most in Center Group: Global Tajweed V4 COLRv1 Icon Toggle */}
-          {onToggleTajweed && (
-            <button
-              onClick={onToggleTajweed}
-              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                showTajweed
-                  ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
-                  : 'border border-transparent text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
-              }`}
-            >
-              <Palette className="w-4 h-4" strokeWidth={1.85} />
-            </button>
-          )}
-
-        </div>
+          </div>
+        )}
 
         {/* ======================================================== */}
         {/* RIGHT SIDE: Mode-Specific Controls                       */}
@@ -478,6 +623,83 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
                 >
                   <SlidersHorizontal className="w-4 h-4" strokeWidth={1.85} />
                 </button>
+              )}
+            </div>
+          )}
+
+          {/* 4. Hadith Mode Controls: Language Filter (All / Urdu / Arabic / English) & Font Zoom */}
+          {activeMode === 'hadith' && (
+            <div className="flex items-center gap-1.5 flex-nowrap">
+              {onSelectHadithViewLang && (
+                <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+                  <button
+                    onClick={() => onSelectHadithViewLang('all')}
+                    title="تمام زبانیں دکھائیں"
+                    className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                      hadithViewLang === 'all'
+                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                    }`}
+                  >
+                    سب
+                  </button>
+                  <button
+                    onClick={() => onSelectHadithViewLang('ur')}
+                    title="صرف اردو ترجمہ"
+                    className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                      hadithViewLang === 'ur'
+                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                    }`}
+                  >
+                    اردو
+                  </button>
+                  <button
+                    onClick={() => onSelectHadithViewLang('ar')}
+                    title="صرف عربی متن"
+                    className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                      hadithViewLang === 'ar'
+                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                    }`}
+                  >
+                    عربی
+                  </button>
+                  <button
+                    onClick={() => onSelectHadithViewLang('en')}
+                    title="English Translation Only"
+                    className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                      hadithViewLang === 'en'
+                        ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                    }`}
+                  >
+                    EN
+                  </button>
+                </div>
+              )}
+
+              {/* Font Size Stepper */}
+              {onFontSizeChange && (
+                <div className="hidden sm:flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+                  <button
+                    onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
+                    title="چھوٹا فونٹ"
+                    className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer"
+                  >
+                    <ZoomOut className="w-3.5 h-3.5" strokeWidth={1.85} />
+                  </button>
+                  <span className="px-1.5 text-[11px] font-app font-bold text-slate-700 dark:text-slate-300">
+                    {fontSize}
+                  </span>
+                  <button
+                    onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
+                    title="بڑا فونٹ"
+                    className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer"
+                  >
+                    <ZoomIn className="w-3.5 h-3.5" strokeWidth={1.85} />
+                  </button>
+                </div>
               )}
             </div>
           )}

@@ -8,6 +8,8 @@ import { ZenModeHUD } from './components/ZenModeHUD';
 import { TranslationView } from './components/TranslationView';
 import { MorphologyView } from './components/MorphologyView';
 import { TafsirView } from './components/TafsirView';
+import { HadithView } from './components/HadithView';
+import { SearchModal } from './components/SearchModal';
 import { TafsirSettingsModal, DEFAULT_TAFSIR_ORDER } from './components/TafsirSettingsModal';
 import { QuickPeekDrawer } from './components/QuickPeekDrawer';
 import { RootExplorerModal } from './components/RootExplorerModal';
@@ -30,7 +32,10 @@ import {
   Bookmark, 
   AyahNote, 
   TafsirHighlight, 
-  HighlightColor 
+  HighlightColor,
+  HadithBook,
+  HadithChapter,
+  HadithItem
 } from './types/quran';
 import { 
   fetchSurahs, 
@@ -42,7 +47,11 @@ import {
   fetchNotes,
   fetchHighlights,
   saveHighlight,
-  deleteHighlight
+  deleteHighlight,
+  fetchHadithBooks,
+  fetchHadithChapters,
+  fetchHadithList,
+  fetchHadithByNumber
 } from './services/api';
 
 export const App: React.FC = () => {
@@ -60,6 +69,7 @@ export const App: React.FC = () => {
     if (saved === 'translation') return 'translation';
     if (saved === 'morphology' || saved === 'sarf') return 'sarf';
     if (saved === 'tafsir' || saved === 'tafseer') return 'tafseer';
+    if (saved === 'hadith') return 'hadith';
     return 'quran';
   });
   // Strictly QCF V2 ('madani') everywhere
@@ -90,6 +100,26 @@ export const App: React.FC = () => {
     return 'stacked';
   });
   const [overallReadingMode, setOverallReadingMode] = useState<OverallReadingMode>('standard');
+
+  // Hadith Study Station State (8 Canonical Collections)
+  const [hadithBooks, setHadithBooks] = useState<HadithBook[]>([]);
+  const [currentHadithBook, setCurrentHadithBook] = useState<string>(() => {
+    return localStorage.getItem('qs_hadith_book') || 'bukhari';
+  });
+  const [hadithChapters, setHadithChapters] = useState<HadithChapter[]>([]);
+  const [currentHadithChapterId, setCurrentHadithChapterId] = useState<number | 'all'>(() => {
+    const saved = localStorage.getItem('qs_hadith_chapter');
+    if (saved === 'all' || !saved) return 'all';
+    return Number(saved);
+  });
+  const [hadiths, setHadiths] = useState<HadithItem[]>([]);
+  const [hadithPage, setHadithPage] = useState<number>(1);
+  const [hadithPagination, setHadithPagination] = useState({ page: 1, limit: 25, total: 0, totalPages: 1 });
+  const [hadithLoading, setHadithLoading] = useState<boolean>(false);
+  const [hadithViewLang, setHadithViewLang] = useState<'all' | 'ur' | 'ar' | 'en'>(() => {
+    return (localStorage.getItem('qs_hadith_lang') as any) || 'all';
+  });
+  const [highlightHadithNumber, setHighlightHadithNumber] = useState<number | null>(null);
 
   // Left & Right Horizontal Padding Percentage (1% to 24%)
   const [horizontalPadding, setHorizontalPadding] = useState<number>(() => {
@@ -189,6 +219,7 @@ export const App: React.FC = () => {
   const [showTajweedLegend, setShowTajweedLegend] = useState<boolean>(false);
   const [showAttributions, setShowAttributions] = useState<boolean>(false);
   const [showSearchModal, setShowSearchModal] = useState<boolean>(false);
+  const [showOmnibarModal, setShowOmnibarModal] = useState<boolean>(false);
   const [showStudySuiteModal, setShowStudySuiteModal] = useState<boolean>(false);
   const [showNoteDrawer, setShowNoteDrawer] = useState<boolean>(false);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
@@ -248,6 +279,36 @@ export const App: React.FC = () => {
       .then(res => setSurahs(res))
       .catch(console.error);
   }, []);
+
+  // Load Hadith Books on mount
+  useEffect(() => {
+    fetchHadithBooks()
+      .then(setHadithBooks)
+      .catch(err => console.error('Failed to load hadith books:', err));
+  }, []);
+
+  // Load Hadith Chapters when currentHadithBook changes
+  useEffect(() => {
+    if (!currentHadithBook) return;
+    fetchHadithChapters(currentHadithBook)
+      .then(res => {
+        setHadithChapters(res.chapters);
+      })
+      .catch(err => console.error('Failed to load chapters:', err));
+  }, [currentHadithBook]);
+
+  // Load Hadiths when Book, Chapter, or Page changes
+  useEffect(() => {
+    if (!currentHadithBook) return;
+    setHadithLoading(true);
+    fetchHadithList(currentHadithBook, currentHadithChapterId, hadithPage, 25)
+      .then(res => {
+        setHadiths(res.hadiths);
+        setHadithPagination(res.pagination);
+      })
+      .catch(err => console.error('Failed to load hadiths:', err))
+      .finally(() => setHadithLoading(false));
+  }, [currentHadithBook, currentHadithChapterId, hadithPage]);
 
   // Load Ayahs when Surah changes
   useEffect(() => {
@@ -404,6 +465,13 @@ export const App: React.FC = () => {
         return;
       }
 
+      // Quick Omnibar Command Palette: Ctrl+P / Cmd+P
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        setShowOmnibarModal(prev => !prev);
+        return;
+      }
+
       // Space: Play/Pause audio
       if (e.code === 'Space') {
         e.preventDefault();
@@ -459,13 +527,14 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Numbers 1, 2, 3, 4: Switch 4 Primary Tabs
-      if (['1', '2', '3', '4'].includes(e.key) && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+      // Numbers 1, 2, 3, 4, 5: Switch 5 Primary Tabs
+      if (['1', '2', '3', '4', '5'].includes(e.key) && !e.shiftKey && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         if (e.key === '1') setActiveMode('quran');
         if (e.key === '2') setActiveMode('translation');
         if (e.key === '3') setActiveMode('sarf');
         if (e.key === '4') setActiveMode('tafseer');
+        if (e.key === '5') setActiveMode('hadith');
         return;
       }
     };
@@ -520,6 +589,68 @@ export const App: React.FC = () => {
     }
   }, [currentSurahId]);
 
+  // Hadith Navigation Handlers
+  const handleSelectHadithBook = (slug: string) => {
+    setCurrentHadithBook(slug);
+    setCurrentHadithChapterId('all');
+    setHadithPage(1);
+    setHighlightHadithNumber(null);
+    localStorage.setItem('qs_hadith_book', slug);
+    localStorage.setItem('qs_hadith_chapter', 'all');
+  };
+
+  const handleSelectHadithChapter = (chapId: number | 'all') => {
+    setCurrentHadithChapterId(chapId);
+    setHadithPage(1);
+    setHighlightHadithNumber(null);
+    localStorage.setItem('qs_hadith_chapter', String(chapId));
+  };
+
+  const handlePrevHadithChapter = () => {
+    if (currentHadithChapterId === 'all') return;
+    const currentIdx = hadithChapters.findIndex(c => c.chapter_number === currentHadithChapterId);
+    if (currentIdx > 0) {
+      handleSelectHadithChapter(hadithChapters[currentIdx - 1].chapter_number);
+    }
+  };
+
+  const handleNextHadithChapter = () => {
+    if (currentHadithChapterId === 'all') return;
+    const currentIdx = hadithChapters.findIndex(c => c.chapter_number === currentHadithChapterId);
+    if (currentIdx >= 0 && currentIdx < hadithChapters.length - 1) {
+      handleSelectHadithChapter(hadithChapters[currentIdx + 1].chapter_number);
+    }
+  };
+
+  const handleJumpToHadithNumber = async (num: number) => {
+    try {
+      const res = await fetchHadithByNumber(currentHadithBook, num);
+      if (res && res.hadith) {
+        setCurrentHadithChapterId(res.hadith.chapter_id);
+        const page = Math.floor((res.hadith.hadith_number - 1) / 25) + 1;
+        setHadithPage(page);
+        setHighlightHadithNumber(res.hadith.hadith_number);
+      }
+    } catch {
+      setHighlightHadithNumber(num);
+    }
+  };
+
+  const handleSelectHadith = (bookSlug: string, hadithNumber: number) => {
+    setCurrentHadithBook(bookSlug);
+    setActiveMode('hadith');
+    setHighlightHadithNumber(hadithNumber);
+    fetchHadithByNumber(bookSlug, hadithNumber)
+      .then(res => {
+        if (res && res.hadith) {
+          setCurrentHadithChapterId(res.hadith.chapter_id);
+          const page = Math.floor((res.hadith.hadith_number - 1) / 25) + 1;
+          setHadithPage(page);
+        }
+      })
+      .catch(() => {});
+  };
+
   return (
     <div className="min-h-screen bg-slate-100/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/25 selection:text-emerald-950 dark:selection:bg-emerald-500/35 dark:selection:text-emerald-100 font-app">
       
@@ -560,6 +691,20 @@ export const App: React.FC = () => {
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
           activeMode={activeMode}
+          hadithBooks={hadithBooks}
+          currentHadithBook={currentHadithBook}
+          onSelectHadithBook={handleSelectHadithBook}
+          hadithChapters={hadithChapters}
+          currentHadithChapterId={currentHadithChapterId}
+          onSelectHadithChapter={handleSelectHadithChapter}
+          onPrevHadithChapter={handlePrevHadithChapter}
+          onNextHadithChapter={handleNextHadithChapter}
+          onJumpToHadithNumber={handleJumpToHadithNumber}
+          hadithViewLang={hadithViewLang}
+          onSelectHadithViewLang={(lang) => {
+            setHadithViewLang(lang);
+            localStorage.setItem('qs_hadith_lang', lang);
+          }}
           isBookmarked={isCurrentAyahBookmarked}
           onToggleBookmark={handleToggleBookmark}
           hasNote={hasCurrentAyahNote}
@@ -795,6 +940,23 @@ export const App: React.FC = () => {
                 tafsirLayoutMode={tafsirLayoutMode}
               />
             )}
+
+            {/* Mode 5: Dedicated Hadith Study Station (۸ کتبِ احادیث مبارکہ) */}
+            {activeMode === 'hadith' && (
+              <HadithView
+                book={hadithBooks.find(b => b.slug === currentHadithBook) || null}
+                chapters={hadithChapters}
+                currentChapterId={currentHadithChapterId}
+                hadiths={hadiths}
+                loading={hadithLoading}
+                pagination={hadithPagination}
+                onPageChange={(p) => setHadithPage(p)}
+                onSelectChapter={handleSelectHadithChapter}
+                hadithViewLang={hadithViewLang}
+                fontSize={fontSize}
+                highlightHadithNumber={highlightHadithNumber}
+              />
+            )}
           </>
         )}
       </main>
@@ -942,15 +1104,27 @@ export const App: React.FC = () => {
         onClose={() => setShowAttributions(false)}
       />
 
-      {/* Global Omnibar Command Palette */}
-      <OmnibarModal
+      {/* Precision Lexical, Hadith & Tafsir Search Modal */}
+      <SearchModal
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
+        onSelectResult={(surahId, ayahNumber) => {
+          handleSelectSurah(surahId);
+          handleSelectAyah(ayahNumber);
+        }}
+        onSelectHadithResult={handleSelectHadith}
+      />
+
+      {/* Global Omnibar Command Palette */}
+      <OmnibarModal
+        isOpen={showOmnibarModal}
+        onClose={() => setShowOmnibarModal(false)}
         surahs={surahs}
         onSelectSurahAyah={(surahId, ayahNumber) => {
           handleSelectSurah(surahId);
           handleSelectAyah(ayahNumber);
         }}
+        onSelectHadith={handleSelectHadith}
         onSelectPage={(page) => setActiveMushafPage(page)}
         onChangeMode={(mode) => setActiveMode(mode)}
         onChangeTheme={(theme) => setThemeMode(theme)}

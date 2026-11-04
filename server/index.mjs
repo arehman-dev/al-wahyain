@@ -5,11 +5,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseLexicalQuery, executeLexicalSearch, getAutocompleteSuggestions } from './lexicalSearch.mjs';
 import { buildAyahDependencyTree } from './corpusTreebank.mjs';
+import { normalizeArabic } from './arabicNormalizer.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DB_PATH = process.env.CORPUS_DB_PATH || path.join(__dirname, '..', 'data', 'quran_study.db');
 const USER_DB_PATH = process.env.USER_DB_PATH || path.join(__dirname, '..', 'data', 'user_study.db');
+const HADITH_DB_PATH = process.env.HADITH_DB_PATH || path.join(__dirname, '..', 'data', 'hadith.db');
 const STATIC_DIR = process.env.STATIC_DIR || path.join(__dirname, '..', 'dist');
 const FONTS_DIR = process.env.FONTS_DIR || path.join(__dirname, '..', 'public', 'fonts');
 const AUDIO_DIR = process.env.AUDIO_DIR || path.join(__dirname, '..', 'data', 'audio');
@@ -19,6 +21,19 @@ fs.mkdirSync(path.dirname(USER_DB_PATH), { recursive: true });
 fs.mkdirSync(path.join(AUDIO_DIR, 'alafasy'), { recursive: true });
 
 const db = new DatabaseSync(DB_PATH);
+let hadithDb = null;
+if (fs.existsSync(HADITH_DB_PATH)) {
+  try {
+    hadithDb = new DatabaseSync(HADITH_DB_PATH);
+    hadithDb.exec(`
+      PRAGMA mmap_size = 268435456;
+      PRAGMA temp_store = MEMORY;
+      PRAGMA cache_size = -32000;
+    `);
+  } catch (e) {
+    console.warn('Hadith DB initialization warning:', e.message);
+  }
+}
 const PORT = process.env.PORT !== undefined ? Number(process.env.PORT) : 3001;
 
 // Best Practice #2: Memory-mapped I/O & in-memory temp store for 447MB corpus DB
@@ -856,6 +871,187 @@ const server = http.createServer(async (req, res) => {
       const hlId = decodeURIComponent(delHlMatch[1]);
       db.prepare('DELETE FROM user_db.highlights WHERE id = ?').run(hlId);
       return jsonResponse(res, { success: true });
+    }
+
+    // ========================================================
+    // 12. HADITH LIBRARY API (8 Canonical Collections)
+    // ========================================================
+
+    // GET /api/hadith/books
+    if (req.method === 'GET' && pathname === '/api/hadith/books') {
+      if (!hadithDb) return jsonResponse(res, { error: 'Hadith database not available' }, 503);
+      const books = hadithDb.prepare(`
+        SELECT b.id, b.slug, b.name_arabic, b.name_urdu, b.name_english,
+               b.author_arabic, b.author_urdu, b.author_english,
+               b.total_hadiths,
+               (SELECT count(*) FROM hadith_chapters c WHERE c.book_id = b.id) as total_chapters
+        FROM hadith_books b
+        ORDER BY b.id ASC
+      `).all();
+      return jsonResponse(res, books);
+    }
+
+    // GET /api/hadith/search?q=...&book=...&limit=...
+    if (req.method === 'GET' && pathname === '/api/hadith/search') {
+      if (!hadithDb) return jsonResponse(res, { error: 'Hadith database not available' }, 503);
+      const q = parsedUrl.searchParams.get('q') || '';
+      const bookSlug = parsedUrl.searchParams.get('book') || null;
+      const limit = Math.min(Math.max(Number(parsedUrl.searchParams.get('limit')) || 30, 1), 100);
+
+      if (!q.trim()) {
+        return jsonResponse(res, { query: q, results: [], total: 0 });
+      }
+
+      const cleanAr = normalizeArabic(q.trim());
+      const sanitized = q.trim().replace(/['"*]/g, ' ');
+      const words = sanitized.split(/\s+/).filter(Boolean);
+      const ftsQuery = `"${cleanAr}" OR "${sanitized}" OR ${words.map(w => `"${w}"*`).join(' ')}`;
+
+      let rows = [];
+      try {
+        let sql = `
+          SELECT h.id, b.slug as book_slug, b.name_urdu as book_name_urdu, b.name_english as book_name_english,
+                 h.hadith_number, h.chapter_id,
+                 c.title_arabic as chapter_title_arabic, c.title_english as chapter_title_english,
+                 h.arabic_text, h.urdu_text, h.english_text, h.english_narrator,
+                 snippet(hadiths_fts, 0, '<mark class="bg-amber-300 dark:bg-amber-800 text-inherit px-0.5 rounded">', '</mark>', '...', 15) as snippet_ar,
+                 snippet(hadiths_fts, 1, '<mark class="bg-amber-300 dark:bg-amber-800 text-inherit px-0.5 rounded">', '</mark>', '...', 15) as snippet_ur,
+                 snippet(hadiths_fts, 2, '<mark class="bg-amber-300 dark:bg-amber-800 text-inherit px-0.5 rounded">', '</mark>', '...', 15) as snippet_en
+          FROM hadiths_fts f
+          JOIN hadiths h ON f.rowid = h.id
+          JOIN hadith_books b ON h.book_id = b.id
+          LEFT JOIN hadith_chapters c ON h.book_id = c.book_id AND h.chapter_id = c.chapter_number
+          WHERE hadiths_fts MATCH ?
+        `;
+        const params = [ftsQuery];
+        if (bookSlug && bookSlug !== 'all') {
+          sql += ' AND b.slug = ?';
+          params.push(bookSlug);
+        }
+        sql += ' ORDER BY rank LIMIT ?';
+        params.push(limit);
+
+        rows = hadithDb.prepare(sql).all(...params);
+      } catch (searchErr) {
+        try {
+          let fallbackSql = `
+            SELECT h.id, b.slug as book_slug, b.name_urdu as book_name_urdu, b.name_english as book_name_english,
+                   h.hadith_number, h.chapter_id,
+                   c.title_arabic as chapter_title_arabic, c.title_english as chapter_title_english,
+                   h.arabic_text, h.urdu_text, h.english_text, h.english_narrator
+            FROM hadiths h
+            JOIN hadith_books b ON h.book_id = b.id
+            LEFT JOIN hadith_chapters c ON h.book_id = c.book_id AND h.chapter_id = c.chapter_number
+            WHERE h.arabic_clean LIKE ? OR h.urdu_text LIKE ? OR h.english_text LIKE ?
+          `;
+          const p = [`%${cleanAr}%`, `%${q}%`, `%${q}%`];
+          if (bookSlug && bookSlug !== 'all') {
+            fallbackSql += ' AND b.slug = ?';
+            p.push(bookSlug);
+          }
+          fallbackSql += ' LIMIT ?';
+          p.push(limit);
+          rows = hadithDb.prepare(fallbackSql).all(...p);
+        } catch (e2) {
+          console.warn('Hadith search error:', e2.message);
+        }
+      }
+
+      return jsonResponse(res, { query: q, results: rows, total: rows.length });
+    }
+
+    // GET /api/hadith/:bookSlug/chapters
+    const hadithChapsMatch = pathname.match(/^\/api\/hadith\/([a-z0-9_-]+)\/chapters$/);
+    if (req.method === 'GET' && hadithChapsMatch) {
+      if (!hadithDb) return jsonResponse(res, { error: 'Hadith database not available' }, 503);
+      const bookSlug = hadithChapsMatch[1];
+      const book = hadithDb.prepare('SELECT id, slug, name_arabic, name_urdu, name_english, author_urdu, author_english FROM hadith_books WHERE slug = ?').get(bookSlug);
+      if (!book) return jsonResponse(res, { error: 'Book not found' }, 404);
+
+      const chapters = hadithDb.prepare(`
+        SELECT c.id, c.chapter_number, c.title_arabic, c.title_urdu, c.title_english,
+               (SELECT count(*) FROM hadiths h WHERE h.book_id = c.book_id AND h.chapter_id = c.chapter_number) as hadith_count
+        FROM hadith_chapters c
+        WHERE c.book_id = ?
+        ORDER BY c.chapter_number ASC
+      `).all(book.id);
+
+      return jsonResponse(res, { book, chapters });
+    }
+
+    // GET /api/hadith/:bookSlug/list?chapterId=...&page=...&limit=...
+    const hadithListMatch = pathname.match(/^\/api\/hadith\/([a-z0-9_-]+)\/list$/);
+    if (req.method === 'GET' && hadithListMatch) {
+      if (!hadithDb) return jsonResponse(res, { error: 'Hadith database not available' }, 503);
+      const bookSlug = hadithListMatch[1];
+      const book = hadithDb.prepare('SELECT * FROM hadith_books WHERE slug = ?').get(bookSlug);
+      if (!book) return jsonResponse(res, { error: 'Book not found' }, 404);
+
+      const chapterIdParam = parsedUrl.searchParams.get('chapterId');
+      const page = Math.max(Number(parsedUrl.searchParams.get('page')) || 1, 1);
+      const limit = Math.min(Math.max(Number(parsedUrl.searchParams.get('limit')) || 25, 1), 100);
+      const offset = (page - 1) * limit;
+
+      let whereClause = 'WHERE h.book_id = ?';
+      const params = [book.id];
+
+      if (chapterIdParam !== null && chapterIdParam !== undefined && chapterIdParam !== '' && chapterIdParam !== 'all') {
+        whereClause += ' AND h.chapter_id = ?';
+        params.push(Number(chapterIdParam));
+      }
+
+      const countRow = hadithDb.prepare(`SELECT count(*) as count FROM hadiths h ${whereClause}`).get(...params);
+      const total = countRow ? countRow.count : 0;
+
+      const hadiths = hadithDb.prepare(`
+        SELECT h.id, h.book_id, h.chapter_id, h.hadith_number,
+               h.arabic_text, h.urdu_text, h.english_narrator, h.english_text,
+               c.title_arabic as chapter_title_arabic,
+               c.title_urdu as chapter_title_urdu,
+               c.title_english as chapter_title_english
+        FROM hadiths h
+        LEFT JOIN hadith_chapters c ON h.book_id = c.book_id AND h.chapter_id = c.chapter_number
+        ${whereClause}
+        ORDER BY h.hadith_number ASC
+        LIMIT ? OFFSET ?
+      `).all(...params, limit, offset);
+
+      return jsonResponse(res, {
+        book,
+        hadiths,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      });
+    }
+
+    // GET /api/hadith/:bookSlug/:hadithNumber
+    const hadithSingleMatch = pathname.match(/^\/api\/hadith\/([a-z0-9_-]+)\/(\d+)$/);
+    if (req.method === 'GET' && hadithSingleMatch) {
+      if (!hadithDb) return jsonResponse(res, { error: 'Hadith database not available' }, 503);
+      const bookSlug = hadithSingleMatch[1];
+      const hadithNumber = Number(hadithSingleMatch[2]);
+
+      const book = hadithDb.prepare('SELECT * FROM hadith_books WHERE slug = ?').get(bookSlug);
+      if (!book) return jsonResponse(res, { error: 'Book not found' }, 404);
+
+      const hadith = hadithDb.prepare(`
+        SELECT h.id, h.book_id, h.chapter_id, h.hadith_number,
+               h.arabic_text, h.urdu_text, h.english_narrator, h.english_text,
+               c.title_arabic as chapter_title_arabic,
+               c.title_urdu as chapter_title_urdu,
+               c.title_english as chapter_title_english
+        FROM hadiths h
+        LEFT JOIN hadith_chapters c ON h.book_id = c.book_id AND h.chapter_id = c.chapter_number
+        WHERE h.book_id = ? AND h.hadith_number = ?
+        LIMIT 1
+      `).get(book.id, hadithNumber);
+
+      if (!hadith) return jsonResponse(res, { error: 'Hadith not found' }, 404);
+      return jsonResponse(res, { book, hadith });
     }
 
     // 12. STATIC ASSET FALLBACK FOR PRODUCTION & ELECTRON DESKTOP RUNTIME

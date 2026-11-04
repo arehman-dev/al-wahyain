@@ -1,6 +1,6 @@
 export type ScriptMode = 'madani' | 'indopak';
 export type MushafDisplayMode = 'page' | 'continuous';
-export type AppMode = 'quran' | 'translation' | 'sarf' | 'tafseer' | 'mushaf' | 'morphology' | 'tafsir';
+export type AppMode = 'quran' | 'translation' | 'sarf' | 'tafseer' | 'mushaf' | 'morphology' | 'tafsir' | 'hadith';
 export type ReadingTheme = 'light' | 'sepia' | 'dark' | 'oled';
 export type TafsirLayoutMode = 'stacked' | 'split' | 'focus';
 export type OverallReadingMode = 'standard' | 'book';
@@ -319,4 +319,73 @@ export interface StudyState {
   expandedTafasir: Record<string, boolean>;
   fontSizeArabic: number;
   fontSizeUrdu: number;
+}
+
+// ========================================================
+// HADITH LIBRARY (8 Canonical Collections)
+// ========================================================
+
+export interface HadithBook {
+  id: number;
+  slug: string;
+  name_arabic: string;
+  name_urdu: string;
+  name_english: string;
+  author_arabic: string;
+  author_urdu: string;
+  author_english: string;
+  total_hadiths: number;
+  total_chapters?: number;
+}
+
+export interface HadithChapter {
+  id: number;
+  chapter_number: number;
+  title_arabic: string;
+  title_urdu: string | null;
+  title_english: string;
+  hadith_count?: number;
+}
+
+export interface HadithItem {
+  id: number;
+  book_id: number;
+  chapter_id: number;
+  hadith_number: number;
+  arabic_text: string;
+  urdu_text: string | null;
+  english_narrator: string | null;
+  english_text: string | null;
+  chapter_title_arabic?: string;
+  chapter_title_urdu?: string | null;
+  chapter_title_english?: string;
+}
+
+export interface HadithListResponse {
+  book: HadithBook;
+  hadiths: HadithItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface HadithSearchResult {
+  id: number;
+  book_slug: string;
+  book_name_urdu: string;
+  book_name_english: string;
+  hadith_number: number;
+  chapter_id: number;
+  chapter_title_arabic?: string;
+  chapter_title_english?: string;
+  arabic_text: string;
+  urdu_text: string | null;
+  english_text: string | null;
+  english_narrator: string | null;
+  snippet_ar?: string;
+  snippet_ur?: string;
+  snippet_en?: string;
 }
