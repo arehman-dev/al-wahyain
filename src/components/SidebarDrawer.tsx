@@ -331,7 +331,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     الوحيين
                   </h2>
                   <p className="text-[10px] text-slate-400 font-sans">
-                    Al-Wahyain v1.1.0
+                    Al-Wahyain v1.2.0
                   </p>
                 </div>
               </div>
@@ -1096,6 +1096,12 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_lexical_search.mjs & server/lexicalSearch.mjs (v1.1)</div>
                     <p className="text-slate-600 dark:text-slate-300 mt-1">
                       Seeds normalized <code className="font-app">text_clean</code> columns, generates the 14,771-token <code className="font-app">lexical_dictionary</code> table, and powers the Precision Word Search Engine with Tanzil-style operators (<code className="font-app">root:</code>, <code className="font-app">lem:</code>, wildcards <code className="font-app">?</code>/<code className="font-app">*</code>, <code className="font-app">NEAR/n</code>, <code className="font-app">OR |</code>, <code className="font-app">-NOT</code>, strict Tashkeel match, and 114-Surah dispersion heatmap).
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_ahmedyar_irab.mjs & server/corpusTreebank.mjs (v1.2)</div>
+                    <p className="text-slate-600 dark:text-slate-300 mt-1">
+                      Ingests all 340 complete passages of Professor Hafiz Ahmed Yar&#39;s monumental Urdu grammatical treatise (<code className="font-app">urdu_irab_ahmedyar</code>: <em>لغات، اعراب و رسمِ قرآن</em>) and powers the interactive SVG Dependency Treebank (<code className="font-app">corpus.quran.com</code> style) with sub-word morphemes and 10 Classical Sarf Verb Forms (الأوزان العشرة).
                     </p>
                   </div>
                 </div>

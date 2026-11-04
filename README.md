@@ -1,8 +1,8 @@
-# الوحيين — Al-Wahyain (`v1.1.0`)
+# الوحيين — Al-Wahyain (`v1.2.0`)
 
 **Offline-First Quranic Study, Lexical Morphology & Comparative Urdu Tafaseer Workstation**
 
-> **الوحيين (Al-Wahyain)** is a fast, 100% local-first scholarly workstation for studying the Noble Qur'an across **604 authentic Medina Mushaf pages (QCF V2 & V4 COLRv1 Tajweed)**, **77,429 morphologically analyzed words**, **Precision Lexical Search Engine (Tanzil-style operators & 114-Surah dispersion heatmap)**, **9 translations (6 Urdu + 3 English)**, **4 word-by-word interlinear glosses**, and **6 complete classical & contemporary Urdu Tafaseer (37,416 indexed commentary entries)**—running seamlessly both in the browser and as a cross-platform Desktop Application.
+> **الوحيين (Al-Wahyain)** is a fast, 100% local-first scholarly workstation for studying the Noble Qur'an across **604 authentic Medina Mushaf pages (QCF V2 & V4 COLRv1 Tajweed)**, **Interactive SVG Syntactic Dependency Treebank (`corpus.quran.com` style) with 10 Sarf Verb Forms**, **Complete Urdu I'rab Treatise of Prof. Hafiz Ahmed Yar ؒ (340 passages)**, **Precision Lexical Search Engine (Tanzil-style operators & 114-Surah dispersion heatmap)**, **77,429 morphologically analyzed words**, **9 translations (6 Urdu + 3 English)**, and **6 complete classical & contemporary Urdu Tafaseer (37,416 entries)**—running seamlessly both in the browser and as a cross-platform Desktop Application.
 
 - **Developer & Architect**: **Abdul Rehman (`@arehman-dev`)**
   - 🌐 **Portfolio Site**: [https://arehman-dev.github.io/](https://arehman-dev.github.io/)

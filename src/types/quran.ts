@@ -175,6 +175,80 @@ export interface AutocompleteResponse {
   words: AutocompleteItemWord[];
 }
 
+export interface SubWordSegment {
+  type: 'PREFIX' | 'STEM' | 'SUFFIX';
+  text: string;
+  pos: string;
+  root?: string;
+  lemma?: string;
+}
+
+export interface TreebankNode {
+  id: number;
+  position: number;
+  text_uthmani: string;
+  root?: string;
+  lemma?: string;
+  pos_tag?: string;
+  grammar_details?: string;
+  translation_ur?: string;
+  translation_en?: string;
+  category: 'noun' | 'verb' | 'particle' | 'pronoun' | 'proper_noun' | 'adjective' | 'relative';
+  role_arabic: string;
+  role_code: string;
+  sub_segments: SubWordSegment[];
+}
+
+export interface TreebankEdge {
+  source: number;
+  target: number;
+  label_arabic: string;
+  label_code: string;
+}
+
+export interface SarfParadigmItem {
+  form: string;
+  wazan: string;
+  madi: string;
+  mudari: string;
+  masdar: string;
+  ism_fail: string;
+  ism_maful: string;
+  meaning: string;
+}
+
+export interface RootTreebankInfo {
+  root: string;
+  lemma?: string;
+  pos: string;
+  paradigms: SarfParadigmItem[];
+}
+
+export interface AyahTreebankResponse {
+  surah_id: number;
+  ayah_number: number;
+  nodes: TreebankNode[];
+  edges: TreebankEdge[];
+  roots: RootTreebankInfo[];
+}
+
+export interface UrduIrabEntry {
+  id: number;
+  surah_id: number;
+  ayah_start: number;
+  ayah_end: number;
+  title_ur: string;
+  url: string;
+  content_html: string;
+}
+
+export interface UrduIrabResponse {
+  surah_id: number;
+  ayah_number: number;
+  has_entry: boolean;
+  entry: UrduIrabEntry | null;
+}
+
 export interface SearchResultTafsir {
   id: number;
   surah_id: number;

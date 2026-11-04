@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Layers } from 'lucide-react';
-import { Ayah, Word, ScriptMode } from '../types/quran';
+import { Layers, GitFork, GraduationCap, Sparkles } from 'lucide-react';
+import { Ayah, Word, ScriptMode, AyahTreebankResponse } from '../types/quran';
 import { toArabicDigits } from '../utils/juzMapping';
 import { MorphologyGraph } from './MorphologyGraph';
+import { MorphologyDependencyTree } from './MorphologyDependencyTree';
+import { UrduIrabViewer } from './UrduIrabViewer';
+import { fetchAyahTreebank } from '../services/api';
 import { loadQcfPageFont, getQcfFontFamily } from '../utils/qcfFontLoader';
 
 interface MorphologyViewProps {
@@ -31,6 +34,15 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
   const [selectedWord, setSelectedWord] = useState<Word | null>(
     currentAyah.words && currentAyah.words.length > 0 ? currentAyah.words[0] : null
   );
+  const [treebank, setTreebank] = useState<AyahTreebankResponse | null>(null);
+  const [activeMorphTab, setActiveMorphTab] = useState<'treebank' | 'ahmedyar' | 'word'>('treebank');
+
+  // Fetch Treebank on verse change
+  useEffect(() => {
+    fetchAyahTreebank(currentAyah.surah_id, currentAyah.ayah_number)
+      .then(setTreebank)
+      .catch(console.error);
+  }, [currentAyah.surah_id, currentAyah.ayah_number]);
 
   // Sync selected word and reset scroll to top on verse change
   useEffect(() => {
@@ -132,10 +144,71 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
       </section>
 
       {/* ======================================================== */}
-      {/* 2. SELECTED WORD DEEP GRAMMATICAL INSPECTOR              */}
+      {/* 2. STUDY MODE SWITCHER SUB-TABS (شجرہ، اعراب، الفاظ)     */}
       {/* ======================================================== */}
-      {selectedWord && (
-        <section className="space-y-5">
+      <div className="flex items-center gap-2 border-b border-emerald-950/10 dark:border-white/10 pb-2 text-xs font-bold overflow-x-auto select-none">
+        <button
+          onClick={() => setActiveMorphTab('treebank')}
+          className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer ${
+            activeMorphTab === 'treebank'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+          }`}
+        >
+          <GitFork className="w-3.5 h-3.5" />
+          <span>۱. نحوی شجرہ و اوزان (Dependency Tree & Sarf)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveMorphTab('ahmedyar')}
+          className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer ${
+            activeMorphTab === 'ahmedyar'
+              ? 'bg-amber-600 text-white shadow-sm'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+          }`}
+        >
+          <GraduationCap className="w-3.5 h-3.5" />
+          <span>۲. اعراب و لغاتِ قرآن (پروفیسر حافظ احمد یارؒ)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveMorphTab('word')}
+          className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer ${
+            activeMorphTab === 'word'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5" />
+          <span>۳. انفرادی کلمات و اجزاء (Word Inspector)</span>
+        </button>
+      </div>
+
+      {/* Tab 1: Dependency Tree & Sarf Verb Paradigms */}
+      {activeMorphTab === 'treebank' && treebank && (
+        <section className="space-y-4 animate-fadeIn">
+          <MorphologyDependencyTree
+            nodes={treebank.nodes}
+            edges={treebank.edges}
+            roots={treebank.roots}
+            verseKey={currentAyah.verse_key}
+          />
+        </section>
+      )}
+
+      {/* Tab 2: Hafiz Ahmed Yar Urdu I'rab Viewer */}
+      {activeMorphTab === 'ahmedyar' && (
+        <section className="space-y-4 animate-fadeIn">
+          <UrduIrabViewer
+            surahId={currentAyah.surah_id}
+            ayahNumber={currentAyah.ayah_number}
+          />
+        </section>
+      )}
+
+      {/* Tab 3: Selected Word Deep Grammatical Inspector */}
+      {activeMorphTab === 'word' && selectedWord && (
+        <section className="space-y-5 animate-fadeIn">
           <div className="flex items-center justify-between pb-2 border-b border-emerald-950/8 dark:border-white/5 text-xs select-none">
             <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <Layers className="w-4 h-4 text-emerald-600" />

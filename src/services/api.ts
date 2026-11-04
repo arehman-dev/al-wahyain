@@ -10,7 +10,9 @@ import {
   TafsirHighlight,
   PageData,
   LexicalSearchResponse,
-  AutocompleteResponse
+  AutocompleteResponse,
+  AyahTreebankResponse,
+  UrduIrabResponse
 } from '../types/quran';
 
 const BASE_URL = '/api';
@@ -66,6 +68,18 @@ export async function fetchTafasir(surahId: number, ayahNumber: number): Promise
 export async function fetchRootDetails(root: string): Promise<RootDetail> {
   const res = await fetch(`${BASE_URL}/roots/${encodeURIComponent(root)}`);
   if (!res.ok) throw new Error(`Failed to fetch root details for ${root}`);
+  return res.json();
+}
+
+export async function fetchAyahTreebank(surahId: number, ayahNumber: number): Promise<AyahTreebankResponse> {
+  const res = await fetch(`${BASE_URL}/treebank/${surahId}/${ayahNumber}`);
+  if (!res.ok) throw new Error(`Failed to fetch treebank for ${surahId}:${ayahNumber}`);
+  return res.json();
+}
+
+export async function fetchUrduIrab(surahId: number, ayahNumber: number): Promise<UrduIrabResponse> {
+  const res = await fetch(`${BASE_URL}/irab/${surahId}/${ayahNumber}`);
+  if (!res.ok) throw new Error(`Failed to fetch Urdu I'rab for ${surahId}:${ayahNumber}`);
   return res.json();
 }
 

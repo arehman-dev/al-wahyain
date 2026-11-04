@@ -4,6 +4,7 @@ import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseLexicalQuery, executeLexicalSearch, getAutocompleteSuggestions } from './lexicalSearch.mjs';
+import { buildAyahDependencyTree } from './corpusTreebank.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -497,6 +498,49 @@ const server = http.createServer(async (req, res) => {
       return jsonResponse(res, {
         root: rootRow || { root: rootQuery, root_arabic: rootQuery, occurrences_count: verses.length },
         verses
+      });
+    }
+
+    // 6.3. GET /api/treebank/:surah/:ayah (Corpus Dependency Treebank & Morphemes)
+    const treebankMatch = pathname.match(/^\/api\/treebank\/(\d+)\/(\d+)$/);
+    if (req.method === 'GET' && treebankMatch) {
+      const surahId = parseInt(treebankMatch[1], 10);
+      const ayahNumber = parseInt(treebankMatch[2], 10);
+
+      const words = db.prepare(`
+        SELECT position, text_uthmani, root, lemma, pos_tag, grammar_details, translation_ur, translation_en, translation_ur_2, translation_en_2
+        FROM words
+        WHERE surah_id = ? AND ayah_number = ?
+        ORDER BY position ASC
+      `).all(surahId, ayahNumber);
+
+      const tree = buildAyahDependencyTree(words);
+      return jsonResponse(res, {
+        surah_id: surahId,
+        ayah_number: ayahNumber,
+        ...tree
+      });
+    }
+
+    // 6.4. GET /api/irab/:surah/:ayah (Hafiz Ahmed Yar Urdu I'rab & Lughat)
+    const irabMatch = pathname.match(/^\/api\/irab\/(\d+)\/(\d+)$/);
+    if (req.method === 'GET' && irabMatch) {
+      const surahId = parseInt(irabMatch[1], 10);
+      const ayahNumber = parseInt(irabMatch[2], 10);
+
+      const row = db.prepare(`
+        SELECT id, surah_id, ayah_start, ayah_end, title_ur, url, content_html
+        FROM urdu_irab_ahmedyar
+        WHERE surah_id = ? AND ? >= ayah_start AND ? <= ayah_end
+        ORDER BY (ayah_end - ayah_start) ASC
+        LIMIT 1
+      `).get(surahId, ayahNumber, ayahNumber);
+
+      return jsonResponse(res, {
+        surah_id: surahId,
+        ayah_number: ayahNumber,
+        has_entry: !!row,
+        entry: row || null
       });
     }
 
