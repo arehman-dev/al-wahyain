@@ -11,9 +11,10 @@ import {
   Search,
   Maximize2,
   Minimize2,
-  MoveHorizontal
+  MoveHorizontal,
+  ScrollText
 } from 'lucide-react';
-import { Ayah, Surah } from '../types/quran';
+import { Ayah, Surah, AppMode, HadithBook, HadithChapter } from '../types/quran';
 
 interface BottomDockProps {
   currentSurah: Surah | undefined;
@@ -30,6 +31,9 @@ interface BottomDockProps {
   onToggleZenMode: () => void;
   horizontalPadding: number;
   onChangeHorizontalPadding: (val: number) => void;
+  activeMode?: AppMode;
+  currentHadithBook?: HadithBook | null;
+  currentHadithChapter?: HadithChapter | null;
 }
 
 export const BottomDock: React.FC<BottomDockProps> = ({
@@ -46,7 +50,10 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   isZenMode,
   onToggleZenMode,
   horizontalPadding,
-  onChangeHorizontalPadding
+  onChangeHorizontalPadding,
+  activeMode,
+  currentHadithBook,
+  currentHadithChapter
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playbackRate, setPlaybackRate] = useState<number>(1.0);
@@ -127,7 +134,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         onEnded={handleEnded}
       />
 
-      <div className="w-full h-full grid grid-cols-3 items-center">
+      <div className="w-full h-full grid grid-cols-[1fr_auto_1fr] items-center gap-2">
 
         {/* ======================================================== */}
         {/* LEFT SIDE (Left -> Right): Zen -> Search -> Share -> Padding Slider */}
@@ -194,77 +201,100 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         </div>
 
         {/* ======================================================== */}
-        {/* CENTER (Screen-Centered): Audio Playback Controls        */}
+        {/* CENTER (Screen-Centered): Audio Playback or Hadith Status */}
         {/* ======================================================== */}
         <div dir="rtl" className="flex items-center justify-center gap-1.5 justify-self-center">
-          <button
-            onClick={onPrevAyah}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
-          >
-            <SkipForward className="w-4 h-4" strokeWidth={1.85} />
-          </button>
+          {activeMode === 'hadith' && !isPlaying ? (
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-semibold px-3 py-1 rounded-xl bg-slate-200/40 dark:bg-slate-800/50 border border-slate-300/40 dark:border-slate-700/40">
+              <ScrollText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" strokeWidth={1.85} />
+              <span>مجموعۂ کتبِ حدیث نبوی ﷺ</span>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={onPrevAyah}
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+              >
+                <SkipForward className="w-4 h-4" strokeWidth={1.85} />
+              </button>
 
-          <button
-            onClick={() => isPlaying ? onPause() : onPlay()}
-            className="w-8 h-8 rounded-xl border border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center justify-center active:scale-95 transition-all cursor-pointer"
-          >
-            {isPlaying ? (
-              <Pause className="w-4 h-4" strokeWidth={1.85} />
-            ) : (
-              <Play className="w-4 h-4" strokeWidth={1.85} />
-            )}
-          </button>
+              <button
+                onClick={() => isPlaying ? onPause() : onPlay()}
+                className="w-8 h-8 rounded-xl border border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+              >
+                {isPlaying ? (
+                  <Pause className="w-4 h-4" strokeWidth={1.85} />
+                ) : (
+                  <Play className="w-4 h-4" strokeWidth={1.85} />
+                )}
+              </button>
 
-          <button
-            onClick={onNextAyah}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
-          >
-            <SkipBack className="w-4 h-4" strokeWidth={1.85} />
-          </button>
+              <button
+                onClick={onNextAyah}
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+              >
+                <SkipBack className="w-4 h-4" strokeWidth={1.85} />
+              </button>
 
-          <button
-            onClick={cycleRepeat}
-            className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-all cursor-pointer ${
-              repeatCount > 1 || repeatCount === Infinity
-                ? 'border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                : 'border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
-            }`}
-          >
-            <Repeat className="w-3.5 h-3.5" strokeWidth={1.85} />
-            <span>
-              {repeatCount === Infinity 
-                ? `∞` 
-                : repeatCount > 1 
-                ? `${currentRepeat}/${repeatCount}` 
-                : '1x'}
-            </span>
-          </button>
+              <button
+                onClick={cycleRepeat}
+                className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-all cursor-pointer ${
+                  repeatCount > 1 || repeatCount === Infinity
+                    ? 'border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                    : 'border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+                }`}
+              >
+                <Repeat className="w-3.5 h-3.5" strokeWidth={1.85} />
+                <span>
+                  {repeatCount === Infinity 
+                    ? `∞` 
+                    : repeatCount > 1 
+                    ? `${currentRepeat}/${repeatCount}` 
+                    : '1x'}
+                </span>
+              </button>
 
-          <button
-            onClick={cycleSpeed}
-            className="hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 text-[11px] font-app font-bold transition-colors cursor-pointer"
-          >
-            <Gauge className="w-3.5 h-3.5" strokeWidth={1.85} />
-            <span>{playbackRate}x</span>
-          </button>
+              <button
+                onClick={cycleSpeed}
+                className="hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 text-[11px] font-app font-bold transition-colors cursor-pointer"
+              >
+                <Gauge className="w-3.5 h-3.5" strokeWidth={1.85} />
+                <span>{playbackRate}x</span>
+              </button>
+            </>
+          )}
         </div>
 
         {/* ======================================================== */}
-        {/* RIGHT SIDE: Current Surah/Ayah & Reciter Info            */}
+        {/* RIGHT SIDE: Current Surah/Ayah or Hadith Info            */}
         {/* ======================================================== */}
         <div dir="rtl" className="flex items-center gap-2.5 min-w-0 justify-self-end">
-          <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold truncate">
-            <span className={`w-2 h-2 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-            <span>سورة {currentSurah?.name_arabic || 'الفاتحة'}</span>
-            <span className="text-slate-500 dark:text-slate-400 font-app text-[11px] font-bold">
-              {currentAyah ? `(${currentAyah.ayah_number})` : ''}
-            </span>
-          </div>
+          {activeMode === 'hadith' && !isPlaying ? (
+            <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold truncate">
+              <span className="w-2 h-2 rounded-full shrink-0 bg-emerald-500" />
+              <span>{currentHadithBook?.name_urdu || 'کتبِ حدیث'}</span>
+              {currentHadithChapter && (
+                <span className="text-slate-500 dark:text-slate-400 font-app text-[11px] truncate max-w-[140px] hidden sm:inline-block">
+                  ({currentHadithChapter.title_arabic || currentHadithChapter.title_english})
+                </span>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold truncate">
+                <span className={`w-2 h-2 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                <span>سورة {currentSurah?.name_arabic || 'الفاتحة'}</span>
+                <span className="text-slate-500 dark:text-slate-400 font-app text-[11px] font-bold">
+                  {currentAyah ? `(${currentAyah.ayah_number})` : ''}
+                </span>
+              </div>
 
-          <div className="hidden md:flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-300 font-medium px-2 py-0.5 rounded-lg bg-slate-200/65 dark:bg-slate-800/75 border border-slate-300/50 dark:border-slate-700/50">
-            <Volume2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={1.85} />
-            <span>مشاری راشد العفاسی</span>
-          </div>
+              <div className="hidden md:flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-300 font-medium px-2 py-0.5 rounded-lg bg-slate-200/65 dark:bg-slate-800/75 border border-slate-300/50 dark:border-slate-700/50">
+                <Volume2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={1.85} />
+                <span>مشاری راشد العفاسی</span>
+              </div>
+            </>
+          )}
         </div>
 
       </div>

@@ -7,12 +7,10 @@ import {
   Loader2, 
   Sparkles, 
   Compass, 
-  SlidersHorizontal,
-  Bookmark,
-  Check,
-  Hash,
-  Filter,
-  ScrollText
+  Check, 
+  Hash, 
+  ScrollText,
+  CornerDownLeft
 } from 'lucide-react';
 import { 
   SearchResultQuran, 
@@ -30,16 +28,18 @@ interface SearchModalProps {
   onClose: () => void;
   onSelectResult: (surahId: number, ayahNumber: number) => void;
   onSelectHadithResult?: (bookSlug: string, hadithNumber: number) => void;
+  initialTab?: 'lexical' | 'hadith' | 'tafsir' | 'thematic';
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({
   isOpen,
   onClose,
   onSelectResult,
-  onSelectHadithResult
+  onSelectHadithResult,
+  initialTab = 'lexical'
 }) => {
   const [query, setQuery] = useState('');
-  const [searchTab, setSearchTab] = useState<'lexical' | 'hadith' | 'tafsir' | 'thematic'>('lexical');
+  const [searchTab, setSearchTab] = useState<'lexical' | 'hadith' | 'tafsir' | 'thematic'>(initialTab);
   const [strictDiacritics, setStrictDiacritics] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -65,15 +65,29 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<HTMLDivElement>(null);
 
+  // Sync initial tab when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      if (initialTab) setSearchTab(initialTab);
+      setShowAutocomplete(false);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [isOpen, initialTab]);
+
+  // Keyboard shortcut listener (Escape to close)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        onClose();
+        if (showAutocomplete) {
+          setShowAutocomplete(false);
+        } else {
+          onClose();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, showAutocomplete, onClose]);
 
   // Click outside to close autocomplete
   useEffect(() => {
@@ -164,6 +178,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     if (inputRef.current) inputRef.current.focus();
   };
 
+  const handleTabChange = (newTab: 'lexical' | 'hadith' | 'tafsir' | 'thematic') => {
+    setSearchTab(newTab);
+    setShowAutocomplete(false);
+  };
+
   const categories = ['all', ...Array.from(new Set(THEMATIC_TOPICS.map(t => t.category)))];
 
   const filteredTopics = THEMATIC_TOPICS.filter(t => {
@@ -195,40 +214,43 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     { label: 'NEAR(نور, ظلمات, 5)', query: 'NEAR(نور, ظلمات, 5)', desc: 'باہمی قربت' }
   ];
 
+  const isEnglishQuery = /[a-zA-Z]/.test(query);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-8 sm:pt-14 p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-5 sm:pt-12 p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
       <div 
         dir="rtl"
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden font-ibm"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-ibm"
       >
-        {/* Search Input Bar */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2.5 sm:gap-3 bg-slate-50/50 dark:bg-slate-950/40 relative">
+        {/* ======================================================== */}
+        {/* 1. SEARCH INPUT BAR                                      */}
+        {/* ======================================================== */}
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2.5 sm:gap-3 bg-slate-50/70 dark:bg-slate-950/60 relative">
           <Search className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
           
           <input
             ref={inputRef}
             type="text"
-            autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => {
-              if (autocomplete && (autocomplete.roots.length > 0 || autocomplete.words.length > 0)) {
+              if (searchTab === 'lexical' && autocomplete && (autocomplete.roots.length > 0 || autocomplete.words.length > 0)) {
                 setShowAutocomplete(true);
               }
             }}
             placeholder={
               searchTab === 'lexical'
-                ? "لفظی تلاش (مثلاً: كتب، root:رحم، مس*ون، \"رسول الله\"، كتاب | ميزان)..."
+                ? "قرآن مجید میں تلاش (مثلاً: كتب، root:رحم، مس*ون، \"رسول الله\")..."
                 : searchTab === 'hadith'
-                ? "۸ کتبِ حدیث میں تلاش (عربی، اردو، یا English)..."
+                ? "۸ کتبِ حدیث میں تلاش (حدیث نمبر مثلاً 500، یا عربی، اردو، English)..."
                 : searchTab === 'tafsir'
-                ? "۵ مستند تفاسیر میں تلاش کریں..."
-                : "مضامینِ قرآن میں تلاش کریں..."
+                ? "۵ مستند تفاسیر کے مکمل متون میں FTS5 تلاش کریں..."
+                : "مضامینِ قرآن کے عنوانات میں تلاش کریں..."
             }
-            className="flex-1 bg-transparent border-none outline-none text-base sm:text-lg text-slate-900 dark:text-white placeholder-slate-400 font-medium"
+            className="flex-1 bg-transparent border-none outline-none text-sm sm:text-base text-slate-900 dark:text-white placeholder-slate-400 font-medium min-w-0"
           />
 
-          {loading && <Loader2 className="w-5 h-5 text-emerald-600 animate-spin shrink-0" />}
+          {loading && <Loader2 className="w-4 h-4 text-emerald-600 animate-spin shrink-0" />}
 
           {/* Strict Diacritics Toggle (Harakat) */}
           {searchTab === 'lexical' && (
@@ -236,10 +258,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               type="button"
               onClick={() => setStrictDiacritics(prev => !prev)}
               title={strictDiacritics ? "اعراب حساس تلاش فعال ہے (Strict Tashkeel)" : "اعراب غیر حساس تلاش (Normalized Arabic)"}
-              className={`px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer border ${
+              className={`shrink-0 px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer border ${
                 strictDiacritics
-                  ? 'bg-amber-500 text-white border-amber-600 shadow-sm'
-                  : 'bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-300'
+                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                  : 'bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-300 dark:hover:bg-slate-700'
               }`}
             >
               <span>اعراب</span>
@@ -252,8 +274,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               onClick={() => {
                 setQuery('');
                 setShowAutocomplete(false);
+                inputRef.current?.focus();
               }}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+              title="تلاش صاف کریں"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
@@ -261,19 +285,32 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
           <button
             onClick={onClose}
-            className="px-2.5 py-1 text-xs font-mono bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+            title="بند کریں (Esc)"
+            className="px-2.5 py-1 text-xs font-mono bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors cursor-pointer shrink-0"
           >
             ESC
           </button>
 
-          {/* Typeahead Autocomplete Dropdown */}
-          {showAutocomplete && autocomplete && (
+          {/* Typeahead Autocomplete Popover (Sub-10ms) */}
+          {showAutocomplete && autocomplete && searchTab === 'lexical' && (
             <div 
               ref={autocompleteRef}
-              className="absolute top-full right-4 left-4 z-50 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl p-3 max-h-72 overflow-y-auto font-ibm"
+              className="absolute top-full right-3 left-3 sm:right-6 sm:left-6 z-50 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl p-3 max-h-64 overflow-y-auto font-ibm animate-fadeIn"
             >
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span>تجاویز برائے تلاش (Sub-10ms Typeahead)</span>
+                </span>
+                <button
+                  onClick={() => setShowAutocomplete(false)}
+                  className="p-0.5 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                
                 {/* 1. Root Suggestions */}
                 {autocomplete.roots.length > 0 && (
                   <div>
@@ -345,13 +382,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                     </div>
                   </div>
                 )}
-
               </div>
             </div>
           )}
         </div>
 
-        {/* Syntax Operator Chips (Only in Lexical Tab) */}
+        {/* ======================================================== */}
+        {/* 2. SYNTAX OPERATOR CHIPS (Only in Lexical Tab)          */}
+        {/* ======================================================== */}
         {searchTab === 'lexical' && (
           <div className="flex items-center gap-1.5 px-4 py-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/30 overflow-x-auto text-[11px] select-none">
             <span className="text-[10px] text-slate-400 font-bold shrink-0 ml-1">تلاش کے طریقے:</span>
@@ -364,7 +402,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   if (inputRef.current) inputRef.current.focus();
                 }}
                 title={chip.desc}
-                className="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono text-[10.5px] transition-all whitespace-nowrap cursor-pointer shadow-2xs"
+                className="shrink-0 min-w-max px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono text-[10.5px] transition-all whitespace-nowrap cursor-pointer shadow-2xs"
               >
                 {chip.label}
               </button>
@@ -372,57 +410,87 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           </div>
         )}
 
-        {/* Search Scope Switcher Tabs */}
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 text-xs font-semibold overflow-x-auto">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSearchTab('lexical')}
-              className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
-                searchTab === 'lexical'
-                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-              }`}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>لفظی و صرفی تلاش {totalMatches > 0 ? `(${totalMatches})` : ''}</span>
-            </button>
-            <button
-              onClick={() => setSearchTab('hadith')}
-              className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
-                searchTab === 'hadith'
-                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-              }`}
-            >
-              <ScrollText className="w-4 h-4" />
-              <span>۸ کتبِ حدیث {hadithTotal > 0 ? `(${hadithTotal})` : ''}</span>
-            </button>
-            <button
-              onClick={() => setSearchTab('tafsir')}
-              className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
-                searchTab === 'tafsir'
-                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-              }`}
-            >
-              <Layers className="w-4 h-4" />
-              <span>۵ تفاسیر کا مواد FTS5 {tafsirResults.length > 0 ? `(${tafsirResults.length})` : ''}</span>
-            </button>
-            <button
-              onClick={() => setSearchTab('thematic')}
-              className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
-                searchTab === 'thematic'
-                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-              }`}
-            >
-              <Compass className="w-4 h-4" />
-              <span>مضامینِ قرآن ({THEMATIC_TOPICS.length})</span>
-            </button>
-          </div>
+        {/* ======================================================== */}
+        {/* 3. SEARCH SCOPE SWITCHER TABS (Airy, Uncompacted)        */}
+        {/* ======================================================== */}
+        <div 
+          onMouseDown={() => setShowAutocomplete(false)}
+          className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 pt-2 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-x-auto select-none"
+        >
+          {/* Tab 1: Quran Lexical */}
+          <button
+            onClick={() => handleTabChange('lexical')}
+            className={`shrink-0 min-w-max pb-2.5 px-3 border-b-2 flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              searchTab === 'lexical'
+                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 shrink-0" />
+            <span>قرآن مجید (لفظی تلاش)</span>
+            {totalMatches > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-app bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
+                {totalMatches}
+              </span>
+            )}
+          </button>
+
+          {/* Tab 2: Hadith */}
+          <button
+            onClick={() => handleTabChange('hadith')}
+            className={`shrink-0 min-w-max pb-2.5 px-3 border-b-2 flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              searchTab === 'hadith'
+                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <ScrollText className="w-4 h-4 shrink-0" />
+            <span>کتبِ حدیث (۸ کتب)</span>
+            {hadithTotal > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-app bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
+                {hadithTotal}
+              </span>
+            )}
+          </button>
+
+          {/* Tab 3: Tafsir */}
+          <button
+            onClick={() => handleTabChange('tafsir')}
+            className={`shrink-0 min-w-max pb-2.5 px-3 border-b-2 flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              searchTab === 'tafsir'
+                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <Layers className="w-4 h-4 shrink-0" />
+            <span>تفاسیر قرآنی (FTS5)</span>
+            {tafsirResults.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-app bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
+                {tafsirResults.length}
+              </span>
+            )}
+          </button>
+
+          {/* Tab 4: Thematic Topics */}
+          <button
+            onClick={() => handleTabChange('thematic')}
+            className={`shrink-0 min-w-max pb-2.5 px-3 border-b-2 flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              searchTab === 'thematic'
+                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <Compass className="w-4 h-4 shrink-0" />
+            <span>مضامینِ قرآن</span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-app bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold">
+              {THEMATIC_TOPICS.length}
+            </span>
+          </button>
         </div>
 
-        {/* 114 Surah Dispersion Heatmap (Lexical Mode) */}
+        {/* ======================================================== */}
+        {/* 4. SURAH DISPERSION HEATMAP (Lexical Mode)               */}
+        {/* ======================================================== */}
         {searchTab === 'lexical' && dispersion.length > 0 && totalMatches > 0 && (
           <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
             <SurahDispersionHeatmap
@@ -434,12 +502,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           </div>
         )}
 
-        {/* Hadith Book Filter Bar */}
+        {/* ======================================================== */}
+        {/* 5. HADITH BOOK FILTER BAR (Pills with shrink-0)         */}
+        {/* ======================================================== */}
         {searchTab === 'hadith' && (
           <div className="flex items-center gap-1.5 px-4 py-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/30 overflow-x-auto text-xs select-none">
             <span className="text-[11px] text-slate-400 font-bold shrink-0 ml-1">کتاب فلٹر:</span>
             {[
-              { slug: 'all', label: 'تمام کتب (All 8 Books)' },
+              { slug: 'all', label: 'تمام کتب (All 8)' },
               { slug: 'bukhari', label: 'صحیح بخاری' },
               { slug: 'muslim', label: 'صحیح مسلم' },
               { slug: 'abudawud', label: 'سنن ابو داؤد' },
@@ -452,7 +522,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               <button
                 key={b.slug}
                 onClick={() => setHadithBookFilter(b.slug)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                className={`shrink-0 min-w-max px-2.5 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   hadithBookFilter === b.slug
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
@@ -464,14 +534,16 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           </div>
         )}
 
-        {/* Thematic Category Filter Bar */}
+        {/* ======================================================== */}
+        {/* 6. THEMATIC CATEGORY FILTER BAR                          */}
+        {/* ======================================================== */}
         {searchTab === 'thematic' && (
-          <div className="flex items-center gap-1.5 px-4 py-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/30 overflow-x-auto text-[11px]">
+          <div className="flex items-center gap-1.5 px-4 py-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/30 overflow-x-auto text-[11px] select-none">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-2.5 py-1 rounded-lg font-medium border transition-all whitespace-nowrap cursor-pointer ${
+                className={`shrink-0 min-w-max px-2.5 py-1 rounded-lg font-medium border transition-all whitespace-nowrap cursor-pointer ${
                   selectedCategory === cat
                     ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
@@ -483,7 +555,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           </div>
         )}
 
-        {/* Results Container */}
+        {/* ======================================================== */}
+        {/* 7. RESULTS CONTAINER                                     */}
+        {/* ======================================================== */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 divide-y divide-slate-100 dark:divide-slate-800/60">
           
           {/* A. LEXICAL SEARCH RESULTS */}
@@ -536,67 +610,82 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             )
           )}
 
-          {/* HADITH RESULTS */}
+          {/* B. HADITH RESULTS */}
           {searchTab === 'hadith' && (
             hadithResults.length === 0 ? (
               <div className="py-14 text-center text-slate-400">
                 {query.trim() 
-                  ? "کتبِ حدیث میں اس لفظ یا عبارت کا اندراج نہیں ملا۔" 
-                  : "کتبِ حدیث میں تلاش کے لیے الفاظ (عربی، اردو یا انگریزی) درج فرمائیں۔"}
+                  ? "کتبِ حدیث میں اس لفظ، عبارت یا حدیث نمبر کا اندراج نہیں ملا۔" 
+                  : "کتبِ حدیث میں تلاش کے لیے حدیث نمبر (مثلاً: 500) یا الفاظ (عربی، اردو، انگریزی) درج فرمائیں۔"}
               </div>
             ) : (
-              hadithResults.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => {
-                    onSelectHadithResult?.(item.book_slug, item.hadith_number);
-                    onClose();
-                  }}
-                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-emerald-200 dark:hover:border-slate-700/60 group"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                        {item.book_name_urdu}
-                      </span>
-                      {item.chapter_title_arabic && (
-                        <span dir="rtl" className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-medium truncate max-w-xs">
-                          {item.chapter_title_arabic}
+              hadithResults.map((item) => {
+                const enMatched = isEnglishQuery || (item.snippet_en && item.snippet_en.includes('<mark'));
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      onSelectHadithResult?.(item.book_slug, item.hadith_number);
+                      onClose();
+                    }}
+                    className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-emerald-200 dark:hover:border-slate-700/60 group"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                          {item.book_name_urdu}
                         </span>
-                      )}
+                        {item.chapter_title_arabic && (
+                          <span dir="rtl" className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-medium truncate max-w-xs">
+                            {item.chapter_title_arabic}
+                          </span>
+                        )}
+                      </div>
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shrink-0">
+                        حدیث #{item.hadith_number}
+                      </span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
-                      حدیث #{item.hadith_number}
-                    </span>
+
+                    {/* Arabic Text or Snippet */}
+                    {item.snippet_ar && (
+                      <p 
+                        dir="rtl"
+                        dangerouslySetInnerHTML={{ __html: item.snippet_ar }}
+                        className="text-sm sm:text-base font-amiri text-slate-900 dark:text-slate-100 leading-relaxed mb-2 text-right"
+                      />
+                    )}
+
+                    {/* Matched Translation (English if query was in English, Urdu otherwise) */}
+                    {enMatched && item.snippet_en ? (
+                      <div dir="ltr" className="pt-1 text-left">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">English</span>
+                        <p 
+                          dangerouslySetInnerHTML={{ __html: item.snippet_en }}
+                          className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-app leading-relaxed"
+                        />
+                      </div>
+                    ) : item.snippet_ur ? (
+                      <div dir="rtl" className="pt-1 text-right">
+                        <p 
+                          dangerouslySetInnerHTML={{ __html: item.snippet_ur }}
+                          className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-nastaliq leading-[2.6]"
+                        />
+                      </div>
+                    ) : item.snippet_en ? (
+                      <div dir="ltr" className="pt-1 text-left">
+                        <p 
+                          dangerouslySetInnerHTML={{ __html: item.snippet_en }}
+                          className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-app leading-relaxed"
+                        />
+                      </div>
+                    ) : null}
                   </div>
-
-                  {item.snippet_ar && (
-                    <p 
-                      dir="rtl"
-                      dangerouslySetInnerHTML={{ __html: item.snippet_ar }}
-                      className="text-sm font-amiri text-slate-900 dark:text-slate-100 leading-relaxed mb-1.5 text-right"
-                    />
-                  )}
-
-                  {item.snippet_ur ? (
-                    <p 
-                      dir="rtl"
-                      dangerouslySetInnerHTML={{ __html: item.snippet_ur }}
-                      className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-nastaliq leading-[2.2]"
-                    />
-                  ) : item.snippet_en ? (
-                    <p 
-                      dir="ltr"
-                      dangerouslySetInnerHTML={{ __html: item.snippet_en }}
-                      className="text-xs text-slate-600 dark:text-slate-400 font-app leading-relaxed"
-                    />
-                  ) : null}
-                </div>
-              ))
+                );
+              })
             )
           )}
 
-          {/* B. TAFSIR RESULTS */}
+          {/* C. TAFSIR RESULTS */}
           {searchTab === 'tafsir' && (
             tafsirResults.length === 0 ? (
               <div className="py-14 text-center text-slate-400">
@@ -623,7 +712,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                         {item.tafsir_name}
                       </span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shrink-0">
                       {item.ayah_from === item.ayah_to ? `${item.surah_id}:${item.ayah_from}` : `${item.surah_id}:${item.ayah_from}-${item.ayah_to}`}
                     </span>
                   </div>
@@ -639,7 +728,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             )
           )}
 
-          {/* C. THEMATIC TOPICS */}
+          {/* D. THEMATIC TOPICS */}
           {searchTab === 'thematic' && (
             filteredTopics.length === 0 ? (
               <div className="py-14 text-center text-slate-400">
@@ -662,7 +751,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       </span>
                       <span className="text-xs text-slate-400 font-sans">({topic.title_en})</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shrink-0">
                       {topic.verse_key}
                     </span>
                   </div>

@@ -237,7 +237,7 @@ export const HadithView: React.FC<HadithViewProps> = ({
                   <div dir="rtl" className={`${(hadithViewLang === 'all' && h.arabic_text) ? 'pt-4 border-t border-slate-100 dark:border-slate-800/80' : ''}`}>
                     {h.urdu_text ? (
                       <p 
-                        className="font-nastaliq text-slate-800 dark:text-slate-200 text-right leading-[2.4] select-text"
+                        className="font-nastaliq text-slate-800 dark:text-slate-200 text-right leading-[2.6] select-text"
                         style={{ fontSize: `${fontSize * 1.12}px` }}
                       >
                         {h.urdu_text}

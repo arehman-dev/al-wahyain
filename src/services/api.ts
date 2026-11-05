@@ -209,7 +209,12 @@ export async function fetchHadithList(
   return res.json();
 }
 
-export async function fetchHadithByNumber(bookSlug: string, hadithNumber: number): Promise<{ book: HadithBook; hadith: HadithItem }> {
+export async function fetchHadithByNumber(bookSlug: string, hadithNumber: number): Promise<{ 
+  book: HadithBook; 
+  hadith: HadithItem; 
+  chapter_page?: number; 
+  book_page?: number; 
+}> {
   const res = await fetch(`${BASE_URL}/hadith/${encodeURIComponent(bookSlug)}/${hadithNumber}`);
   if (!res.ok) throw new Error(`Failed to fetch hadith ${bookSlug} #${hadithNumber}`);
   return res.json();

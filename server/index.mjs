@@ -902,6 +902,34 @@ const server = http.createServer(async (req, res) => {
         return jsonResponse(res, { query: q, results: [], total: 0 });
       }
 
+      // Check for direct Hadith Number search (e.g. "500", "#500")
+      const numMatch = q.trim().match(/^#?(\d+)$/);
+      if (numMatch) {
+        const hNum = Number(numMatch[1]);
+        let sql = `
+          SELECT h.id, b.slug as book_slug, b.name_urdu as book_name_urdu, b.name_english as book_name_english,
+                 h.hadith_number, h.chapter_id,
+                 c.title_arabic as chapter_title_arabic, c.title_english as chapter_title_english,
+                 h.arabic_text, h.urdu_text, h.english_text, h.english_narrator,
+                 h.arabic_text as snippet_ar,
+                 h.urdu_text as snippet_ur,
+                 h.english_text as snippet_en
+          FROM hadiths h
+          JOIN hadith_books b ON h.book_id = b.id
+          LEFT JOIN hadith_chapters c ON h.book_id = c.book_id AND h.chapter_id = c.chapter_number
+          WHERE h.hadith_number = ?
+        `;
+        const params = [hNum];
+        if (bookSlug && bookSlug !== 'all') {
+          sql += ' AND b.slug = ?';
+          params.push(bookSlug);
+        }
+        sql += ' ORDER BY b.id ASC LIMIT ?';
+        params.push(limit);
+        const rows = hadithDb.prepare(sql).all(...params);
+        return jsonResponse(res, { query: q, results: rows, total: rows.length });
+      }
+
       const cleanAr = normalizeArabic(q.trim());
       const sanitized = q.trim().replace(/['"*]/g, ' ');
       const words = sanitized.split(/\s+/).filter(Boolean);
@@ -1051,7 +1079,20 @@ const server = http.createServer(async (req, res) => {
       `).get(book.id, hadithNumber);
 
       if (!hadith) return jsonResponse(res, { error: 'Hadith not found' }, 404);
-      return jsonResponse(res, { book, hadith });
+
+      // Compute exact 25-per-page offset for chapter and book views
+      const countBeforeInChapter = hadithDb.prepare(`
+        SELECT count(*) as cnt FROM hadiths WHERE book_id = ? AND chapter_id = ? AND hadith_number < ?
+      `).get(book.id, hadith.chapter_id, hadith.hadith_number);
+
+      const countBeforeInBook = hadithDb.prepare(`
+        SELECT count(*) as cnt FROM hadiths WHERE book_id = ? AND hadith_number < ?
+      `).get(book.id, hadith.hadith_number);
+
+      const chapter_page = Math.floor((countBeforeInChapter?.cnt || 0) / 25) + 1;
+      const book_page = Math.floor((countBeforeInBook?.cnt || 0) / 25) + 1;
+
+      return jsonResponse(res, { book, hadith, chapter_page, book_page });
     }
 
     // 12. STATIC ASSET FALLBACK FOR PRODUCTION & ELECTRON DESKTOP RUNTIME

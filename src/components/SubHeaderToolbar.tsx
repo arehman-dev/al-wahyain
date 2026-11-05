@@ -13,7 +13,8 @@ import {
   Bookmark,
   FileEdit,
   Focus,
-  Languages
+  Languages,
+  ScrollText
 } from 'lucide-react';
 import { Surah, AppMode, TafsirLayoutMode, HadithBook, HadithChapter } from '../types/quran';
 
@@ -131,15 +132,42 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   const [fastJumpText, setFastJumpText] = useState('');
   const [fastJumpError, setFastJumpError] = useState(false);
 
+  const hadithChapIdx = currentHadithChapterId === 'all'
+    ? -1
+    : hadithChapters.findIndex(c => c.chapter_number === currentHadithChapterId);
+  const isHadithPrevDisabled = currentHadithChapterId === 'all' || hadithChapIdx <= 0;
+  const isHadithNextDisabled = currentHadithChapterId === 'all' || hadithChapIdx < 0 || hadithChapIdx >= hadithChapters.length - 1;
+
   const handleFastJumpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const raw = fastJumpText.trim();
     if (!raw) return;
 
     if (activeMode === 'hadith') {
-      const hNum = parseInt(raw, 10);
-      if (!isNaN(hNum) && hNum > 0) {
-        onJumpToHadithNumber?.(hNum);
+      const bookPrefixMatch = raw.match(/^([a-zA-Z\u0600-\u06FF\s]+?)\s*#?(\d+)$/);
+      if (bookPrefixMatch) {
+        const bookStr = bookPrefixMatch[1].trim().toLowerCase();
+        const num = parseInt(bookPrefixMatch[2], 10);
+        const foundBook = hadithBooks.find(b => 
+          b.slug.toLowerCase() === bookStr || 
+          b.name_english.toLowerCase().includes(bookStr) ||
+          b.name_urdu.includes(bookStr) ||
+          b.name_arabic.includes(bookStr)
+        );
+        if (foundBook) {
+          onSelectHadithBook?.(foundBook.slug);
+        }
+        if (!isNaN(num) && num > 0) {
+          onJumpToHadithNumber?.(num);
+          setFastJumpText('');
+          setFastJumpError(false);
+          return;
+        }
+      }
+
+      const numOnly = parseInt(raw.replace(/^#/, ''), 10);
+      if (!isNaN(numOnly) && numOnly > 0) {
+        onJumpToHadithNumber?.(numOnly);
         setFastJumpText('');
         setFastJumpError(false);
         return;
@@ -206,37 +234,48 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         {/* LEFT SIDE: Only Bookmark & Note (Icon-Only, 2D Outline/Filled) */}
         {/* ======================================================== */}
         <div className="flex items-center gap-1.5 justify-self-start">
-          {/* Bookmark Icon Button (No Label per 3.4) */}
-          <button
-            onClick={onToggleBookmark}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-              isBookmarked
-                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
-                : 'text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
-            }`}
-          >
-            <Bookmark 
-              className="w-4 h-4" 
-              strokeWidth={1.85} 
-              fill={isBookmarked ? 'currentColor' : 'none'} 
-            />
-          </button>
+          {activeMode !== 'hadith' ? (
+            <>
+              {/* Bookmark Icon Button (No Label per 3.4) */}
+              <button
+                onClick={onToggleBookmark}
+                title={isBookmarked ? "بک مارک ہٹائیں" : "بک مارک کریں"}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                  isBookmarked
+                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+                }`}
+              >
+                <Bookmark 
+                  className="w-4 h-4" 
+                  strokeWidth={1.85} 
+                  fill={isBookmarked ? 'currentColor' : 'none'} 
+                />
+              </button>
 
-          {/* Note Icon Button (No Label per 3.4) */}
-          <button
-            onClick={onOpenNoteDrawer}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-              hasNote
-                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
-            }`}
-          >
-            <FileEdit 
-              className="w-4 h-4" 
-              strokeWidth={1.85} 
-              fill={hasNote ? 'currentColor' : 'none'} 
-            />
-          </button>
+              {/* Note Icon Button (No Label per 3.4) */}
+              <button
+                onClick={onOpenNoteDrawer}
+                title={hasNote ? "نوٹ دیکھیں یا ترمیم کریں" : "نوٹ تحریر کریں"}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                  hasNote
+                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+                }`}
+              >
+                <FileEdit 
+                  className="w-4 h-4" 
+                  strokeWidth={1.85} 
+                  fill={hasNote ? 'currentColor' : 'none'} 
+                />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded-xl bg-slate-200/50 dark:bg-slate-800/50 border border-slate-300/50 dark:border-slate-700/50">
+              <ScrollText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span className="hidden sm:inline">کتبِ حدیث</span>
+            </div>
+          )}
         </div>
 
         {/* ======================================================== */}
@@ -289,7 +328,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
               <button
                 onClick={onPrevHadithChapter}
-                disabled={currentHadithChapterId === 'all' || currentHadithChapterId === 1 || currentHadithChapterId === 0}
+                disabled={isHadithPrevDisabled}
                 title="پچھلا باب"
                 className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
               >
@@ -315,7 +354,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
 
               <button
                 onClick={onNextHadithChapter}
-                disabled={currentHadithChapterId === 'all'}
+                disabled={isHadithNextDisabled}
                 title="اگلا باب"
                 className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
               >

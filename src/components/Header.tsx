@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({
       dir="ltr" 
       className="sticky top-0 z-40 w-full h-12 glass-bar border-b transition-all font-ibm select-none px-3 sm:px-6"
     >
-      <div className="w-full h-full grid grid-cols-3 items-center">
+      <div className="w-full h-full grid grid-cols-[1fr_auto_1fr] items-center gap-2">
         
         {/* ======================================================== */}
         {/* LEFT SIDE (Left -> Right): Zen -> Theme -> Bookmarks -> Search */}
@@ -137,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <button
             onClick={() => onChangeMode('quran')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs shrink-0 whitespace-nowrap transition-all cursor-pointer ${
               activeMode === 'quran' || activeMode === 'mushaf'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
@@ -149,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('translation')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs shrink-0 whitespace-nowrap transition-all cursor-pointer ${
               activeMode === 'translation'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
@@ -161,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('sarf')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs shrink-0 whitespace-nowrap transition-all cursor-pointer ${
               activeMode === 'sarf' || activeMode === 'morphology'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('tafseer')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs shrink-0 whitespace-nowrap transition-all cursor-pointer ${
               activeMode === 'tafseer' || activeMode === 'tafsir'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
@@ -186,7 +186,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => onChangeMode('hadith')}
             title="حدیث مطالعہ (Mode 5)"
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs shrink-0 whitespace-nowrap transition-all cursor-pointer ${
               activeMode === 'hadith'
                 ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'

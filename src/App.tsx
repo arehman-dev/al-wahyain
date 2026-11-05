@@ -627,7 +627,7 @@ export const App: React.FC = () => {
       const res = await fetchHadithByNumber(currentHadithBook, num);
       if (res && res.hadith) {
         setCurrentHadithChapterId(res.hadith.chapter_id);
-        const page = Math.floor((res.hadith.hadith_number - 1) / 25) + 1;
+        const page = res.chapter_page || 1;
         setHadithPage(page);
         setHighlightHadithNumber(res.hadith.hadith_number);
       }
@@ -644,7 +644,7 @@ export const App: React.FC = () => {
       .then(res => {
         if (res && res.hadith) {
           setCurrentHadithChapterId(res.hadith.chapter_id);
-          const page = Math.floor((res.hadith.hadith_number - 1) / 25) + 1;
+          const page = res.chapter_page || 1;
           setHadithPage(page);
         }
       })
@@ -980,6 +980,9 @@ export const App: React.FC = () => {
           onToggleZenMode={() => setIsZenMode(prev => !prev)}
           horizontalPadding={horizontalPadding}
           onChangeHorizontalPadding={setHorizontalPadding}
+          activeMode={activeMode}
+          currentHadithBook={hadithBooks.find(b => b.slug === currentHadithBook) || null}
+          currentHadithChapter={hadithChapters.find(c => c.chapter_number === currentHadithChapterId) || null}
         />
       )}
 
@@ -1113,6 +1116,7 @@ export const App: React.FC = () => {
           handleSelectAyah(ayahNumber);
         }}
         onSelectHadithResult={handleSelectHadith}
+        initialTab={activeMode === 'hadith' ? 'hadith' : (activeMode === 'tafseer' || activeMode === 'tafsir') ? 'tafsir' : 'lexical'}
       />
 
       {/* Global Omnibar Command Palette */}
