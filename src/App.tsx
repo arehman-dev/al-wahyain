@@ -19,7 +19,6 @@ import { NoteEditorDrawer } from './components/NoteEditorDrawer';
 import { ExportShareModal } from './components/ExportShareModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { SurahIntroView } from './components/SurahIntroView';
-import { SurahIntroDrawer } from './components/SurahIntroDrawer';
 import { 
   Surah, 
   Ayah, 
@@ -195,7 +194,6 @@ export const App: React.FC = () => {
   const [showNoteDrawer, setShowNoteDrawer] = useState<boolean>(false);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [showShortcutsModal, setShowShortcutsModal] = useState<boolean>(false);
-  const [showSurahIntroDrawer, setShowSurahIntroDrawer] = useState<boolean>(false);
 
   // 5. Bookmarks, Notes & Highlights State
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -563,7 +561,6 @@ export const App: React.FC = () => {
           onNextSurah={handleNextSurah}
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
-          onOpenSurahIntro={() => setShowSurahIntroDrawer(true)}
           activeMode={activeMode}
           isBookmarked={isCurrentAyahBookmarked}
           onToggleBookmark={handleToggleBookmark}
@@ -1010,17 +1007,6 @@ export const App: React.FC = () => {
         isOpen={showShortcutsModal}
         onClose={() => setShowShortcutsModal(false)}
       />
-
-      {/* Surah Introduction Drawer (Option 1) */}
-      {currentSurah && (
-        <SurahIntroDrawer
-          isOpen={showSurahIntroDrawer}
-          onClose={() => setShowSurahIntroDrawer(false)}
-          currentSurah={currentSurah}
-          onJumpToAyah0={() => handleSelectAyah(0)}
-          fontSize={fontSize}
-        />
-      )}
 
     </div>
   );

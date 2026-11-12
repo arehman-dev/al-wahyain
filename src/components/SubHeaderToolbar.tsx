@@ -13,8 +13,7 @@ import {
   Bookmark,
   FileEdit,
   Focus,
-  Languages,
-  Info
+  Languages
 } from 'lucide-react';
 import { Surah, AppMode, TafsirLayoutMode } from '../types/quran';
 
@@ -28,7 +27,6 @@ interface SubHeaderToolbarProps {
   onNextSurah: () => void;
   onPrevAyah: () => void;
   onNextAyah: () => void;
-  onOpenSurahIntro?: () => void;
   activeMode: AppMode;
 
   // Bookmark & Note (Placed at Left of Sub-Header per 3.2 & 3.4)
@@ -75,7 +73,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   onNextSurah,
   onPrevAyah,
   onNextAyah,
-  onOpenSurahIntro,
   activeMode,
   isBookmarked,
   onToggleBookmark,
@@ -255,19 +252,6 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
             </button>
           </div>
-
-          {/* 1.5. Intro Drawer Trigger Button (Option 1) */}
-          {onOpenSurahIntro && (
-            <button
-              type="button"
-              onClick={onOpenSurahIntro}
-              title="سورت کا تعارف و پس منظر (Introduction)"
-              className="px-2 py-1 rounded-xl flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 transition-all cursor-pointer shadow-2xs"
-            >
-              <Info className="w-3.5 h-3.5" strokeWidth={1.85} />
-              <span className="hidden sm:inline">تعارف</span>
-            </button>
-          )}
 
           {/* 2. Ayah Selector with Prev/Next Ayah Icons */}
           <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
