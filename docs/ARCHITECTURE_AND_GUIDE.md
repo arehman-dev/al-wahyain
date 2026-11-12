@@ -107,7 +107,14 @@ Configured in [`tailwind.config.js`](../tailwind.config.js) and [`src/index.css`
    - `tafsir_slug` (`'bayan'`, `'tafheem'`, `'maarifulquran'`, `'ibnkathir'`, `'saadi'`, `'taisirulquran'`)
    - `tafsir_name`, `author_name`, `content_html`, `source_attribution`, `source_url`
 
-6. **FTS5 Full-Text Search Virtual Tables**:
+6. **`surah_introductions` (114 rows)**:
+   - `id` (`INTEGER PRIMARY KEY`), `surah_id` (`INTEGER UNIQUE`)
+   - `title_ur`, `title_en`
+   - `source_ur` (*تفہیم القرآن*), `source_en` (*Tafhim al-Qur'an*)
+   - `short_text_ur`, `short_text_en`
+   - `text_html_ur`, `text_html_en` (Full HTML formatted introductions with standard classical sections: Name, Revelation Period, Historical Context, Main Themes)
+
+7. **FTS5 Full-Text Search Virtual Tables**:
    - `ayahs_fts` (`verse_key`, `surah_id`, `ayah_number`, `text_simple`, `text_uthmani`)
    - `translations_fts` (`verse_key`, `surah_id`, `ayah_number`, `author_name`, `text`)
    - `tafasir_fts` (`verse_key`, `surah_id`, `ayah_number`, `tafsir_slug`, `tafsir_name`, `author_name`, `content_text`)
@@ -124,6 +131,7 @@ Configured in [`tailwind.config.js`](../tailwind.config.js) and [`src/index.css`
 | Method & Endpoint | Description |
 | :--- | :--- |
 | `GET /api/surahs` | Returns all 114 Surahs ordered by `id`. |
+| `GET /api/surah/:id/intro` | Returns Surah metadata and full Urdu/English introduction and historical context (*تفہیم القرآن*). |
 | `GET /api/surahs/:id/ayahs` | Returns all Ayahs for Surah `:id`, hydrated with nested `translations[]` and `words[]` (including `code_v2`, `page_number`, `line_number`, `morphology`). |
 | `GET /api/pages/:pageNumber` | Returns all Ayahs and Words located on Madani Mushaf page `:pageNumber` (`1..604`) for exact 15-line rendering. |
 | `GET /api/ayahs/:surah/:ayah/tafsir` | Returns all 6 Urdu Tafaseer entries for `:surah::ayah`. If a commentary spans a group of verses and the current verse stores a pointer/short text, automatically resolves the linked commentary from the group's primary ayah. |
@@ -163,6 +171,8 @@ Every script used to build, fetch, normalize, and index the corpus is preserved 
     - Specifically strips embedded duplicate multi-ayah Arabic/translation table wrappers (`<table>`, `<p class="ur">`, `<p class="ar">`) from grouped commentaries so *Tafseer e Sa'di* follows the exact same clean per-ayah commentary architecture as the other 5 Tafaseer.
 11. **`scripts/setup_fts5.mjs`**:
     - Drops and rebuilds the SQLite FTS5 virtual tables (`ayahs_fts`, `translations_fts`, `tafasir_fts`) using `tokenize='unicode61 remove_diacritics 2'` across all 6,236 ayahs, 56,124 translations, and 37,416 Tafsir records.
+12. **`scripts/seed_surah_introductions.mjs`**:
+    - Scrapes, normalizes, and seeds all 114 Surah introductions (Urdu and English from Maulana Maududi's *Tafhim-ul-Quran*) into the `surah_introductions` table in `data/quran_study.db`.
 
 ---
 

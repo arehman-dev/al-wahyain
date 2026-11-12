@@ -1,8 +1,8 @@
-# الوحيين — Al-Wahyain (`v1.2.0`)
+# الوحيين — Al-Wahyain (`v1.2.2`)
 
 **Offline-First Quranic Study, Lexical Morphology & Comparative Urdu Tafaseer Workstation**
 
-> **الوحيين (Al-Wahyain)** is a fast, 100% local-first scholarly workstation for studying the Noble Qur'an across **604 authentic Medina Mushaf pages (QCF V2 & V4 COLRv1 Tajweed)**, **Interactive SVG Syntactic Dependency Treebank (`corpus.quran.com` style) with 10 Sarf Verb Forms**, **Complete Urdu I'rab Treatise of Prof. Hafiz Ahmed Yar ؒ (340 passages)**, **Precision Lexical Search Engine (Tanzil-style operators & 114-Surah dispersion heatmap)**, **77,429 morphologically analyzed words**, **9 translations (6 Urdu + 3 English)**, and **6 complete classical & contemporary Urdu Tafaseer (37,416 entries)**—running seamlessly both in the browser and as a cross-platform Desktop Application.
+> **الوحيين (Al-Wahyain)** is a fast, 100% local-first scholarly workstation for studying the Noble Qur'an across **604 authentic Medina Mushaf pages (QCF V2 & V4 COLRv1 Tajweed)**, **Interactive SVG Syntactic Dependency Treebank (`corpus.quran.com` style) with 10 Sarf Verb Forms**, **Complete Urdu I'rab Treatise of Prof. Hafiz Ahmed Yar ؒ (340 passages)**, **114 Complete Surah Introductions & Historical Background in Urdu & English (Sayyid Abul A'la Maududi ؒ)**, **Precision Lexical Search Engine (Tanzil-style operators & 114-Surah dispersion heatmap)**, **77,429 morphologically analyzed words**, **9 translations (6 Urdu + 3 English)**, and **6 complete classical & contemporary Urdu Tafaseer (37,416 entries)**—running seamlessly both in the browser and as a cross-platform Desktop Application.
 
 - **Developer & Architect**: **Abdul Rehman (`@arehman-dev`)**
   - 🌐 **Portfolio Site**: [https://arehman-dev.github.io/](https://arehman-dev.github.io/)
@@ -23,7 +23,10 @@
    - **`2` — ترجمہ (Translation & Interlinear WBW Mode)**: Side-by-side primary and comparative secondary translations (6 Urdu + 3 English) with toggleable classical interlinear Word-by-Word (`الترجمة السطرية`) boxes.
    - **`3` — صرف و نحو (Morphology & Lexical Concordance Mode)**: Complete morphological breakdown of all 77,429 Quranic words (Root, Lemma, POS, Gender/Number/Person/Case/Mood, Decomposed Morpheme Syntactic Graph, and full Quranic Root Concordance).
    - **`4` — تفسیر (Comparative Tafaseer Mode)**: Study 6 complete Urdu Tafaseer in either **Single-Author Focus Mode** or **Stacked Comparative Mode** with custom ordering, persistent 3-color text highlighting (`Yellow`, `Sky Blue`, `Light Green`), and interactive cross-reference verse popovers.
-3. **Dual-Database Local Engine (`quran_study.db` + `user_study.db`)**:
+3. **114 Surah Introductions & Historical Context (`تعارف` / Verse 0)**:
+   - Seamlessly integrated into Translation and Tafsir reading modes without boxed cards or foreign styling.
+   - Includes authentic Calligraphic Surah Frontispiece, Revelation Period, Historical Background (*پس منظر*), and Core Themes in both Urdu and English from Sayyid Abul A'la Maududi's *Tafhim-ul-Quran*.
+4. **Dual-Database Local Engine (`quran_study.db` + `user_study.db`)**:
    - Powered by Node.js native `node:sqlite` (`DatabaseSync`) with SQLite FTS5 full-text search (`unicode61 remove_diacritics 2`).
    - Separates the **447 MB read-only scholarly corpus** (`data/quran_study.db`) from the **writable user database** (`user_study.db` via `ATTACH DATABASE ... AS user_db`), ensuring personal bookmarks, notes, and Tafsir highlights are never overwritten during application updates.
 
@@ -34,6 +37,7 @@
 | Dataset Category | Included Works / Count | Details |
 | :--- | :--- | :--- |
 | **Quranic Script & Pages** | **114 Surahs • 6,236 Ayahs • 604 Pages** | Uthmani script, Indopak script, QCF V2 glyph codes (`code_v2`), verse-end markers (`end_code_v2`), and 15-line Mushaf layout coordinates. |
+| **Surah Introductions** | **114 Complete Surah Introductions** | Complete Urdu & English scholarly introductions (*مقدمات و تعارفِ سورہ*) by Sayyid Abul Ala Maududi (*Tafhim al-Qur'an*) covering Name, Period of Revelation, Historical Background, and Themes. |
 | **Morphology & Roots** | **77,429 Words • 1,648 Roots** | University of Leeds Quranic Arabic Corpus morphology, Arabic grammar templates, and root concordance. |
 | **Urdu Translations (6)** | **37,416 Verse Translations** | 1. Mufti Muhammad Taqi Usmani (`taqi_usmani`)<br>2. Sayyid Abul Ala Maududi (`maududi`)<br>3. Maulana Muhammad Junagarhi (`junagarhi`)<br>4. Shaykh al-Hind Mahmud al-Hasan (`mahmud_hasan`)<br>5. Dr. Israr Ahmad (`israr_ahmad`)<br>6. Fateh Muhammad Jalandhari (`jalandhari`) |
 | **English Translations (3)** | **18,708 Verse Translations** | 1. Saheeh International (`sahih_intl`)<br>2. Mufti Taqi Usmani English (`taqi_usmani_en`)<br>3. Prof. M.A.S. Abdel Haleem (`abdel_haleem`) |
