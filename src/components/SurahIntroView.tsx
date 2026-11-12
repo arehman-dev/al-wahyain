@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Copy, 
-  Check, 
-  ChevronLeft
+  Check
 } from 'lucide-react';
 import { Surah, SurahIntro } from '../types/quran';
 import { fetchSurahIntro } from '../services/api';
@@ -11,13 +10,12 @@ import { toArabicDigits } from '../utils/juzMapping';
 interface SurahIntroViewProps {
   currentSurah: Surah;
   fontSize?: number;
-  onStartSurah: (ayahNumber: number) => void;
+  onStartSurah?: (ayahNumber: number) => void;
 }
 
 export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
   currentSurah,
-  fontSize = 17,
-  onStartSurah
+  fontSize = 17
 }) => {
   const [intro, setIntro] = useState<SurahIntro | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -190,19 +188,8 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
           </div>
         )}
 
-        {/* Editorial Bottom Divider & Next Action */}
-        <div className="pt-8 mt-10 border-t border-emerald-950/10 dark:border-emerald-500/10 flex items-center justify-between text-xs font-ibm select-none">
-          <span className="text-slate-500 dark:text-slate-400">
-            سورت کا ابتدائی پس منظر مکمل ہوا۔
-          </span>
-          <button
-            onClick={() => onStartSurah(1)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all shadow-sm cursor-pointer"
-          >
-            <span>پہلی آیت کا مطالعہ شروع کریں (آیت ۱)</span>
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Editorial Bottom Divider */}
+        <div className="pt-8 mt-10 border-t border-emerald-950/10 dark:border-emerald-500/10" />
 
       </section>
 

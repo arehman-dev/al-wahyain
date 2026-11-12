@@ -273,8 +273,16 @@ export const App: React.FC = () => {
   }, [currentSurahId, currentAyahNumber]);
 
   // Current Surah & Ayah Objects
+  const isQuranOrSarf = activeMode === 'quran' || activeMode === 'mushaf' || activeMode === 'sarf' || activeMode === 'morphology';
   const currentSurah = surahs.find(s => s.id === currentSurahId);
   const currentAyah = ayahs.find(a => a.ayah_number === currentAyahNumber) || (currentAyahNumber === 0 ? null : (ayahs[0] || null));
+
+  // In Quran and Sarf mode, ensure verse 0 is never selected
+  useEffect(() => {
+    if (isQuranOrSarf && currentAyahNumber === 0) {
+      setCurrentAyahNumber(1);
+    }
+  }, [isQuranOrSarf, currentAyahNumber]);
 
   // Sync active page with current Ayah
   useEffect(() => {
@@ -355,22 +363,26 @@ export const App: React.FC = () => {
     if (surahId && surahId !== currentSurahId) {
       setCurrentSurahId(surahId);
     }
-    setCurrentAyahNumber(num);
+    const isQuranOrSarfMode = activeMode === 'quran' || activeMode === 'mushaf' || activeMode === 'sarf' || activeMode === 'morphology';
+    setCurrentAyahNumber(isQuranOrSarfMode && num === 0 ? 1 : num);
   };
 
   // Navigation: Next / Prev Ayah
   const handleNextAyah = useCallback(() => {
     if (!currentSurah) return;
+    const isQuranOrSarfMode = activeMode === 'quran' || activeMode === 'mushaf' || activeMode === 'sarf' || activeMode === 'morphology';
     if (currentAyahNumber < currentSurah.verses_count) {
       setCurrentAyahNumber(prev => prev + 1);
     } else if (currentSurahId < 114) {
       setCurrentSurahId(prev => prev + 1);
-      setCurrentAyahNumber(0);
+      setCurrentAyahNumber(isQuranOrSarfMode ? 1 : 0);
     }
-  }, [currentSurah, currentAyahNumber, currentSurahId]);
+  }, [currentSurah, currentAyahNumber, currentSurahId, activeMode]);
 
   const handlePrevAyah = useCallback(() => {
-    if (currentAyahNumber > 0) {
+    const isQuranOrSarfMode = activeMode === 'quran' || activeMode === 'mushaf' || activeMode === 'sarf' || activeMode === 'morphology';
+    const minAyah = isQuranOrSarfMode ? 1 : 0;
+    if (currentAyahNumber > minAyah) {
       setCurrentAyahNumber(prev => prev - 1);
     } else if (currentSurahId > 1) {
       const prevSurah = surahs.find(s => s.id === currentSurahId - 1);
@@ -379,7 +391,7 @@ export const App: React.FC = () => {
         setCurrentAyahNumber(prevSurah.verses_count);
       }
     }
-  }, [currentAyahNumber, currentSurahId, surahs]);
+  }, [currentAyahNumber, currentSurahId, surahs, activeMode]);
 
   // Audio Handlers
   const handlePlayAyah = (ayah: Ayah) => {
@@ -672,14 +684,13 @@ export const App: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : currentAyahNumber === 0 && currentSurah ? (
+        ) : currentAyahNumber === 0 && currentSurah && !isQuranOrSarf ? (
           /* ======================================================== */
-          /* OPTION 2: FULL-CANVAS SURAH FRONTISPIECE & INTRODUCTION   */
+          /* NATIVE SURAH FRONTISPIECE & INTRODUCTION (Zero Boxed Cards) */
           /* ======================================================== */
           <SurahIntroView
             currentSurah={currentSurah}
             fontSize={fontSize}
-            onStartSurah={(num) => handleSelectAyah(num)}
           />
         ) : (
           /* ======================================================== */

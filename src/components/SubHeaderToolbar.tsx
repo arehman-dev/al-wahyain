@@ -103,6 +103,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   const currentSurah = surahs.find(s => s.id === currentSurahId);
   const versesCount = currentSurah?.verses_count || 1;
   const ayahNumbers = Array.from({ length: versesCount }, (_, i) => i + 1);
+  const isQuranOrSarf = activeMode === 'quran' || activeMode === 'mushaf' || activeMode === 'sarf' || activeMode === 'morphology';
 
   const [fastJumpText, setFastJumpText] = useState('');
   const [fastJumpError, setFastJumpError] = useState(false);
@@ -112,20 +113,22 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
     const raw = fastJumpText.trim();
     if (!raw) return;
 
-    // Direct intro jump (e.g. "0", "intro", "تعارف", "مقدمہ")
-    if (raw === '0' || raw.toLowerCase() === 'intro' || raw === 'تعارف' || raw === 'مقدمہ') {
+    // Direct intro jump (e.g. "0", "intro", "تعارف", "مقدمہ") - only allowed in translation and tafsir modes
+    if (!isQuranOrSarf && (raw === '0' || raw.toLowerCase() === 'intro' || raw === 'تعارف' || raw === 'مقدمہ')) {
       onSelectAyah(0);
       setFastJumpText('');
       setFastJumpError(false);
       return;
     }
 
+    const minAyah = isQuranOrSarf ? 1 : 0;
+
     const matchKey = raw.match(/^(\d{1,3})[:\-/.\s](\d{1,3})$/);
     if (matchKey) {
       const sId = parseInt(matchKey[1], 10);
       const aNum = parseInt(matchKey[2], 10);
       const targetSurah = surahs.find(s => s.id === sId);
-      if (targetSurah && aNum >= 0 && aNum <= targetSurah.verses_count) {
+      if (targetSurah && aNum >= minAyah && aNum <= targetSurah.verses_count) {
         onSelectSurah(sId);
         setTimeout(() => onSelectAyah(aNum), 30);
         setFastJumpText('');
@@ -142,7 +145,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         setFastJumpError(false);
         return;
       }
-      if (numOnly >= 0 && numOnly <= versesCount) {
+      if (numOnly >= minAyah && numOnly <= versesCount) {
         onSelectAyah(numOnly);
         setFastJumpText('');
         setFastJumpError(false);
@@ -257,7 +260,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
             <button
               onClick={onPrevAyah}
-              disabled={currentSurahId === 1 && currentAyahNumber <= 0}
+              disabled={currentSurahId === 1 && currentAyahNumber <= (isQuranOrSarf ? 1 : 0)}
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -269,9 +272,11 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               aria-label="آیت منتخب کریں"
               className="bg-transparent text-slate-800 dark:text-slate-100 text-xs font-bold px-1.5 py-0.5 focus:outline-none cursor-pointer"
             >
-              <option value={0} className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400">
-                تعارف
-              </option>
+              {!isQuranOrSarf && (
+                <option value={0} className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400">
+                  تعارف
+                </option>
+              )}
               {ayahNumbers.map((num) => (
                 <option key={num} value={num} className="dark:bg-slate-900">
                   آیت {num}
