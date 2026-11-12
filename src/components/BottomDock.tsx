@@ -206,7 +206,13 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={() => isPlaying ? onPause() : onPlay()}
-            className="w-8 h-8 rounded-xl border border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+            disabled={!currentAyah}
+            title={!currentAyah ? 'مقدمہ کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause)' : 'چلائیں (Play)'}
+            className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all ${
+              !currentAyah 
+                ? 'border-slate-300/40 dark:border-slate-700/40 text-slate-400 dark:text-slate-600 opacity-40 cursor-not-allowed' 
+                : 'border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 active:scale-95 cursor-pointer'
+            }`}
           >
             {isPlaying ? (
               <Pause className="w-4 h-4" strokeWidth={1.85} />
@@ -224,10 +230,13 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={cycleRepeat}
-            className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-all cursor-pointer ${
-              repeatCount > 1 || repeatCount === Infinity
-                ? 'border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                : 'border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+            disabled={!currentAyah}
+            className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-all ${
+              !currentAyah
+                ? 'opacity-30 cursor-not-allowed border-slate-300 dark:border-slate-700 text-slate-400'
+                : repeatCount > 1 || repeatCount === Infinity
+                ? 'border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 cursor-pointer'
+                : 'border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 cursor-pointer'
             }`}
           >
             <Repeat className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -242,7 +251,12 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={cycleSpeed}
-            className="hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 text-[11px] font-app font-bold transition-colors cursor-pointer"
+            disabled={!currentAyah}
+            className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-colors ${
+              !currentAyah
+                ? 'opacity-30 cursor-not-allowed border-slate-300 dark:border-slate-700 text-slate-400'
+                : 'border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 cursor-pointer'
+            }`}
           >
             <Gauge className="w-3.5 h-3.5" strokeWidth={1.85} />
             <span>{playbackRate}x</span>
@@ -256,9 +270,15 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold truncate">
             <span className={`w-2 h-2 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
             <span>سورة {currentSurah?.name_arabic || 'الفاتحة'}</span>
-            <span className="text-slate-500 dark:text-slate-400 font-app text-[11px] font-bold">
-              {currentAyah ? `(${currentAyah.ayah_number})` : ''}
-            </span>
+            {currentAyah ? (
+              <span className="text-slate-500 dark:text-slate-400 font-app text-[11px] font-bold">
+                ({currentAyah.ayah_number})
+              </span>
+            ) : (
+              <span className="text-emerald-600 dark:text-emerald-400 font-app text-[11px] font-bold">
+                (مقدمہ و تعارف)
+              </span>
+            )}
           </div>
 
           <div className="hidden md:flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-300 font-medium px-2 py-0.5 rounded-lg bg-slate-200/65 dark:bg-slate-800/75 border border-slate-300/50 dark:border-slate-700/50">

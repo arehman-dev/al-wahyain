@@ -348,6 +348,20 @@ const server = http.createServer(async (req, res) => {
       return jsonResponse(res, row);
     }
 
+    // 2b. GET /api/surah/:id/intro
+    const surahIntroMatch = pathname.match(/^\/api\/surah\/(\d+)\/intro$/);
+    if (req.method === 'GET' && surahIntroMatch) {
+      const surahId = parseInt(surahIntroMatch[1], 10);
+      const surah = db.prepare('SELECT * FROM surahs WHERE id = ?').get(surahId);
+      if (!surah) return jsonResponse(res, { error: 'Surah not found' }, 404);
+      
+      const intro = db.prepare('SELECT * FROM surah_introductions WHERE surah_id = ?').get(surahId);
+      return jsonResponse(res, {
+        surah,
+        intro: intro || null
+      });
+    }
+
     // 3. GET /api/ayahs?surah=1
     if (req.method === 'GET' && pathname === '/api/ayahs') {
       const surahId = parseInt(parsedUrl.searchParams.get('surah') || '1', 10);

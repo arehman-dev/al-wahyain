@@ -16,6 +16,24 @@ export interface Surah {
   page_end: number;
 }
 
+export interface SurahIntro {
+  id: number;
+  surah_id: number;
+  title_ur?: string;
+  title_en?: string;
+  source_ur: string;
+  source_en: string;
+  short_text_ur?: string;
+  short_text_en?: string;
+  text_html_ur: string;
+  text_html_en: string;
+}
+
+export interface SurahIntroResponse {
+  surah: Surah;
+  intro: SurahIntro | null;
+}
+
 export interface Word {
   id: number;
   surah_id: number;

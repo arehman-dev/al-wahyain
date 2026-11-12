@@ -12,7 +12,8 @@ import {
   LexicalSearchResponse,
   AutocompleteResponse,
   AyahTreebankResponse,
-  UrduIrabResponse
+  UrduIrabResponse,
+  SurahIntroResponse
 } from '../types/quran';
 
 const BASE_URL = '/api';
@@ -44,6 +45,12 @@ export async function fetchAutocomplete(prefix: string): Promise<AutocompleteRes
 export async function fetchSurahs(): Promise<Surah[]> {
   const res = await fetch(`${BASE_URL}/surahs`);
   if (!res.ok) throw new Error('Failed to fetch surahs');
+  return res.json();
+}
+
+export async function fetchSurahIntro(surahId: number): Promise<SurahIntroResponse> {
+  const res = await fetch(`${BASE_URL}/surah/${surahId}/intro`);
+  if (!res.ok) throw new Error(`Failed to fetch introduction for surah ${surahId}`);
   return res.json();
 }
 

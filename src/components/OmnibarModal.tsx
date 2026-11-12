@@ -128,11 +128,13 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     const sId = parseInt(directMatch[1], 10);
     const aNum = parseInt(directMatch[2], 10);
     const matchedSurah = surahs.find(s => s.id === sId);
-    if (matchedSurah && aNum >= 1 && aNum <= matchedSurah.verses_count) {
+    if (matchedSurah && aNum >= 0 && aNum <= matchedSurah.verses_count) {
       actions.push({
         id: `jump-${sId}-${aNum}`,
         type: 'jump',
-        title: `براہِ راست جمپ: سورة ${matchedSurah.name_arabic}، آیت ${aNum}`,
+        title: aNum === 0 
+          ? `براہِ راست جمپ: سورة ${matchedSurah.name_arabic}، مقدمہ و پس منظر` 
+          : `براہِ راست جمپ: سورة ${matchedSurah.name_arabic}، آیت ${aNum}`,
         subtitle: `${matchedSurah.name_simple} • ${sId}:${aNum}`,
         icon: <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
         badge: 'Enter',

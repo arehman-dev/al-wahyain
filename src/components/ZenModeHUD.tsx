@@ -72,7 +72,11 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
       <div className="flex items-center gap-1.5 font-bold border-l border-slate-700 pl-3">
         <span className="text-emerald-400">۞ {currentSurah?.name_arabic || 'القرآن'}</span>
         <span className="text-slate-300 font-ibm text-[11px]">
-          آیت <span className="font-app">{currentAyah?.ayah_number || 1}</span>
+          {currentAyah ? (
+            <>آیت <span className="font-app">{currentAyah.ayah_number}</span></>
+          ) : (
+            <span className="text-emerald-400">مقدمہ</span>
+          )}
         </span>
         <span className="text-slate-400 font-ibm text-[10px]">
           • ص <span className="font-app">{activePage}</span>
@@ -82,7 +86,13 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
       {/* 2. Audio Play / Pause */}
       <button
         onClick={isPlaying ? onPause : onPlay}
-        className="w-7 h-7 rounded-xl border border-emerald-500 text-emerald-400 bg-emerald-500/15 hover:bg-emerald-500/25 flex items-center justify-center transition-all cursor-pointer"
+        disabled={!currentAyah}
+        title={!currentAyah ? 'مقدمہ کے لیے تلاوت دستیاب نہیں ہے' : undefined}
+        className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all ${
+          !currentAyah
+            ? 'opacity-40 border-slate-700 text-slate-500 cursor-not-allowed'
+            : 'border-emerald-500 text-emerald-400 bg-emerald-500/15 hover:bg-emerald-500/25 cursor-pointer'
+        }`}
       >
         {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
       </button>

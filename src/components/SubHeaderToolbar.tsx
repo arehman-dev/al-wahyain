@@ -13,7 +13,8 @@ import {
   Bookmark,
   FileEdit,
   Focus,
-  Languages
+  Languages,
+  Info
 } from 'lucide-react';
 import { Surah, AppMode, TafsirLayoutMode } from '../types/quran';
 
@@ -27,6 +28,7 @@ interface SubHeaderToolbarProps {
   onNextSurah: () => void;
   onPrevAyah: () => void;
   onNextAyah: () => void;
+  onOpenSurahIntro?: () => void;
   activeMode: AppMode;
 
   // Bookmark & Note (Placed at Left of Sub-Header per 3.2 & 3.4)
@@ -73,6 +75,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   onNextSurah,
   onPrevAyah,
   onNextAyah,
+  onOpenSurahIntro,
   activeMode,
   isBookmarked,
   onToggleBookmark,
@@ -112,12 +115,20 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
     const raw = fastJumpText.trim();
     if (!raw) return;
 
+    // Direct intro jump (e.g. "0", "intro", "تعارف", "مقدمہ")
+    if (raw === '0' || raw.toLowerCase() === 'intro' || raw === 'تعارف' || raw === 'مقدمہ') {
+      onSelectAyah(0);
+      setFastJumpText('');
+      setFastJumpError(false);
+      return;
+    }
+
     const matchKey = raw.match(/^(\d{1,3})[:\-/.\s](\d{1,3})$/);
     if (matchKey) {
       const sId = parseInt(matchKey[1], 10);
       const aNum = parseInt(matchKey[2], 10);
       const targetSurah = surahs.find(s => s.id === sId);
-      if (targetSurah && aNum >= 1 && aNum <= targetSurah.verses_count) {
+      if (targetSurah && aNum >= 0 && aNum <= targetSurah.verses_count) {
         onSelectSurah(sId);
         setTimeout(() => onSelectAyah(aNum), 30);
         setFastJumpText('');
@@ -134,7 +145,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         setFastJumpError(false);
         return;
       }
-      if (numOnly >= 1 && numOnly <= versesCount) {
+      if (numOnly >= 0 && numOnly <= versesCount) {
         onSelectAyah(numOnly);
         setFastJumpText('');
         setFastJumpError(false);
@@ -172,10 +183,13 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           {/* Bookmark Icon Button (No Label per 3.4) */}
           <button
             onClick={onToggleBookmark}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-              isBookmarked
-                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
-                : 'text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+            disabled={currentAyahNumber === 0}
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+              currentAyahNumber === 0
+                ? 'opacity-30 cursor-not-allowed text-slate-400'
+                : isBookmarked
+                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 cursor-pointer'
+                : 'text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 cursor-pointer'
             }`}
           >
             <Bookmark 
@@ -188,10 +202,13 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           {/* Note Icon Button (No Label per 3.4) */}
           <button
             onClick={onOpenNoteDrawer}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-              hasNote
-                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+            disabled={currentAyahNumber === 0}
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+              currentAyahNumber === 0
+                ? 'opacity-30 cursor-not-allowed text-slate-400'
+                : hasNote
+                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 cursor-pointer'
+                : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 cursor-pointer'
             }`}
           >
             <FileEdit 
@@ -239,11 +256,24 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             </button>
           </div>
 
+          {/* 1.5. Intro Drawer Trigger Button (Option 1) */}
+          {onOpenSurahIntro && (
+            <button
+              type="button"
+              onClick={onOpenSurahIntro}
+              title="سورت کا تعارف و پس منظر (Introduction)"
+              className="px-2 py-1 rounded-xl flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 transition-all cursor-pointer shadow-2xs"
+            >
+              <Info className="w-3.5 h-3.5" strokeWidth={1.85} />
+              <span className="hidden sm:inline">تعارف</span>
+            </button>
+          )}
+
           {/* 2. Ayah Selector with Prev/Next Ayah Icons */}
           <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
             <button
               onClick={onPrevAyah}
-              disabled={currentSurahId === 1 && currentAyahNumber <= 1}
+              disabled={currentSurahId === 1 && currentAyahNumber <= 0}
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -255,6 +285,9 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               aria-label="آیت منتخب کریں"
               className="bg-transparent text-slate-800 dark:text-slate-100 text-xs font-bold px-1.5 py-0.5 focus:outline-none cursor-pointer"
             >
+              <option value={0} className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400">
+                آیت 0: مقدمہ و تعارفِ سورت
+              </option>
               {ayahNumbers.map((num) => (
                 <option key={num} value={num} className="dark:bg-slate-900">
                   آیت {num}

@@ -18,6 +18,8 @@ import { StudySuiteModal } from './components/StudySuiteModal';
 import { NoteEditorDrawer } from './components/NoteEditorDrawer';
 import { ExportShareModal } from './components/ExportShareModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
+import { SurahIntroView } from './components/SurahIntroView';
+import { SurahIntroDrawer } from './components/SurahIntroDrawer';
 import { 
   Surah, 
   Ayah, 
@@ -193,6 +195,7 @@ export const App: React.FC = () => {
   const [showNoteDrawer, setShowNoteDrawer] = useState<boolean>(false);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [showShortcutsModal, setShowShortcutsModal] = useState<boolean>(false);
+  const [showSurahIntroDrawer, setShowSurahIntroDrawer] = useState<boolean>(false);
 
   // 5. Bookmarks, Notes & Highlights State
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -263,8 +266,9 @@ export const App: React.FC = () => {
       });
   }, [currentSurahId]);
 
-  // Load Tafasir when current Surah or Ayah changes
+  // Load Tafasir when current Surah or Ayah changes (Skip when on Ayah 0 / Surah Intro)
   useEffect(() => {
+    if (currentAyahNumber === 0) return;
     fetchTafasir(currentSurahId, currentAyahNumber)
       .then(res => setTafasir(res))
       .catch(console.error);
@@ -272,7 +276,7 @@ export const App: React.FC = () => {
 
   // Current Surah & Ayah Objects
   const currentSurah = surahs.find(s => s.id === currentSurahId);
-  const currentAyah = ayahs.find(a => a.ayah_number === currentAyahNumber) || ayahs[0] || null;
+  const currentAyah = ayahs.find(a => a.ayah_number === currentAyahNumber) || (currentAyahNumber === 0 ? null : (ayahs[0] || null));
 
   // Sync active page with current Ayah
   useEffect(() => {
@@ -363,12 +367,12 @@ export const App: React.FC = () => {
       setCurrentAyahNumber(prev => prev + 1);
     } else if (currentSurahId < 114) {
       setCurrentSurahId(prev => prev + 1);
-      setCurrentAyahNumber(1);
+      setCurrentAyahNumber(0);
     }
   }, [currentSurah, currentAyahNumber, currentSurahId]);
 
   const handlePrevAyah = useCallback(() => {
-    if (currentAyahNumber > 1) {
+    if (currentAyahNumber > 0) {
       setCurrentAyahNumber(prev => prev - 1);
     } else if (currentSurahId > 1) {
       const prevSurah = surahs.find(s => s.id === currentSurahId - 1);
@@ -559,6 +563,7 @@ export const App: React.FC = () => {
           onNextSurah={handleNextSurah}
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
+          onOpenSurahIntro={() => setShowSurahIntroDrawer(true)}
           activeMode={activeMode}
           isBookmarked={isCurrentAyahBookmarked}
           onToggleBookmark={handleToggleBookmark}
@@ -670,6 +675,15 @@ export const App: React.FC = () => {
               ))}
             </div>
           </div>
+        ) : currentAyahNumber === 0 && currentSurah ? (
+          /* ======================================================== */
+          /* OPTION 2: FULL-CANVAS SURAH FRONTISPIECE & INTRODUCTION   */
+          /* ======================================================== */
+          <SurahIntroView
+            currentSurah={currentSurah}
+            fontSize={fontSize}
+            onStartSurah={(num) => handleSelectAyah(num)}
+          />
         ) : (
           /* ======================================================== */
           /* STANDARD PRIMARY MODES (Mushaf, Translation, Sarf, Tafsir) */
@@ -996,6 +1010,17 @@ export const App: React.FC = () => {
         isOpen={showShortcutsModal}
         onClose={() => setShowShortcutsModal(false)}
       />
+
+      {/* Surah Introduction Drawer (Option 1) */}
+      {currentSurah && (
+        <SurahIntroDrawer
+          isOpen={showSurahIntroDrawer}
+          onClose={() => setShowSurahIntroDrawer(false)}
+          currentSurah={currentSurah}
+          onJumpToAyah0={() => handleSelectAyah(0)}
+          fontSize={fontSize}
+        />
+      )}
 
     </div>
   );
