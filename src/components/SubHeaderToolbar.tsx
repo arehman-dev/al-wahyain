@@ -286,7 +286,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               className="bg-transparent text-slate-800 dark:text-slate-100 text-xs font-bold px-1.5 py-0.5 focus:outline-none cursor-pointer"
             >
               <option value={0} className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400">
-                آیت 0: مقدمہ و تعارفِ سورت
+                تعارف
               </option>
               {ayahNumbers.map((num) => (
                 <option key={num} value={num} className="dark:bg-slate-900">
