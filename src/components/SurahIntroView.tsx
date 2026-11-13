@@ -33,14 +33,23 @@ interface SurahIntroViewProps {
   onNavigateToVerse?: (surahId: number, ayahNumber: number) => void;
 }
 
+const AUTHOR_METADATA: Record<string, { name: string; author: string }> = {
+  tafheem: { name: 'تفہیم القرآن', author: 'مولانا سید ابوالاعلیٰ مودودی' },
+  bayan_ul_quran: { name: 'بیان القرآن', author: 'ڈاکٹر اسرار احمد' },
+  maarif: { name: 'معارف القرآن', author: 'مفتی محمد شفیع عثمانی' },
+  ibn_kathir: { name: 'تفسیر ابنِ کثیر (اردو)', author: 'حافظ عماد الدین ابنِ کثیر' },
+  saadi: { name: 'تفسیر السعدی', author: 'شیخ عبدالرحمٰن بن ناصر السعدی' },
+  tayseer: { name: 'تیسیر القرآن', author: 'مولانا عبدالرحمٰن کیلانی' },
+};
+
 export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
   currentSurah,
   tafasir = [],
   expandedTafasir,
   onToggleTafsir,
-  tafsirOrder = [],
+  tafsirOrder = ['tafheem', 'bayan_ul_quran', 'maarif', 'ibn_kathir', 'saadi', 'tayseer'],
   visibleTafasir = {},
-  tafsirLayoutMode = 'stacked',
+  tafsirLayoutMode = 'focus',
   fontSize = 17,
   highlights = [],
   onAddHighlight,
@@ -90,23 +99,27 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
 
   const isMakki = currentSurah.revelation_place === 'makkah';
 
-  // Sort and filter entries based on user's order and visibility preferences
-  const displayTafasir = [...tafasir]
-    .filter(entry => visibleTafasir[entry.tafsir_slug] !== false)
-    .sort((a, b) => {
-      const idxA = tafsirOrder.indexOf(a.tafsir_slug);
-      const idxB = tafsirOrder.indexOf(b.tafsir_slug);
-      const posA = idxA === -1 ? 999 : idxA;
-      const posB = idxB === -1 ? 999 : idxB;
-      return posA - posB;
-    });
+  // Authors active according to user visibility preferences
+  const activeSlugs = tafsirOrder.filter(slug => visibleTafasir[slug] !== false);
 
-  // Ensure selected author exists in display list
-  useEffect(() => {
-    if (displayTafasir.length > 0 && !displayTafasir.some(t => t.tafsir_slug === selectedAuthorTab)) {
-      setSelectedAuthorTab(displayTafasir[0].tafsir_slug);
+  // Filter available authentic tafasir
+  const availableTafasirMap = new Map<string, TafsirEntry>();
+  for (const t of tafasir) {
+    if (t.content_html && t.content_html.trim().length > 0) {
+      availableTafasirMap.set(t.tafsir_slug, t);
     }
-  }, [displayTafasir, selectedAuthorTab]);
+  }
+
+  // Ensure default author tab is valid and has authentic text if available
+  useEffect(() => {
+    if (!availableTafasirMap.has(selectedAuthorTab)) {
+      if (availableTafasirMap.has('tafheem')) {
+        setSelectedAuthorTab('tafheem');
+      } else if (availableTafasirMap.size > 0) {
+        setSelectedAuthorTab(Array.from(availableTafasirMap.keys())[0]);
+      }
+    }
+  }, [currentSurah.id, tafasir]);
 
   const renderEditorialCommentary = (entry: TafsirEntry, showHeader: boolean = true) => {
     const entryHighlights = highlights.filter(
@@ -147,7 +160,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
           </div>
         )}
 
-        {/* Prose Body — Strictly I-Beam Text Cursor & Selectable, Identical Styling to TafsirView */}
+        {/* Prose Body — Strictly I-Beam Text Cursor & Selectable, 100% Authentic Text */}
         <div 
           data-tafsir-slug={entry.tafsir_slug}
           style={{ fontSize: `${fontSize}px` }}
@@ -231,32 +244,38 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
       {/* ======================================================== */}
       {/* 2. SCHOLARLY SHARH (تعارف و تفاسیر) — Editorial Flow    */}
       {/* ======================================================== */}
-      {displayTafasir.length === 0 ? (
+      {activeSlugs.length === 0 ? (
         <div className="py-12 text-center text-slate-500 dark:text-slate-400 font-ibm space-y-2">
           <BookOpen className="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
           <p className="font-bold">اس سورت کے لیے فی الحال کوئی تفسیر منتخب نہیں ہے</p>
           <p className="text-xs">سب ہیڈر بار میں &quot;ترتیب و انتخابِ تفاسیر&quot; سے تفاسیر کو فعال کریں۔</p>
         </div>
       ) : tafsirLayoutMode === 'focus' ? (
-        /* Focus Mode: Single Tafsir Stream with Author Tabs Ribbon */
+        /* Focus Mode: Author Tabs Ribbon */
         <div className="space-y-4">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 border-b border-emerald-950/10 dark:border-white/10 text-xs font-ibm select-none scrollbar-none">
-            {displayTafasir.map((entry) => {
-              const isSelected = selectedAuthorTab === entry.tafsir_slug;
+            {activeSlugs.map((slug) => {
+              const meta = AUTHOR_METADATA[slug] || { name: slug, author: '' };
+              const isSelected = selectedAuthorTab === slug;
+              const hasIntro = availableTafasirMap.has(slug);
+
               return (
                 <button
-                  key={`intro-ribbon-${entry.tafsir_slug}`}
-                  onClick={() => setSelectedAuthorTab(entry.tafsir_slug)}
+                  key={`intro-ribbon-${slug}`}
+                  onClick={() => setSelectedAuthorTab(slug)}
                   className={`px-3.5 py-1.5 rounded-xl border transition-all whitespace-nowrap font-medium cursor-pointer flex items-center gap-1.5 ${
                     isSelected
                       ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
                       : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800'
                   }`}
                 >
-                  <span>{entry.tafsir_name}</span>
+                  <span>{meta.name}</span>
                   <span className={`text-[11px] ${isSelected ? 'text-emerald-600/80 dark:text-emerald-300/80' : 'text-slate-400 dark:text-slate-500'}`}>
-                    ({entry.author_name})
+                    ({meta.author})
                   </span>
+                  {!hasIntro && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 inline-block" title="مقدمہ دستیاب نہیں" />
+                  )}
                 </button>
               );
             })}
@@ -264,24 +283,45 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
 
           <div>
             {(() => {
-              const activeEntry = displayTafasir.find(t => t.tafsir_slug === selectedAuthorTab) || displayTafasir[0];
-              return activeEntry ? renderEditorialCommentary(activeEntry) : null;
+              const activeEntry = availableTafasirMap.get(selectedAuthorTab);
+              if (activeEntry) {
+                return renderEditorialCommentary(activeEntry);
+              }
+              const meta = AUTHOR_METADATA[selectedAuthorTab] || { name: selectedAuthorTab, author: '' };
+              return (
+                <div className="py-16 px-4 text-center rounded-2xl bg-slate-50/80 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-800/70 space-y-2">
+                  <BookOpen className="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
+                  <p className="font-bold text-slate-700 dark:text-slate-300 text-sm">
+                    اس سورت کے لیے {meta.name} ({meta.author}) کا مستقل مقدمہ فی الحال ڈیجیٹائز نہیں ہے
+                  </p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">
+                    صرف مصنف کا براہِ راست تصنیف کردہ مستند متنی مواد ہی پیش کیا جاتا ہے۔
+                  </p>
+                </div>
+              );
             })()}
           </div>
         </div>
       ) : (
-        /* Stacked Editorial List (All Tafasir with Single-Row Header & Expand/Collapse) */
+        /* Stacked Editorial List (Only Authentic Ingested Introductions) */
         <div className="space-y-4">
-          {displayTafasir.map((entry) => {
-            const isExpanded = expandedTafasir[entry.tafsir_slug] !== false;
+          {activeSlugs.map((slug) => {
+            const entry = availableTafasirMap.get(slug);
+            const meta = AUTHOR_METADATA[slug] || { name: slug, author: '' };
+            const isExpanded = expandedTafasir[slug] !== false;
+
+            if (!entry) {
+              return null; // In stacked mode, only display commentaries that have authentic intros
+            }
+
             return (
               <div 
-                key={`intro-stacked-${entry.tafsir_slug}`} 
+                key={`intro-stacked-${slug}`} 
                 className="pb-3 border-b border-emerald-950/8 dark:border-white/5 space-y-2"
               >
-                {/* Single Unified Header Row (Tafsir Name, Author, Copy & Expand/Collapse) */}
+                {/* Header Row */}
                 <div 
-                  onClick={() => onToggleTafsir(entry.tafsir_slug)}
+                  onClick={() => onToggleTafsir(slug)}
                   className="flex items-center justify-between cursor-pointer py-2 px-2.5 rounded-xl hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors select-none"
                 >
                   <div className="flex items-center gap-2">
@@ -325,7 +365,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
                   </div>
                 </div>
 
-                {/* Collapsible Commentary Body */}
+                {/* Collapsible Body */}
                 {isExpanded && (
                   <div className="px-1 pt-1 pb-3">
                     {renderEditorialCommentary(entry, false)}
