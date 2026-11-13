@@ -138,9 +138,6 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
               <span className="font-bold text-base text-slate-900 dark:text-white">
                 {entry.tafsir_name}
               </span>
-              <span className="text-slate-500 dark:text-slate-400">
-                — {entry.author_name}
-              </span>
               <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold font-mono">
                 (0-intro • مقدمہ و تعارفِ سورت)
               </span>
@@ -199,14 +196,14 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
         {/* Metadata Header Row */}
         <div className="flex items-center justify-between gap-3 mb-3 text-xs font-ibm">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-mono font-bold text-xs">
-              0-intro
-            </span>
             <span className="font-app font-bold text-sm text-emerald-700 dark:text-emerald-400">
               ۞ سورة {currentSurah.name_arabic}
             </span>
             <span className="text-slate-500 dark:text-slate-400 font-ibm text-xs font-medium">
               ({currentSurah.name_simple} • {currentSurah.name_urdu})
+            </span>
+            <span dir="rtl" className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-mono font-bold text-xs">
+              0-intro
             </span>
           </div>
 
@@ -273,9 +270,6 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
                   }`}
                 >
                   <span>{meta.name}</span>
-                  <span className={`text-[11px] ${isSelected ? 'text-emerald-600/80 dark:text-emerald-300/80' : 'text-slate-400 dark:text-slate-500'}`}>
-                    ({meta.author})
-                  </span>
                   {!hasIntro && (
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 inline-block" title="مقدمہ دستیاب نہیں" />
                   )}
@@ -295,7 +289,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
                 <div className="py-16 px-4 text-center rounded-2xl bg-slate-50/80 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-800/70 space-y-2">
                   <BookOpen className="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
                   <p className="font-bold text-slate-700 dark:text-slate-300 text-sm">
-                    اس سورت کے لیے {meta.name} ({meta.author}) کا مستقل مقدمہ فی الحال ڈیجیٹائز نہیں ہے
+                    اس سورت کے لیے {meta.name} کا مستقل مقدمہ فی الحال ڈیجیٹائز نہیں ہے
                   </p>
                   <p className="text-xs text-slate-400 dark:text-slate-500">
                     صرف مصنف کا براہِ راست تصنیف کردہ مستند متنی مواد ہی پیش کیا جاتا ہے۔
@@ -330,9 +324,6 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-sm text-slate-900 dark:text-white">
                       {entry.tafsir_name}
-                    </span>
-                    <span className="text-slate-500 dark:text-slate-400 text-xs">
-                      — {entry.author_name}
                     </span>
                     <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold hidden sm:inline">
                       (مقدمہ و تعارف)

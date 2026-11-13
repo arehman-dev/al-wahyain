@@ -296,10 +296,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
               {/* SECONDARY TRANSLATION (Subtle Indent Margin)             */}
               {/* ======================================================== */}
               {secondaryTr && secondaryTr.author_id !== activeTr?.author_id && (
-                <div className="mt-3.5 pr-4 border-r-2 border-emerald-500/30 dark:border-emerald-500/40">
-                  <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-400 font-ibm block mb-0.5">
-                    {secondaryTr.author_name}:
-                  </span>
+                <div className="mt-3.5 pr-4 border-r-2 border-emerald-500/30 dark:border-emerald-500/40 text-right">
                   <p 
                     style={{ fontSize: `${Math.max(13, fontSize - 1)}px` }}
                     className={`text-slate-700 dark:text-slate-300 select-text ${
@@ -311,6 +308,9 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                   >
                     {secondaryTr.text}
                   </p>
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 font-ibm mt-1 block">
+                    — {secondaryTr.author_name}
+                  </span>
                 </div>
               )}
             </article>

@@ -280,19 +280,20 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             </button>
 
             <select
+              dir="rtl"
               value={currentAyahNumber}
               onChange={(e) => onSelectAyah(Number(e.target.value))}
               aria-label="آیت منتخب کریں"
               className="bg-transparent text-slate-800 dark:text-slate-100 text-xs font-bold px-1.5 py-0.5 focus:outline-none cursor-pointer"
             >
               {!isQuranOrSarf && (
-                <option value={0} className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                <option value={0} dir="rtl" className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400 font-mono">
                   0-intro
                 </option>
               )}
               {ayahNumbers.map((num) => (
                 <option key={num} value={num} className="dark:bg-slate-900">
-                  آیت {num}
+                  {num}
                 </option>
               ))}
             </select>

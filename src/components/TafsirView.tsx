@@ -144,9 +144,6 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
               <span className="font-bold text-base text-slate-900 dark:text-white">
                 {entry.tafsir_name}
               </span>
-              <span className="text-slate-500 dark:text-slate-400">
-                — {entry.author_name}
-              </span>
               {entry.ayah_from !== entry.ayah_to && (
                 <span className="text-[11px] text-amber-700 dark:text-amber-400 font-semibold">
                   (آیات {toArabicDigits(entry.ayah_from)} تا {toArabicDigits(entry.ayah_to)})
@@ -213,7 +210,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
               ۞ {currentAyah.verse_key}
             </span>
             <span className="text-slate-500 dark:text-slate-400 font-ibm text-xs font-medium">
-              (آیت {currentAyah.ayah_number} از {totalVersesInSurah})
+              ({currentAyah.ayah_number} / {totalVersesInSurah})
             </span>
           </div>
         </div>
@@ -288,9 +285,6 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                   }`}
                 >
                   <span>{entry.tafsir_name}</span>
-                  <span className={`text-[11px] ${isSelected ? 'text-emerald-600/80 dark:text-emerald-300/80' : 'text-slate-400 dark:text-slate-500'}`}>
-                    ({entry.author_name})
-                  </span>
                 </button>
               );
             })}
@@ -324,9 +318,6 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                     </div>
                     <span className="font-bold text-base text-slate-900 dark:text-white font-ibm">
                       {entry.tafsir_name}
-                    </span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-ibm">
-                      — {entry.author_name}
                     </span>
                     {entry.ayah_from !== entry.ayah_to && (
                       <span className="text-[11px] text-amber-700 dark:text-amber-400 font-semibold font-ibm">
