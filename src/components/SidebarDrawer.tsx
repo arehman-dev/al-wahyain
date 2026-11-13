@@ -302,15 +302,15 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex" dir="ltr">
+    <div className="fixed inset-0 z-50 flex justify-end animate-fadeIn" dir="ltr">
       {/* Backdrop */}
       <div 
         onClick={onClose}
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
       />
 
-      {/* Slide-out Sidebar Panel */}
-      <aside className="relative z-10 w-full max-w-4xl bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row h-full overflow-hidden font-sans">
+      {/* Slide-out Sidebar Panel (Right-Anchored, LTR Content) */}
+      <aside className="relative z-10 w-full max-w-4xl bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row h-full overflow-hidden font-sans">
         
         {/* ======================================================== */}
         {/* SIDEBAR NAVIGATION RAIL                                  */}
