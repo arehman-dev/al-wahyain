@@ -264,9 +264,8 @@ export const App: React.FC = () => {
       });
   }, [currentSurahId]);
 
-  // Load Tafasir when current Surah or Ayah changes (Skip when on Ayah 0 / Surah Intro)
+  // Load Tafasir when current Surah or Ayah changes (including Ayah 0 / Surah Introductions)
   useEffect(() => {
-    if (currentAyahNumber === 0) return;
     fetchTafasir(currentSurahId, currentAyahNumber)
       .then(res => setTafasir(res))
       .catch(console.error);
@@ -686,11 +685,21 @@ export const App: React.FC = () => {
           </div>
         ) : currentAyahNumber === 0 && currentSurah && !isQuranOrSarf ? (
           /* ======================================================== */
-          /* NATIVE SURAH FRONTISPIECE & INTRODUCTION (Zero Boxed Cards) */
+          /* NATIVE SURAH FRONTISPIECE & INTRODUCTION (Multi-Author)  */
           /* ======================================================== */
           <SurahIntroView
             currentSurah={currentSurah}
+            tafasir={tafasir}
+            expandedTafasir={expandedTafasir}
+            onToggleTafsir={handleToggleTafsir}
+            tafsirOrder={tafsirOrder}
+            visibleTafasir={visibleTafasir}
+            tafsirLayoutMode={tafsirLayoutMode}
             fontSize={fontSize}
+            highlights={highlights}
+            onAddHighlight={handleAddHighlight}
+            onDeleteHighlight={handleDeleteHighlight}
+            onNavigateToVerse={handleNavigateToVerse}
           />
         ) : (
           /* ======================================================== */

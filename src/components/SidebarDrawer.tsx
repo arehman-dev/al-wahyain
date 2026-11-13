@@ -243,7 +243,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           org: 'Markazi Anjuman Khuddam-ul-Quran Lahore / Quran Academy',
           desc: 'Insightful Urdu commentary rooted in structural cohesion (Nazm-ul-Quran), bridging classical scholarship with modern intellectual thought.',
           url: 'https://quranacademy.com',
-          badge: '37,416 Ingested Records'
+          badge: '38,100 Ingested Records'
         },
         {
           title: 'Tafhim-ul-Quran — Sayyid Abul A\'la Maududi',
@@ -530,7 +530,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         4. Comparative Scholarly Tafasir Engine
                       </h3>
                       <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Parallel multi-pane and focused study across 37,416 commentary records (Bayan, Tafhim, Ma'arif, Ibn Kathir, Sa'di, and Tayseer) with clean, sanitized textual provenance.
+                        Parallel multi-pane and focused study across 38,100 commentary records (6 Mufassireen × 6,236 Ayahs + 684 Surah Introductions) with clean, sanitized textual provenance.
                       </p>
                     </div>
                   </div>
@@ -604,9 +604,9 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">37,416</div>
+                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">38,100</div>
                   <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Tafsir Records</div>
-                  <div className="text-[10px] text-slate-400">Purged of Scraped Web Artifacts</div>
+                  <div className="text-[10px] text-slate-400">Verse Sharh + 684 Surah Intros</div>
                 </div>
               </div>
 
@@ -1094,7 +1094,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   <div className="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 space-y-1">
                     <div className="font-bold text-slate-900 dark:text-white font-mono">data/quran_study.db (447 MB — Read-Only Corpus)</div>
                     <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
-                      Contains 114 Surahs, 6,236 Ayahs, 77,429 word tokens, 9 translations, and 6 full commentaries (37,416 records) with SQLite FTS5 index. Memory-mapped (<code className="font-mono text-[10px]">mmap_size = 256MB</code>) for sub-millisecond query execution.
+                      Contains 114 Surahs, 6,236 Ayahs, 77,429 word tokens, 9 translations, and 6 full commentaries (38,100 records including 684 Surah introductions) with SQLite FTS5 index. Memory-mapped (<code className="font-mono text-[10px]">mmap_size = 256MB</code>) for sub-millisecond query execution.
                     </p>
                   </div>
                   <div className="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 space-y-1">
