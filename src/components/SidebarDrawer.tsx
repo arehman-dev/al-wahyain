@@ -110,6 +110,16 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
     }
   }, [isOpen, activeTab, refreshAudioCache]);
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handlePrecacheSurah = async (surahId: number) => {
     setCachingSurahLoading(true);
     try {
@@ -312,33 +322,34 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
       {/* Slide-out Sidebar Panel (Right-Anchored, LTR Content) */}
       <aside className="relative z-10 w-full max-w-4xl bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row h-full overflow-hidden font-sans">
         
+        {/* Top-Right Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-30 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+          title="Close (Esc)"
+          aria-label="Close Sidebar"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
         {/* ======================================================== */}
         {/* SIDEBAR NAVIGATION RAIL                                  */}
         {/* ======================================================== */}
         <div className="w-full md:w-64 bg-slate-50 dark:bg-slate-950/90 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col justify-between shrink-0 select-none">
           <div className="space-y-4">
             {/* Brand Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center">
-                  <BookOpen className="w-4 h-4" />
-                </div>
-                <div>
-                  <h2 className="font-bold text-sm text-slate-900 dark:text-white leading-tight">
-                    Al-Wahyain
-                  </h2>
-                  <p className="text-[10px] text-slate-400 font-mono">
-                    v1.2.2 • Local-First
-                  </p>
-                </div>
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="w-8 h-8 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center">
+                <BookOpen className="w-4 h-4" />
               </div>
-
-              <button
-                onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div>
+                <h2 className="font-bold text-sm text-slate-900 dark:text-white leading-tight">
+                  Al-Wahyain
+                </h2>
+                <p className="text-[10px] text-slate-400 font-mono">
+                  v1.2.2 • Local-First
+                </p>
+              </div>
             </div>
 
             {/* Navigation Tabs */}
@@ -448,7 +459,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {activeTab === 'about' && (
             <div className="space-y-6 animate-fadeIn">
               {/* Header Banner */}
-              <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-2">
+              <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-2 pr-10">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold font-mono">
                     v1.2.2 • Academic & Computational Quran Station
@@ -556,7 +567,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {activeTab === 'verification' && (
             <div className="space-y-6 animate-fadeIn">
               {/* Header */}
-              <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-1.5">
+              <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-1.5 pr-10">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold font-mono flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
@@ -667,7 +678,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {activeTab === 'preferences' && (
             <div className="space-y-6 animate-fadeIn">
               {/* Header */}
-              <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="pb-3 border-b border-slate-200 dark:border-slate-800 pr-10">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <SlidersHorizontal className="w-5 h-5 text-emerald-600" />
                   <span>Reading & Rendering Preferences</span>
@@ -992,7 +1003,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {activeTab === 'references' && (
             <div className="space-y-6 animate-fadeIn">
               {/* Header */}
-              <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="pb-3 border-b border-slate-200 dark:border-slate-800 pr-10">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <Library className="w-5 h-5 text-emerald-600" />
                   <span>Data Sources & Scholarly Citations</span>
@@ -1060,7 +1071,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {activeTab === 'docs' && (
             <div className="space-y-6 animate-fadeIn">
               {/* Header */}
-              <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="pb-3 border-b border-slate-200 dark:border-slate-800 pr-10">
                 <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold font-mono">
                   System Architecture • Local-First SQLite • Data Pipelines
                 </span>
