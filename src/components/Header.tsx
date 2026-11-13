@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { AppMode, ReadingTheme } from '../types/quran';
 
-export type SidebarTab = 'about' | 'preferences' | 'references' | 'docs';
+export type SidebarTab = 'about' | 'verification' | 'preferences' | 'references' | 'docs';
 
 interface HeaderProps {
   activeMode: AppMode;
@@ -187,9 +187,10 @@ export const Header: React.FC<HeaderProps> = ({
         {/* RIGHT SIDE: Reference, Preferences, Shortcuts + Brand & Menu */}
         {/* ======================================================== */}
         <div className="flex items-center gap-1.5 justify-self-end">
-          {/* Reference / Data Sources */}
+          {/* Text Verification / Authenticity */}
           <button
-            onClick={() => onOpenSidebar('references')}
+            onClick={() => onOpenSidebar('verification')}
+            title="توثیق و تحقیقِ متن (Text Verification)"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4" strokeWidth={1.85} />

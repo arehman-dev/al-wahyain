@@ -2,7 +2,7 @@ import React from 'react';
 import { 
   X, 
   BookOpen, 
-  Settings, 
+  SlidersHorizontal, 
   ShieldCheck, 
   Info, 
   ExternalLink, 
@@ -12,13 +12,11 @@ import {
   Eye, 
   Palette, 
   MoveHorizontal, 
-  SlidersHorizontal, 
   Sparkles, 
   Library, 
   Volume2, 
   Database, 
   Globe,
-  Keyboard,
   Type,
   Minus,
   Plus,
@@ -28,7 +26,10 @@ import {
   User,
   FolderGit2,
   Download,
-  RefreshCw
+  RefreshCw,
+  CheckCircle2,
+  Layers,
+  Check
 } from 'lucide-react';
 import { ReadingTheme, TafsirLayoutMode, OverallReadingMode } from '../types/quran';
 import { SidebarTab } from './Header';
@@ -129,40 +130,29 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
   const referenceCategories = [
     {
-      category: '۱. القرآني نص، خطوط اور مصحف مدینہ (Quranic Script, QCF Fonts & APIs)',
+      category: '۱. القرآني نص وخطوط (Quranic Text, QCF Fonts & APIs)',
       icon: <BookOpen className="w-4 h-4 text-emerald-600" />,
       items: [
         {
           title: 'مجمع الملك فهد لطباعة المصحف الشريف (KFGQPC)',
-          org: 'King Fahd Glorious Quran Printing Complex, Madinah Munawwarah',
-          desc: 'مصحف مدینہ منورہ کے مستند خطوط (QCF V2)، عثمانی رسم الخط اور ۶۰۴ صفحات کی معیاری تقسیم کا بنیادی سرکاری ماخذ۔',
+          org: 'King Fahd Complex, Madinah Munawwarah',
+          desc: 'مصحف مدینہ کے مستند خطوط (QCF V2)، عثمانی رسم الخط اور ۶۰۴ صفحات کی معیاری تقسیم کا بنیادی ماخذ۔',
           url: 'https://qurancomplex.gov.sa',
-          secondaryUrl: 'https://fonts.qurancomplex.gov.sa',
-          secondaryLabel: 'فونٹس پورٹل',
-          license: 'Official Medina Mushaf Standard'
+          badge: 'Official Medina Standard'
         },
         {
           title: 'Quran Foundation & Quran.com API (v4)',
-          org: 'Quran.Foundation Open Islamic Infrastructure',
-          desc: 'لفظ بلفظ کوڈز (code_v2)، صفحات و سطور کا ڈیٹا، اور جدید COLRv1 Tajweed V4 رنگین فونٹس کا مستند ذخیرہ۔',
+          org: 'Quran.Foundation Open Infrastructure',
+          desc: 'لفظ بلفظ کوڈز (code_v2)، صفحات و سطور کا ڈیٹا، اور جدید COLRv1 Tajweed V4 رنگین فونٹس۔',
           url: 'https://api-docs.quran.foundation',
-          secondaryUrl: 'https://quran.com',
-          secondaryLabel: 'Quran.com',
-          license: 'Open Islamic API'
-        },
-        {
-          title: 'Quran.com Frontend Next & COLRv1 Tajweed Fonts',
-          org: 'Quran.com Engineering & Typography Team',
-          desc: 'تجوید کے قواعد کے مطابق ہر حرف کی ویکٹر کلر لیئرنگ (COLRv1 Light/Dark/Sepia Palettes)۔',
-          url: 'https://github.com/quran/quran.com-frontend-next',
-          license: 'MIT Open Source'
+          badge: 'Open Islamic API'
         },
         {
           title: 'Tanzil Quran Navigator Project',
-          org: 'Tanzil.net (Zekr / Global Quran Verification)',
-          desc: 'قرآنی متن، آیات کے حدود، رکوع، سجدہ ہائے تلاوت اور حزب و منزل کی تصدیق شدہ ساخت۔',
+          org: 'Tanzil.net (Global Quran Verification)',
+          desc: 'قرآنی متن، آیات کے حدود، رکوع، سجدہ ہائے تلاوت اور حروف و اعراب کی مستند ترین عالمی تصدیق۔',
           url: 'https://tanzil.net',
-          license: 'Creative Commons Attribution 3.0'
+          badge: 'Verified Text Standard'
         }
       ]
     },
@@ -172,58 +162,65 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
       items: [
         {
           title: 'The Quranic Arabic Corpus — University of Leeds',
-          org: 'Language Research Group, University of Leeds (Dr. Kais Dukes)',
-          desc: '۷۷,۴۲۹ الفاظ کا تفصیلی صرفی و نحوی تجزیہ، مادہ (Roots)، صیغے، اعراب اور نحوی ترکیب کا عالمی علمی ماخذ۔',
+          org: 'Dr. Kais Dukes, Language Research Group, University of Leeds',
+          desc: '۷۷,۴۲۹ الفاظ کا تفصیلی صرفی و نحوی تجزیہ، مادے (Roots)، صیغے اور نحوی ٹری بینک۔',
           url: 'https://corpus.quran.com',
-          license: 'GNU General Public License (GPL)'
+          badge: 'Academic Corpus'
+        },
+        {
+          title: 'لغات، اعراب و رسمِ قرآن — پروفیسر حافظ احمد یارؒ',
+          org: 'تنظیم ڈیجیٹل لائبریری / ڈاکٹر اسرار احمدؒ اکیڈمی',
+          desc: 'قرآنی تراکیب، اعرابی حالتیں، اور لغوی حل پر ۳۴۰ مفصل اسباق پر مشتمل عظیم الشان اردو نحوی ذخیرہ۔',
+          url: 'https://hafizahmedyar.tanzeemdigitallibrary.com',
+          badge: 'Urdu Irab Treatise'
         },
         {
           title: 'Quranic Universal Library (QUL by Tarteel)',
-          org: 'Tarteel AI & Open Quranic Data Initiative',
-          desc: 'قرآنی الفاظ کے معانی، صرفی ڈیٹا بیس، اور مصاحف کے تکنیکی وسائل کا اوپن پلیٹ فارم۔',
+          org: 'Tarteel AI & Open Quranic Data',
+          desc: 'قرآنی معانی اور لغوی اشاریہ کا جدید اوپن پلیٹ فارم۔',
           url: 'https://qul.tarteel.ai',
-          license: 'Open Community Resource'
+          badge: 'Open Data Resource'
         }
       ]
     },
     {
-      category: '۳. التراجم المعتمدة (Urdu & English Scholarly Translations)',
+      category: '۳. التراجم المعتمدة (Scholarly Translations)',
       icon: <Globe className="w-4 h-4 text-emerald-600" />,
       items: [
         {
           title: 'آسان ترجمۂ قرآن — مفتی محمد تقی عثمانی',
           org: 'دارالعلوم کراچی / مکتبہ معارف القرآن',
-          desc: 'سلیس، فصیح اور بامحاورہ اردو ترجمۂ قرآن مع مختصر تشریحی ربط۔',
+          desc: 'سلیس، فصیح اور بامحاورہ اردو و انگریزی ترجمۂ قرآن مع مختصر تشریحی ربط۔',
           url: 'https://quran.com',
-          license: 'Educational & Study Access'
+          badge: 'Urdu & English'
         },
         {
           title: 'ترجمہ تفہیم القرآن — سید ابوالاعلیٰ مودودیؒ',
           org: 'ادارہ ترجمان القرآن لاہور / ReadMaududi',
-          desc: 'جدید اردو اسلوب میں قرآن مجید کے معانی و مطالب کی رواں ترجمانی۔',
+          desc: 'جدید اردو اسلوب میں قرآنی معانی و مطالب کی رواں ترجمانی۔',
           url: 'https://www.readmaududi.com',
-          license: 'Public Da\'wah & Academic Use'
+          badge: 'Contemporary Urdu'
         },
         {
           title: 'ترجمہ بیان القرآن — ڈاکٹر اسرار احمدؒ',
           org: 'مرکزی انجمن خدام القرآن لاہور',
-          desc: 'نظمِ قرآن اور سیاق و سباق کی روشنی میں سہل اردو ترجمہ۔',
+          desc: 'نظمِ قرآن اور سیاق و سباق کی روشنی میں فہم قرآن کا سلیس اردو ترجمہ۔',
           url: 'https://quranacademy.com',
-          license: 'Anjuman Khuddam-ul-Quran Archive'
+          badge: 'Classical Urdu'
         },
         {
-          title: 'ترجمہ شیخ الہندؒ، فتح محمد جالندھریؒ اور مولانا محمد جوناگڑھیؒ',
+          title: 'تراجم شیخ الہندؒ، فتح محمد جالندھریؒ اور مولانا محمد جوناگڑھیؒ',
           org: 'کلاسیکی برصغیر اردو تراجم ذخیرہ (Tanzil & KFGQPC)',
-          desc: 'برصغیر پاک و ہند کے مستند ترین اور مقبولِ عام اردو تراجم۔',
+          desc: 'برصغیر پاک و ہند کے مستند ترین اور صدیوں سے متداول مقبولِ عام اردو تراجم۔',
           url: 'https://tanzil.net/#trans/ur.mahali',
-          license: 'Public Domain / Open Access'
+          badge: 'Scholarly Heritage'
         },
         {
           title: 'Saheeh International & Prof. M.A.S. Abdel Haleem (Oxford)',
           org: 'Abul-Qasim Publishing House / Oxford University Press',
-          desc: 'عالمی سطح پر مستند ترین انگریزی تراجمِ قرآن اور لفظی انگریزی معانی۔',
+          desc: 'عالمی سطح پر معتبر ترین انگریزی تراجمِ قرآن اور معیاری قرآنی لغت۔',
           url: 'https://quran.com',
-          license: 'Academic Reference'
+          badge: 'Academic English'
         }
       ]
     },
@@ -234,73 +231,71 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
         {
           title: 'بیان القرآن — ڈاکٹر اسرار احمدؒ',
           org: 'مرکزی انجمن خدام القرآن لاہور / قرآن اکیڈمی',
-          desc: 'حمید الدین فراہیؒ، امین احسن اصلاحیؒ اور مولانا محمود الحسنؒ کے منہج پر نظمِ قرآن کی بصیرت افروز تفسیر۔',
+          desc: 'حمید الدین فراہیؒ اور مولانا محمود الحسنؒ کے منہج پر نظمِ قرآن کی بصیرت افروز تفسیر۔',
           url: 'https://quranacademy.com',
-          license: 'Open Da\'wah Resource'
+          badge: '37,416 Ingested Records'
         },
         {
           title: 'تفہیم القرآن — مولانا سید ابوالاعلیٰ مودودیؒ',
-          org: 'ReadMaududi Digital Library',
-          desc: 'چھ جلدوں پر مشتمل عصری، دعوتی، تاریخی اور فقہی مباحث کی جامع تفسیر۔',
+          org: 'ادارہ ترجمان القرآن / ReadMaududi',
+          desc: 'چھ جلدوں پر مشتمل عصری، دعوتی، تاریخی اور فکری مباحث کی جامع تفسیر۔',
           url: 'https://www.readmaududi.com',
-          license: 'Non-Commercial Educational'
+          badge: 'Sanitized Clean Text'
         },
         {
           title: 'معارف القرآن — مفتی اعظم محمد شفیع عثمانیؒ',
-          org: 'ادارۃ المعارف کراچی / eQuranLibrary',
-          desc: 'بیان القرآن (اشرف علی تھانویؒ) کی تسہیل اور فقہی و علمی نکات کا مستند ذخیرہ۔',
+          org: 'ادارۃ المعارف کراچی',
+          desc: 'حکیم الامت تھانویؒ کے بیان القرآن کی تسہیل اور فقہی و علمی نکات کا مستند ذخیرہ۔',
           url: 'https://www.equranlibrary.com',
-          license: 'Digital Islamic Library'
+          badge: 'Sanitized Clean Text'
         },
         {
           title: 'تفسیر ابن کثیر (اردو) — حافظ عماد الدین ابن کثیرؒ',
           org: 'تفسیر القرآن العظیم (ترجمہ مولانا محمد جوناگڑھیؒ)',
-          desc: 'قرآن، احادیثِ صحیحہ اور آثارِ صحابہ و تابعین کی روشنی میں قدیم ترین مستند تفسیر بالماثور۔',
+          desc: 'قرآن، احادیثِ صحیحہ اور آثارِ صحابہ و تابعین کی روشنی میں مستند ترین تفسیر بالماثور۔',
           url: 'https://www.equranlibrary.com',
-          license: 'Classical Heritage Archive'
+          badge: 'Classical Heritage'
         },
         {
           title: 'تفسیر السعدی (تیسیر الکریم الرحمٰن) — شیخ عبدالرحمٰن بن ناصر السعدیؒ',
-          org: 'دارالسلام و QUL (Quranic Universal Library)',
-          desc: 'سہل، جامع اور ایمان افروز اسلوب میں قرآنی مقاصد، عقائد اور اخلاقی لطائف کی مستند تفسیر۔',
+          org: 'دارالسلام ریاض و QUL Tarteel',
+          desc: 'سہل، جامع اور ایمان افروز اسلوب میں قرآنی مقاصد، عقائد اور اخلاقی لطائف کی تفسیر۔',
           url: 'https://qul.tarteel.ai/resources/tafsir/309',
-          license: 'Open Scholarly Access'
+          badge: 'Arabic / Urdu Salafi Heritage'
         },
         {
           title: 'تیسیر القرآن — مولانا عبدالرحمٰن کیلانیؒ',
           org: 'مکتبہ السلام لاہور / محدث لائبریری',
-          desc: 'سلیس اردو، لغوی تحقیق اور سنتِ صحیحہ کی روشنی میں جامع تفسیر۔',
+          desc: 'سلیس اردو، لغوی تحقیق اور سنتِ صحیحہ کی روشنی میں تفصیلی اور جامع تفسیر۔',
           url: 'https://www.equranlibrary.com',
-          license: 'Digital Study Archive'
+          badge: 'Sanitized Clean Text'
         }
       ]
     },
     {
-      category: '۵. التلاوة الصوتية والمصادر المشابهة (Audio & Similar Scholarly Platforms)',
+      category: '۵. التلاوة الصوتية والمنصات المشابهة (Audio CDN & Research Platforms)',
       icon: <Volume2 className="w-4 h-4 text-emerald-600" />,
       items: [
         {
           title: 'EveryAyah & Quran.com Audio CDN',
-          org: 'EveryAyah.com & Quran Foundation Audio',
+          org: 'EveryAyah.com & Quran Foundation',
           desc: 'شیخ مشاری راشد العفاسی کی آیت وار صوتی تلاوت اور ملی سیکنڈز کی سطح پر لفظی آڈیو سنکرونائزیشن۔',
           url: 'https://everyayah.com',
-          license: 'Open Quran Audio Archive'
+          badge: 'High-Bitrate MP3'
         },
         {
           title: 'آيات — المصحف الإلكتروني بجامعة الملك سعود',
           org: 'King Saud University Electronic Mosshaf Project',
-          desc: 'تلاوت، عربی تفاسیر (طبری، قرطبی، سعدی، بغوی) اور قرآنی مطالعہ کا جامع پورٹل۔',
+          desc: 'تلاوت، عربی تفاسیر اور قرآنی تقابلی مطالعہ کا جامع پورٹل۔',
           url: 'https://quran.ksu.edu.sa',
-          license: 'Academic University Portal'
+          badge: 'Academic Research'
         },
         {
-          title: 'مركز تفسير للدراسات القرآنية والمكتبة الشاملة',
-          org: 'Tafsir Center (tafsir.net) & Al-Maktabah Al-Shamilah',
-          desc: 'علومِ قرآن، اصولِ تفسیر اور قدیم و جدید اسلامی کتب کا عالمی تحقیقی ذخیرہ۔',
-          url: 'https://tafsir.net',
-          secondaryUrl: 'https://shamela.ws',
-          secondaryLabel: 'المكتبة الشاملة',
-          license: 'Scholarly Research Platforms'
+          title: 'المكتبة الشاملة ومركز تفسير',
+          org: 'Al-Maktabah Al-Shamilah & Tafsir Center',
+          desc: 'علومِ قرآن اور قدیم و جدید اسلامی کتب کا عالمی تحقیقی ذخیرہ۔',
+          url: 'https://shamela.ws',
+          badge: 'Scholarly Database'
         }
       ]
     }
@@ -317,7 +312,9 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
       {/* Slide-out Sidebar Panel (Right Side in RTL) */}
       <aside className="relative z-10 w-full max-w-4xl bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row h-full overflow-hidden font-ibm">
         
-        {/* Sidebar Navigation Rail */}
+        {/* ======================================================== */}
+        {/* SIDEBAR NAVIGATION RAIL                                  */}
+        {/* ======================================================== */}
         <div className="w-full md:w-64 bg-slate-50 dark:bg-slate-950/90 border-b md:border-b-0 md:border-l border-slate-200 dark:border-slate-800 p-4 flex flex-col justify-between shrink-0 select-none">
           <div className="space-y-4">
             {/* Brand Header */}
@@ -344,50 +341,67 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               </button>
             </div>
 
-            {/* 3 Primary Sidebar Pages */}
-            <nav className="flex md:flex-col gap-1.5 overflow-x-auto">
+            {/* Navigation Tabs */}
+            <nav className="flex md:flex-col gap-1 overflow-x-auto">
               <button
                 onClick={() => onSelectTab('about')}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'about'
-                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Info className="w-4 h-4 shrink-0" />
-                <span>تعارفی صفحہ (About)</span>
+                <span>تعارف (About)</span>
+              </button>
+
+              <button
+                onClick={() => onSelectTab('verification')}
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  activeTab === 'verification'
+                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <span>توثیقِ متن (Verification)</span>
+                </div>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-normal">
+                  مصدقہ
+                </span>
               </button>
 
               <button
                 onClick={() => onSelectTab('preferences')}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'preferences'
-                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <Settings className="w-4 h-4 shrink-0" />
+                <SlidersHorizontal className="w-4 h-4 shrink-0" />
                 <span>ترجیحات (Preferences)</span>
               </button>
 
               <button
                 onClick={() => onSelectTab('references')}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'references'
-                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <ShieldCheck className="w-4 h-4 shrink-0" />
+                <Library className="w-4 h-4 shrink-0" />
                 <span>مآخذ و مراجع (References)</span>
               </button>
 
               <button
                 onClick={() => onSelectTab('docs')}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'docs'
-                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Code2 className="w-4 h-4 shrink-0" />
@@ -397,420 +411,463 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           </div>
 
           {/* Bottom Offline Database Status & Developer Quick Links */}
-          <div className="hidden md:block pt-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 space-y-2.5">
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
+          <div className="hidden md:block pt-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-2">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold text-xs">
                 <Database className="w-3.5 h-3.5" />
-                <span>مکمل آف لائن انجن فعال</span>
+                <span>آف لائن انجن فعال (Offline Engine)</span>
               </div>
-              <p className="leading-relaxed font-ibm">
-                <span className="font-app font-semibold">604</span> صفحات • <span className="font-app font-semibold">6,236</span> آیات • <span className="font-app font-semibold">77,429</span> الفاظ • <span className="font-app font-semibold">6</span> تفاسیر
+              <p className="leading-relaxed font-ibm text-[11px]">
+                <span className="font-app font-semibold">604</span> صفحات • <span className="font-app font-semibold">6,236</span> آیات • <span className="font-app font-semibold">6</span> تفاسیر
               </p>
             </div>
 
-            <div className="pt-2 border-t border-slate-200/70 dark:border-slate-800/70 space-y-1">
-              <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 font-app">
-                Developed by Abdul Rehman (@arehman-dev)
+            <div className="pt-2 border-t border-slate-200/70 dark:border-slate-800/70 text-[10px]">
+              <div className="text-slate-700 dark:text-slate-300 font-semibold">
+                Abdul Rehman (<a href="https://github.com/arehman-dev" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">@arehman-dev</a>)
               </div>
-              <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-app" dir="ltr">
-                <a href="https://arehman-dev.github.io/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">Portfolio</a>
+              <div className="flex items-center gap-2 text-slate-400 pt-0.5 font-sans" dir="ltr">
+                <a href="https://arehman-dev.github.io/" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600">Portfolio</a>
                 <span>•</span>
-                <a href="https://arehman-dev.github.io/me/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">Personal</a>
+                <a href="https://github.com/arehman-dev/al-wahyain" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600">Repo</a>
                 <span>•</span>
-                <a href="https://github.com/arehman-dev" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">GitHub</a>
-                <span>•</span>
-                <a href="https://x.com/arehman_dev" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline">X</a>
+                <a href="https://x.com/arehman_dev" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600">X</a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main Page Content Area inside Sidebar */}
+        {/* ======================================================== */}
+        {/* MAIN CONTENT AREA (Reduced cards, unified sections)     */}
+        {/* ======================================================== */}
         <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6">
           
           {/* ======================================================== */}
-          {/* PAGE 1: ABOUT PAGE (تعارفی صفحہ)                           */}
+          {/* PAGE 1: ABOUT (تعارف)                                     */}
           {/* ======================================================== */}
           {activeTab === 'about' && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
-                <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
-                  ورژن <span className="font-app">1.0</span> • علمی و تحقیقی مطالعہ قرآن اسٹیشن
-                </span>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                  الوحيين — قرآن مجید، صرف و نحو اور تقابلی تفاسیر کا جامع پلیٹ فارم
+              {/* Header Banner */}
+              <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
+                    ورژن <span className="font-app">1.2.2</span> • تحقیقی و علمی مطالعہ قرآن پلیٹ فارم
+                  </span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                  الوحيين — قرآن مجید، صرف و نحو اور تقابلی تفاسیر کا جامع اسٹیشن
                 </h1>
-                <p className="font-ibm text-base text-slate-700 dark:text-slate-300 mt-2 leading-[2.2]">
-                  ’’الوحيين‘‘ ایک جدید، تیز رفتار اور مکمل طور پر آف لائن چلنے والا علمی اسٹیشن ہے جو قرآن کریم کی تلاوت، لفظی و بامحاورہ تراجم، عربی مادوں (Roots) کی تحقیق اور مستند اردو تفاسیر کے تقابلی مطالعے کے لیے تیار کیا گیا ہے۔
+                <p className="font-ibm text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-[2.1]">
+                  ’’الوحيين‘‘ ایک تیز رفتار، مقامی (Local-First) اور جدید ڈیجیٹل علمی پلیٹ فارم ہے جسے محققین، طلبۂ علومِ اسلامیہ اور عام قارئین کے لیے ڈیزائن کیا گیا ہے۔ یہ مصحف مدینہ کے اصل خطوط، مفصل صرفی و اعرابی تجزیے اور چھ مستند اردو تفاسیر کے تقابل کو یکجا کرتا ہے۔
                 </p>
               </div>
 
-              {/* 4 Core Study Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-emerald-700 dark:text-emerald-400">
-                    <BookOpen className="w-4 h-4" />
-                    <span>۱. مستند خطِ مدینہ (QCF V2 & V4 Tajweed)</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    مجمع الملک فہد مدینہ منورہ کے ۶۰۴ صفحات کے اصلی خطاطی گلفس (QCF V2) اور Quran Foundation کے جدید COLRv1 رنگین تجوید فونٹس۔
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-emerald-700 dark:text-emerald-400">
-                    <Globe className="w-4 h-4" />
-                    <span>۲. کلاسیکی سطری لفظی و بامحاورہ ترجمہ</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    ہر قرآنی لفظ کے نیچے اردو اور انگریزی معانی (الترجمة السطرية) اور بیک وقت دو مستند مترجمین کے بامحاورہ تراجم کا تقابل۔
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-emerald-700 dark:text-emerald-400">
-                    <Sparkles className="w-4 h-4" />
-                    <span>۳. صرف، نحو اور قرآنی مادوں کا اشاریہ</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    ہر لفظ کا مادہ (Root)، صیغہ، اعرابی حالت، نحوی گراف اور قرآن بھر میں اس مادے کے تمام مقامات تک فوری رسائی۔
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-emerald-700 dark:text-emerald-400">
-                    <Library className="w-4 h-4" />
-                    <span>۴. چھ مستند تفاسیر کا تقابلی مطالعہ</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    بیان القرآن، تفہیم القرآن، معارف القرآن، ابن کثیر، تفسیر السعدی اور تیسیر القرآن کا فوکس اور فہرست موڈ میں مطالعہ اور ہائی لائٹنگ۔
-                  </p>
-                </div>
-              </div>
-
-              {/* Keyboard Shortcuts Reference */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
-                <div className="flex items-center gap-2 font-bold text-sm text-slate-800 dark:text-slate-100">
-                  <Keyboard className="w-4 h-4 text-emerald-600" />
-                  <span>تیز رفتار کی بورڈ شارٹ کٹس (Power-User Hotkeys)</span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <span>جامع تلاش</span>
-                    <kbd className="px-1.5 py-0.5 font-mono bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">Ctrl+K</kbd>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <span>تلاوت چلائیں/روکیں</span>
-                    <kbd className="px-1.5 py-0.5 font-mono bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">Space</kbd>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <span>اگلی / پچھلی آیت</span>
-                    <kbd className="px-1.5 py-0.5 font-mono bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">J / K</kbd>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <span>اگلا / پچھلا صفحہ</span>
-                    <kbd className="px-1.5 py-0.5 font-mono bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">[ / ]</kbd>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <span>آیت بک مارک</span>
-                    <kbd className="px-1.5 py-0.5 font-mono bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">B</kbd>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <span>چاروں موڈز</span>
-                    <kbd className="px-1.5 py-0.5 font-mono bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">1 - 4</kbd>
-                  </div>
-                </div>
-              </div>
-
-              {/* Developer & Architect Info + Direct Links */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/30 space-y-3.5">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center">
-                      <User className="w-4 h-4" />
+              {/* 4 Core Pillars — Borderless Unified Grid */}
+              <div className="space-y-3">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-sans">
+                  بنیادی علمی خصوصیات (Key Study Pillars)
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                      <BookOpen className="w-4 h-4" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-sm text-slate-900 dark:text-white">
-                        عبد الرحمٰن (Abdul Rehman • <span className="font-app">@arehman-dev</span>)
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                        ۱. مستند خطِ مدینہ و تجوید (QCF V2 & V4)
                       </h3>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                        معمار و مصنفِ سافٹ ویئر — Systems & Software Engineer • Digital Islamic Heritage Builder
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        مجمع الملک فہد مدینہ منورہ کے ۶۰۴ صفحات کے خطاطی گلفس اور Quran Foundation کے جدید COLRv1 رنگین تجوید فونٹس۔
                       </p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => onSelectTab('docs')}
-                    className="px-3 py-1.5 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
-                  >
-                    <Code2 className="w-3.5 h-3.5" />
-                    <span>تکنیکی دستاویزات کھولیں</span>
-                  </button>
+
+                  <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                      <Globe className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                        ۲. سطری لفظی و تقابلی بامحاورہ تراجم
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        ہر قرآنی لفظ کے نیچے اردو اور انگریزی معانی، اور بیک وقت دو مستند مترجمین کے بامحاورہ تراجم کا موازنہ۔
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                        ۳. صرف، نحو اور قرآنی مادوں کا اشاریہ
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        ۷۷,۴۲۹ الفاظ کا مادہ (Root)، صیغہ، اعرابی حالت، نحوی گراف اور قرآن بھر میں مادوں کے تمام مقامات تک فوری رسائی۔
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                      <Library className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                        ۴. چھ مستند تفاسیر کا تقابلی مطالعہ
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        بیان القرآن، تفہیم القرآن، معارف القرآن، ابن کثیر، السعدی اور تیسیر القرآن کا صاف اور بیرونی واٹر مارک سے پاک مطالعہ۔
+                      </p>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  ’’الوحيين (Al-Wahyain)‘‘ کو علومِ قرآن و سنت کی ڈیجیٹل خدمت، تیز رفتار مقامی (Local-First) مطالعے اور اوپن سورس علمی تحقیق کے لیے ڈیزائن اور تعمیر کیا گیا ہے۔ دیگر علمی ذخائر جیسے <em>Islamic Classical Library</em>، <em>Library: The Golden Chain</em> اور <em>Library of Contemporary Scholars</em> سمیت مصنف کے تکنیکی پورٹ فولیو اور ذاتی تحریروں کے روابط ذیل میں موجود ہیں:
-                </p>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-xs" dir="ltr">
-                  <a
-                    href="https://arehman-dev.github.io/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
-                  >
-                    <span>Portfolio Site</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                  </a>
-
-                  <a
-                    href="https://arehman-dev.github.io/me/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
-                  >
-                    <span>Personal Site</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                  </a>
-
-                  <a
-                    href="https://github.com/arehman-dev"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
-                  >
-                    <span>GitHub (@arehman-dev)</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                  </a>
-
-                  <a
-                    href="https://x.com/arehman_dev"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-emerald-500 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 font-app font-bold transition-all"
-                  >
-                    <span>X (@arehman_dev)</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                  </a>
+              {/* Fast Action & Quick Links Row */}
+              <div className="p-4 rounded-xl bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    قرآنی متن اور تفاسیر کی تصدیق و اسناد کا تفصیلی بیان دیکھیں۔
+                  </span>
                 </div>
+                <button
+                  onClick={() => onSelectTab('verification')}
+                  className="px-3 py-1.5 rounded-lg border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>توثیقِ متن کھولیں</span>
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Minimal Keyboard Hint */}
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                <span>تیز رفتار نیویگیشن: جامع تلاش کے لیے <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono border border-slate-200 dark:border-slate-700">Ctrl+K</kbd> اور تمام کی بورڈ شارٹ کٹس کے لیے <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono border border-slate-200 dark:border-slate-700">Ctrl+/</kbd> دبائیں۔</span>
               </div>
             </div>
           )}
 
           {/* ======================================================== */}
-          {/* PAGE 2: PREFERENCES PAGE (ترجیحات و ترتیبات)               */}
+          {/* PAGE 2: TEXT VERIFICATION & AUTHENTICITY (توثیقِ متن)     */}
+          {/* ======================================================== */}
+          {activeTab === 'verification' && (
+            <div className="space-y-6 animate-fadeIn">
+              {/* Header */}
+              <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>مصدقہ و محفوظ شدہ نص • 100% Verified Islamic Corpus</span>
+                  </span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                  <span>توثیقِ نصِ قرآن، خطاطی اور تفاسیر کی دیانتداری</span>
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-ibm">
+                  قرآنی کلمات، اعراب، خطِ مدینہ، صرفی تجزئے اور تقابلی تفاسیر کی علمی توثیق اور مستند ماخذوں سے تقابل کی مکمل تفصیلات:
+                </p>
+              </div>
+
+              {/* Verification Metric Counters */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
+                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-app">114</div>
+                  <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">سورتیں (Surahs)</div>
+                  <div className="text-[10px] text-slate-400">مکمل مصدقہ ترتیب</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
+                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-app">6,236</div>
+                  <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">آیات (Ayahs)</div>
+                  <div className="text-[10px] text-slate-400">تنزیل و مصحف مدینہ</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
+                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-app">77,429</div>
+                  <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">الفاظ (Word Tokens)</div>
+                  <div className="text-[10px] text-slate-400">صرفی و لفظی تصدیق</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
+                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-app">37,416</div>
+                  <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">تفسیری ریکارڈز</div>
+                  <div className="text-[10px] text-slate-400">6 تفاسیر (واٹرمارک پاک)</div>
+                </div>
+              </div>
+
+              {/* Verification Sections (Streamlined, elegant dividers) */}
+              <div className="space-y-4 pt-1">
+                
+                {/* 1. Uthmani Script & Medina Mushaf */}
+                <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>۱. رسم الخط اور مصحف مدینہ کی توثیق (Uthmani Text & Tanzil Verification)</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pr-6">
+                    قرآن مجید کا بنیادی متن <strong>مجمع الملك فهد لطباعة المصحف الشريف</strong> (طبع مدینہ منورہ ۱۴۲۲ھ) کے مطابق ہے اور بین الاقوامی قرآنی پروجیکٹ <strong>Tanzil (v1.0.2)</strong> کے ساتھ حرف بہ حرف اور اعراب بہ اعراب ۱۰۰ فیصد مطابقت رکھتا ہے۔ ۶,۲۳۶ آیات، رکوعات، سجدہ ہائے تلاوت اور سورتوں کے احزاب و منازل کی درجہ بندی میں صفر فرق کی تصدیق کی گئی ہے۔
+                  </p>
+                </div>
+
+                {/* 2. Fonts & Glyphs Integrity */}
+                <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>۲. خطاطی گلفس اور رنگین تجوید (QCF V2 & V4 COLRv1 Vector Audit)</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pr-6">
+                    ہر قرآنی لفظ عام یونیکوڈ ٹیکسٹ کے بجائے مجمع الملک فہد کے ۶۰۴ صفحات کے مخصوص گلفس (<code className="font-app">code_v2</code>) اور ۱۵ سطری مصحف کی تقسیم پر مبنی ہے۔ رنگین تجوید موڈ میں Quran Foundation کے <strong>COLRv1</strong> ملٹی پیلیٹ ویکٹر گلفس استعمال ہوتے ہیں جن میں غنہ، اخفاء، ادغام، قلقلہ اور مدات کے ۷ قواعد ہر حرف کی سطح پر درست رنگ کے ساتھ منسلک ہیں۔
+                  </p>
+                </div>
+
+                {/* 3. Tafasir Sanitization & Watermark Purge */}
+                <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>۳. تفاسیر کی طہارت اور واٹر مارکس کی تطہیر (Tafasir Integrity & Watermark Purge)</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pr-6">
+                    ڈیٹا بیس میں موجود تمام ۶ تفاسیر (بیان القرآن، تفہیم القرآن، معارف القرآن، تفسیر ابن کثیر، تیسیر القرآن، تفسیر السعدی) کو تفصیلی تحقیقی عمل سے گزارا گیا ہے۔ تیسرے فریق کی ویب سائٹس کے تمام خودکار واٹر مارکس (جیسے <code className="font-app">eQuran Library</code>) اور عنوانات کے زائد اسکریپڈ ٹکڑوں کو ڈیٹا بیس اور <strong>SQLite FTS5</strong> سرچ انڈیکس سے مکمل طور پر خارج کر دیا گیا ہے تاکہ قاری تک صرف اصل مفسر کا مستند اور باوقار کلام پہنچے۔
+                  </p>
+                </div>
+
+                {/* 4. Morphology & Treebank Sanad */}
+                <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>۴. صرفی تجزیہ اور نحوی ٹری بینک (Corpus & Treebank Provenance)</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pr-6">
+                    قرآن مجید کے ۷۷,۴۲۹ الفاظ کا صرفی و نحوی تجزیہ، مادے (Roots) اور افعال کے اوزان یونیورسٹی آف لیڈز کے <strong>The Quranic Arabic Corpus</strong> (زیرِ نگرانی ڈاکٹر قیس ڈیوکس) کے ڈیٹا سے ہم آہنگ ہیں۔ اس کے ساتھ ساتھ پروفیسر حافظ احمد یارؒ کی شہرۂ آفاق کتاب <em>’’لغات، اعراب و رسمِ قرآن‘‘</em> کے ۳۴۰ مکمل اسباق اور نحوی شجرے (Syntax Treebank) ایپلیکیشن میں مربوط کیے گئے ہیں۔
+                  </p>
+                </div>
+
+                {/* 5. Offline Integrity & Privacy */}
+                <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>۵. مقامی ڈیٹا بیس کی رازداری و دیانتداری (Local-First Offline Privacy)</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pr-6">
+                    قرآنی کارپس کا تمام ڈیٹا ۴۴۷ میگا بائٹ کی مقامی SQLite فائل میں مکمل طور پر محفوظ ہے۔ کسی بھی آیت کی تلاوت، تلاش، یا تفسیری مطالعے کے لیے کسی کلاؤڈ سرور پر کوئی ذاتی ڈیٹا، سوالات یا ہسٹری ارسال نہیں کی جاتی۔
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* PAGE 3: PREFERENCES (ترجیحات و ترتیبات)                    */}
           {/* ======================================================== */}
           {activeTab === 'preferences' && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
+              {/* Header */}
+              <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-emerald-600" />
-                  <span>ترجیحات و ترتیبات (Application Preferences)</span>
+                  <SlidersHorizontal className="w-5 h-5 text-emerald-600" />
+                  <span>ترجیحات و ترتیبات (Reading Preferences)</span>
                 </h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  اپنے مطالعے کے ماحول، دائیں بائیں حاشیے (Padding)، خطاطی، تراجم اور تفاسیر کی ترتیبات یہاں سے متعین کریں۔
+                  مطالعے کے ماحول، حاشیہ، متن کے سائز، تراجم اور آڈیو تلاوت کی ترتیبات۔
                 </p>
               </div>
 
-              {/* 1. Theme Atmosphere */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
-                <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100">
-                  ۱. مطالعہ کا ماحول اور تھیم (Reading Atmosphere)
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                  {([
-                    { id: 'light', label: 'دن (Light)', icon: <Sun className="w-4 h-4 text-amber-500" /> },
-                    { id: 'sepia', label: 'قدیم اوراق (Sepia)', icon: <Coffee className="w-4 h-4 text-amber-700" /> },
-                    { id: 'dark', label: 'نائٹ (Dark)', icon: <Moon className="w-4 h-4 text-indigo-400" /> },
-                    { id: 'oled', label: 'مڈ نائٹ (OLED)', icon: <Eye className="w-4 h-4 text-emerald-400" /> },
-                  ] as const).map((t) => (
+              {/* Group 1: Display & Atmosphere (Theme, Padding, Font Size) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-5">
+                <h2 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2 pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
+                  <Sun className="w-4 h-4 text-amber-500" />
+                  <span>۱. ماحول و منظر (Atmosphere, Layout & Typography)</span>
+                </h2>
+
+                {/* Theme Selector */}
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
+                    مطالعہ کا تھیم (Theme Atmosphere)
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    {([
+                      { id: 'light', label: 'دن (Light)', icon: <Sun className="w-3.5 h-3.5 text-amber-500" /> },
+                      { id: 'sepia', label: 'قدیم اوراق (Sepia)', icon: <Coffee className="w-3.5 h-3.5 text-amber-700" /> },
+                      { id: 'dark', label: 'نائٹ (Dark)', icon: <Moon className="w-3.5 h-3.5 text-indigo-400" /> },
+                      { id: 'oled', label: 'مڈ نائٹ (OLED)', icon: <Eye className="w-3.5 h-3.5 text-emerald-400" /> },
+                    ] as const).map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => onChangeThemeMode(t.id)}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border font-bold transition-all cursor-pointer ${
+                          themeMode === t.id
+                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs'
+                            : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                        }`}
+                      >
+                        {t.icon}
+                        <span>{t.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Padding Slider */}
+                <div className="space-y-2 pt-1 border-t border-slate-200/40 dark:border-slate-800/40">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <MoveHorizontal className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>دائیں بائیں حاشیہ (Side Margins)</span>
+                    </span>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400 font-app">
+                      {horizontalPadding}%
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] text-emerald-600 font-bold shrink-0">1% (وسیع)</span>
+                    <input
+                      type="range"
+                      min={1}
+                      max={24}
+                      step={1}
+                      value={horizontalPadding}
+                      onChange={(e) => onChangeHorizontalPadding(Number(e.target.value))}
+                      className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                    />
+                    <span className="text-[10px] text-slate-400 font-bold shrink-0">24% (کتابی)</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    {[
+                      { val: 2, label: 'وسیع (2%)' },
+                      { val: 6, label: 'متوازن (6%)' },
+                      { val: 12, label: 'معیاری (12%)' },
+                      { val: 18, label: 'کتابی (18%)' }
+                    ].map((p) => (
+                      <button
+                        key={p.val}
+                        onClick={() => onChangeHorizontalPadding(p.val)}
+                        className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
+                          horizontalPadding === p.val
+                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                            : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
+                        }`}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Font Size Control */}
+                <div className="space-y-2 pt-1 border-t border-slate-200/40 dark:border-slate-800/40">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <Type className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>متن اور خط کا سائز (Font Sizing)</span>
+                    </span>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400 font-app">
+                      {fontSize}px (قرآنی خط: {Math.round(fontSize * 1.65)}px)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
                     <button
-                      key={t.id}
-                      onClick={() => onChangeThemeMode(t.id)}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border font-bold transition-all cursor-pointer ${
-                        themeMode === t.id
-                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                          : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-                      }`}
+                      onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
+                      disabled={fontSize <= 14}
+                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     >
-                      {t.icon}
-                      <span>{t.label}</span>
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
-                  ))}
+                    <input
+                      type="range"
+                      min={14}
+                      max={28}
+                      step={1}
+                      value={fontSize}
+                      onChange={(e) => onFontSizeChange(Number(e.target.value))}
+                      className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                    />
+                    <button
+                      onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
+                      disabled={fontSize >= 28}
+                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    {[
+                      { val: 15, label: 'چھوٹا (15px)' },
+                      { val: 18, label: 'معیاری (18px)' },
+                      { val: 21, label: 'بڑا (21px)' },
+                      { val: 25, label: 'جلی (25px)' }
+                    ].map((preset) => (
+                      <button
+                        key={preset.val}
+                        onClick={() => onFontSizeChange(preset.val)}
+                        className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
+                          fontSize === preset.val
+                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                            : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* 2. Left & Right Padding Slider (Requirement 4) */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <MoveHorizontal className="w-4 h-4 text-emerald-600" />
-                    <span>۲. دائیں اور بائیں حاشیہ سلائیڈر (Left & Right Content Padding)</span>
-                  </h3>
-                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-ibm text-xs font-bold">
-                    <span className="font-app">{horizontalPadding}%</span> حاشیہ
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  سلائیڈر کو کم کرنے سے دائیں اور بائیں جانب کا خالی حاشیہ کم ہو جائے گا اور متن کے لیے زیادہ جگہ ملے گی۔
-                </p>
-                <div className="flex items-center gap-4 pt-1">
-                  <span className="text-[11px] font-bold text-emerald-600 shrink-0">زیادہ جگہ (<span className="font-app">1%</span>)</span>
-                  <input
-                    type="range"
-                    min={1}
-                    max={24}
-                    step={1}
-                    value={horizontalPadding}
-                    onChange={(e) => onChangeHorizontalPadding(Number(e.target.value))}
-                    className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-                  />
-                  <span className="text-[11px] font-bold text-slate-400 shrink-0">تنگ کالم (<span className="font-app">24%</span>)</span>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {[
-                    { val: 2, label: 'وسیع ترین (2%)' },
-                    { val: 6, label: 'متوازن (6%)' },
-                    { val: 12, label: 'معیاری (12%)' },
-                    { val: 18, label: 'کمپیکٹ کتابی (18%)' }
-                  ].map((preset) => (
-                    <button
-                      key={preset.val}
-                      onClick={() => onChangeHorizontalPadding(preset.val)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
-                        horizontalPadding === preset.val
-                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
-                          : 'border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                      }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 3. Font Size Control (خط اور متن کا سائز) */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3.5">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <Type className="w-4 h-4 text-emerald-600" />
-                    <span>۳. خط اور متن کا سائز (Font Size Control)</span>
-                  </h3>
-                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-ibm text-xs font-bold">
-                    <span className="font-app">{fontSize}px</span> (قرآنی خط: <span className="font-app">{Math.round(fontSize * 1.65)}px</span>)
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  قرآنی آیات، تراجم اور تفاسیر کے متن کا سائز اپنی سہولت کے مطابق کم یا زیادہ کریں۔
-                </p>
-
-                <div className="flex items-center gap-3 pt-1">
-                  <button
-                    onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
-                    disabled={fontSize <= 14}
-                    className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-
-                  <input
-                    type="range"
-                    min={14}
-                    max={28}
-                    step={1}
-                    value={fontSize}
-                    onChange={(e) => onFontSizeChange(Number(e.target.value))}
-                    className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-                  />
-
-                  <button
-                    onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
-                    disabled={fontSize >= 28}
-                    className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {[
-                    { val: 15, label: 'چھوٹا (15px)' },
-                    { val: 18, label: 'معیاری (18px)' },
-                    { val: 21, label: 'بڑا (21px)' },
-                    { val: 25, label: 'بہت بڑا (25px)' }
-                  ].map((preset) => (
-                    <button
-                      key={preset.val}
-                      onClick={() => onFontSizeChange(preset.val)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
-                        fontSize === preset.val
-                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
-                          : 'border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                      }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 4. Mushaf & Tajweed Settings */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-                <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              {/* Group 2: Mushaf, Tajweed & Translations */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-4">
+                <h2 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2 pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
                   <Palette className="w-4 h-4 text-emerald-600" />
-                  <span>۴. مصحف اور تجوید کے رنگ (QCF V2 & V4 Tajweed)</span>
-                </h3>
+                  <span>۲. خط، تجوید اور تقابلی تراجم (Typography & Translations)</span>
+                </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {/* Tajweed Switch */}
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80">
                     <div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100">رنگین تجوید (QCF V4 COLRv1)</div>
-                      <div className="text-[11px] text-slate-400 mt-0.5">قرآن فاؤنڈیشن کے رنگین تجویدی قوانین</div>
+                      <div className="font-bold text-slate-800 dark:text-slate-200">رنگین تجوید (QCF V4 COLRv1)</div>
+                      <div className="text-[11px] text-slate-400">تجویدی قوانین کے رنگین حروف</div>
                     </div>
                     <button
                       onClick={onToggleTajweed}
-                      className={`px-3 py-1.5 rounded-lg border font-bold transition-colors cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg border font-bold transition-colors cursor-pointer ${
                         showTajweed
                           ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                          : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                          : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                       }`}
                     >
-                      {showTajweed ? 'فعال (ON)' : 'غیر فعال (OFF)'}
+                      {showTajweed ? 'فعال' : 'بند'}
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                  {/* Focus Mode Switch */}
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80">
                     <div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100">تفسیر فوکس موڈ (Focus Mode)</div>
-                      <div className="text-[11px] text-slate-400 mt-0.5">ایک تفسیر پر فوکس یا تمام تفاسیر یکجا</div>
+                      <div className="font-bold text-slate-800 dark:text-slate-200">تفسیر فوکس موڈ (Focus View)</div>
+                      <div className="text-[11px] text-slate-400">ایک تفسیر پر یکسوئی یا تمام تفاسیر</div>
                     </div>
                     <button
                       onClick={() => onSelectTafsirLayoutMode(tafsirLayoutMode === 'focus' ? 'stacked' : 'focus')}
-                      className={`px-3 py-1.5 rounded-lg border font-bold transition-colors cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg border font-bold transition-colors cursor-pointer ${
                         tafsirLayoutMode === 'focus'
                           ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                          : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                          : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                       }`}
                     >
-                      {tafsirLayoutMode === 'focus' ? 'فوکس موڈ (ON)' : 'تمام تفاسیر (OFF)'}
+                      {tafsirLayoutMode === 'focus' ? 'فوکس آن' : 'تمام یکجا'}
                     </button>
                   </div>
-                </div>
-              </div>
 
-              {/* 5. Translation & Tafsir Preferences */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-                <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-emerald-600" />
-                  <span>۵. تراجم اور تفاسیر کی ترتیبات</span>
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5">بنیادی مترجم</label>
+                  {/* Primary Translator */}
+                  <div className="space-y-1">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300 block">بنیادی بامحاورہ مترجم</label>
                     <select
                       value={selectedTranslationAuthor}
                       onChange={(e) => onSelectTranslationAuthor(e.target.value)}
-                      className="w-full h-9 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 font-semibold text-slate-800 dark:text-slate-100 outline-none cursor-pointer"
+                      className="w-full h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 px-2.5 font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
                     >
                       <option value="taqi_usmani">مفتی محمد تقی عثمانی</option>
                       <option value="maududi">سید ابوالاعلیٰ مودودی</option>
@@ -824,12 +881,13 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ثانوی تقابلی مترجم</label>
+                  {/* Secondary Comparative Translator */}
+                  <div className="space-y-1">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300 block">ثانوی تقابلی مترجم</label>
                     <select
                       value={secondaryTranslationAuthor || 'none'}
                       onChange={(e) => onSelectSecondaryTranslationAuthor(e.target.value === 'none' ? null : e.target.value)}
-                      className="w-full h-9 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 font-semibold text-slate-800 dark:text-slate-100 outline-none cursor-pointer"
+                      className="w-full h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 px-2.5 font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
                     >
                       <option value="none">کوئی نہیں (بند)</option>
                       <option value="sahih_intl">+ Saheeh International (EN)</option>
@@ -841,23 +899,24 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5">لفظی ترجمہ زبان</label>
+                  {/* Word by word */}
+                  <div className="space-y-1">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300 block">لفظ بلفظ سطری ترجمہ</label>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={onToggleWordByWord}
-                        className={`px-3 h-9 rounded-xl border font-bold cursor-pointer ${
+                        className={`px-3 h-9 rounded-xl border font-bold cursor-pointer shrink-0 ${
                           showWordByWord
                             ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-                            : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                            : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
                         }`}
                       >
-                        {showWordByWord ? 'لفظی آن' : 'لفظی آف'}
+                        {showWordByWord ? 'لفظی فعال' : 'بند'}
                       </button>
                       <select
                         value={wbwLanguage}
                         onChange={(e) => onSelectWbwLanguage(e.target.value as any)}
-                        className="flex-1 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 font-semibold text-slate-800 dark:text-slate-100 outline-none cursor-pointer"
+                        className="flex-1 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 px-2.5 font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
                       >
                         <option value="both">اردو + Eng</option>
                         <option value="ur">حافظ نذر احمد (اردو 1)</option>
@@ -868,46 +927,41 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
-                      منتخب تفاسیر اور ترتیب
-                    </label>
-                    <div className="flex items-center gap-3 h-9">
-                      <button
-                        onClick={() => {
-                          onClose();
-                          onOpenTafsirSettings();
-                        }}
-                        className="w-full px-3 h-9 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold hover:bg-emerald-500/20 transition-colors cursor-pointer"
-                      >
-                        ترتیب و انتخابِ تفاسیر کھولیں
-                      </button>
-                    </div>
+                  {/* Tafsir Order Modal Trigger */}
+                  <div className="space-y-1">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300 block">انتخاب و ترتیبِ تفاسیر</label>
+                    <button
+                      onClick={() => {
+                        onClose();
+                        onOpenTafsirSettings();
+                      }}
+                      className="w-full h-9 rounded-xl border border-emerald-500/60 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>تفاسیر کی فہرست و ترتیب ترتیب دیں</span>
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* 6. Offline Audio Recitation Cache */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3.5">
+              {/* Group 3: Offline Recitation Cache */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <h2 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
                     <Volume2 className="w-4 h-4 text-emerald-600" />
-                    <span>۶. خودکار آف لائن آڈیو تلاوت (Automatic Audio Caching)</span>
-                  </h3>
-                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-ibm text-xs font-bold">
-                    <span className="font-app">{audioCacheStatus?.cachedCount ?? '...'}</span> / 6,236 آیات کیش شدہ
+                    <span>۳. خودکار آف لائن آڈیو تلاوت (Alafasy Audio Cache)</span>
+                  </h2>
+                  <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 font-app">
+                    {audioCacheStatus?.cachedCount ?? '...'} / 6,236 محفوظ شدہ
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  جب بھی آپ براؤزر میں کوئی آیت سنتے ہیں، وہ خود بخود آپ کی مقامی ڈسک (<code className="font-app">data/audio/alafasy</code>) میں مستقل محفوظ ہو جاتی ہے تاکہ آئندہ انٹرنیٹ کے بغیر 100% آف لائن سنی جا سکے۔
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  تلاوت سنتے ہی آیات خودکار طور پر ڈسک (<code className="font-app">data/audio/alafasy</code>) میں مستقل محفوظ ہو جاتی ہیں تاکہ آئندہ بغیر انٹرنیٹ کے تلاوت سنی جا سکے۔
                 </p>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-xs">
-                  <div>
-                    <div className="font-bold text-slate-800 dark:text-slate-100">قاری: مشاری راشد العفاسی (Alafasy 128kbps)</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5 font-app">
-                      مقامی ڈسک حجم: {audioCacheStatus ? (audioCacheStatus.cachedBytes / (1024 * 1024)).toFixed(2) : '0'} MB
-                    </div>
+                <div className="flex items-center justify-between gap-3 pt-1 text-xs">
+                  <div className="text-slate-500 dark:text-slate-400 text-[11px] font-app">
+                    حجم: {audioCacheStatus ? (audioCacheStatus.cachedBytes / (1024 * 1024)).toFixed(2) : '0'} MB
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -916,11 +970,11 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       className="px-3 py-1.5 rounded-lg border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>{cachingSurahLoading ? 'ڈاؤنلوڈ ہو رہی ہے...' : 'سورۃ الفاتحہ کیش کریں'}</span>
+                      <span>{cachingSurahLoading ? 'کیشنگ...' : 'سورۃ الفاتحہ محفوظ کریں'}</span>
                     </button>
                     <button
                       onClick={refreshAudioCache}
-                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-emerald-600 transition-colors cursor-pointer"
                       title="اسٹیٹس ریفریش کریں"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
@@ -928,203 +982,161 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   </div>
                 </div>
               </div>
+
             </div>
           )}
 
           {/* ======================================================== */}
-          {/* PAGE 3: REFERENCES & DATA SOURCES PAGE (مآخذ و مراجع)     */}
+          {/* PAGE 4: REFERENCES & SCHOLARLY DIRECTORY (مآخذ و مراجع)    */}
           {/* ======================================================== */}
           {activeTab === 'references' && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
+              {/* Header */}
+              <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                  <span>مآخذ، مراجع اور مصدقہ ڈیٹا روابط (Data Sources & Scholarly Citations)</span>
+                  <Library className="w-5 h-5 text-emerald-600" />
+                  <span>مآخذ، مراجع اور مصدقہ کتب خانہ (Scholarly Citations)</span>
                 </h1>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                  اس ایپلیکیشن میں شامل ہر قرآنی لفظ، خطاطی فونٹ، صرفی تجزیہ، ترجمہ، تفسیر اور آڈیو تلاوت کے مستند مآخذ اور ان کے براہِ راست روابط ذیل میں درج ہیں:
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  پلیٹ فارم میں شامل ہر قرآنی لفظ، خطاطی، ترجمہ اور تفسیری ذخیرے کے اصل مآخذ اور براہِ راست روابط:
                 </p>
               </div>
 
-              {referenceCategories.map((group, gIdx) => (
-                <div key={gIdx} className="space-y-3">
-                  <h2 className="font-bold text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-2 pb-1.5 border-b border-emerald-950/10 dark:border-white/10">
-                    {group.icon}
-                    <span>{group.category}</span>
-                  </h2>
+              {/* Compact Academic Directory (Replacing 20 bulky cards) */}
+              <div className="space-y-5">
+                {referenceCategories.map((group, gIdx) => (
+                  <div key={gIdx} className="space-y-2.5">
+                    <h2 className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-2 pb-1 border-b border-slate-200/80 dark:border-slate-800">
+                      {group.icon}
+                      <span>{group.category}</span>
+                    </h2>
 
-                  <div className="grid grid-cols-1 gap-3">
-                    {group.items.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 hover:border-emerald-500/40 transition-colors space-y-1.5"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-bold text-sm text-slate-900 dark:text-white">
-                            {item.title}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            {item.secondaryUrl && (
-                              <a
-                                href={item.secondaryUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-600 text-[11px] font-semibold transition-colors"
-                              >
-                                <span>{item.secondaryLabel}</span>
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
-                            )}
-                            <a
-                              href={item.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 text-[11px] font-bold transition-colors"
-                            >
-                              <span>ماخذ لنک</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
+                    <div className="space-y-2">
+                      {group.items.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/60 dark:border-slate-800/60 hover:border-emerald-500/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs"
+                        >
+                          <div className="space-y-1 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-slate-900 dark:text-white">
+                                {item.title}
+                              </span>
+                              <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-sans">
+                                {item.org}
+                              </span>
+                              {item.badge && (
+                                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100/70 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 font-app">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                              {item.desc}
+                            </p>
                           </div>
-                        </div>
 
-                        <div className="text-xs font-medium text-slate-500 dark:text-slate-400 font-sans">
-                          {item.org}
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 text-[11px] font-bold transition-colors shrink-0"
+                          >
+                            <span>ماخذ لنک</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
                         </div>
-
-                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed pt-0.5">
-                          {item.desc}
-                        </p>
-
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-1">
-                          <span>License / Standard: {item.license}</span>
-                          <span dir="ltr" className="truncate max-w-[240px]">{item.url}</span>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
 
           {/* ======================================================== */}
-          {/* PAGE 4: TECHNICAL DOCUMENTATION & ARCHITECTURE (دستاویزات) */}
+          {/* PAGE 5: TECHNICAL DOCUMENTATION (تکنیکی دستاویزات)          */}
           {/* ======================================================== */}
           {activeTab === 'docs' && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
+              {/* Header */}
+              <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
                 <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
-                  System Architecture • Data Pipelines • Desktop & Web Engine
+                  System Architecture • Local-First SQLite • Data Pipelines
                 </span>
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white mt-2 flex items-center gap-2">
                   <Code2 className="w-5 h-5 text-emerald-600" />
-                  <span>مکمل تکنیکی دستاویزات، ڈیٹا بیس ساخت اور توسیعی رہنما (Architecture & Expansion Guide)</span>
+                  <span>تکنیکی آرکیٹیکچر، ڈیٹا بیس ساخت اور توسیعی رہنما</span>
                 </h1>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                  یہ صفحہ ’’الوحيين (Al-Wahyain)‘‘ کے اندرونی انجن، SQLite FTS5 ڈیٹا بیس، خطاطی گلفس (QCF V2/V4)، اسکرپٹس اور نئی تفاسیر و تراجم شامل کرنے کے مکمل طریقۂ کار کی وضاحت کرتا ہے۔ (مزید تفصیل کے لیے ریپوزٹری میں <code className="font-app">README.md</code> اور <code className="font-app">docs/ARCHITECTURE_AND_GUIDE.md</code> ملاحظہ کریں۔)
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  ایپلیکیشن کے اندرونی انجن، دوہرے ڈیٹا بیس ماڈل اور نئی تفاسیر و تراجم شامل کرنے کا رہنما:
                 </p>
               </div>
 
-              {/* 1. Core Architecture & Dual-DB Engine */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+              {/* 1. Dual-Database Model */}
+              <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-2.5 text-xs">
                 <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
                   <Cpu className="w-4 h-4" />
-                  <span>۱. سسٹم آرکیٹیکچر اور دوہرا ڈیٹا بیس ماڈل (Dual-Database Architecture)</span>
+                  <span>۱. دوہرا ڈیٹا بیس ماڈل (Dual-Database Architecture)</span>
                 </h2>
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  ایپلیکیشن مکمل طور پر مقامی (Local-First) اصول پر کام کرتی ہے اور ویب براؤزر کے ساتھ ساتھ <strong>Electron Desktop App</strong> (Windows, macOS, Linux) دونوں میں یکساں چلتی ہے:
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70 space-y-1">
-                    <div className="font-bold text-slate-900 dark:text-white font-app">1. Read-Only Corpus DB (data/quran_study.db — 447 MB)</div>
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                      اس میں ۱۱۴ سورتیں، ۶,۲۳۶ آیات، ۷۷,۴۲۹ الفاظ کا صرفی و نحوی تجزیہ، ۹ تراجم اور ۶ مکمل اردو تفاسیر (۳۷,۴۱۶ تفسیری ریکارڈز بمعہ FTS5 انڈیکس) محفوظ ہیں۔ ڈیسک ٹاپ ایپ میں اسے <code className="font-app">extraResources</code> کے طور پر <code className="font-app">app.asar</code> سے باہر رکھا جاتا ہے تاکہ SQLite میموری میپنگ (<code className="font-app">mmap_size = 256MB</code>) کے ذریعے ملی سیکنڈز میں ڈیٹا فراہم کرے۔
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 space-y-1">
+                    <div className="font-bold text-slate-900 dark:text-white font-app">data/quran_study.db (447 MB — Read-Only Corpus)</div>
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                      ۱۱۴ سورتیں، ۶,۲۳۶ آیات، ۷۷,۴۲۹ الفاظ، ۹ تراجم اور ۶ مکمل تفاسیر (۳۷,۴۱۶ ریکارڈز) بمعہ SQLite FTS5 انڈیکس۔ میموری میپنگ کے ذریعے ملی سیکنڈز میں کوئریز مکمل کرتا ہے۔
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70 space-y-1">
-                    <div className="font-bold text-slate-900 dark:text-white font-app">2. Writable User Data DB (user_study.db via ATTACH DATABASE)</div>
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                      قاری کے ذاتی بک مارکس (<code className="font-app">bookmarks</code>)، تحقیقی نوٹس (<code className="font-app">notes</code>) اور تفسیری ہائی لائٹس (<code className="font-app">highlights</code>) ایک الگ فائل <code className="font-app">user_study.db</code> میں محفوظ ہوتے ہیں جسے سرور اسٹارٹ ہوتے ہی <code className="font-app">ATTACH DATABASE ... AS user_db</code> کے ذریعے جوڑ لیا جاتا ہے۔ اس سے ایپ اپڈیٹ ہونے پر صارف کا ذاتی ڈیٹا کبھی ضائع نہیں ہوتا۔
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 space-y-1">
+                    <div className="font-bold text-slate-900 dark:text-white font-app">data/user_study.db (Writable User State)</div>
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                      بک مارکس، ذاتی نوٹس اور تفسیری ہائی لائٹس الگ فائل میں محفوظ ہوتے ہیں جسے سرور <code className="font-app">ATTACH DATABASE</code> کے ذریعے جوڑتا ہے۔ ایپ اپڈیٹ سے صارف کا ڈیٹا محفوظ رہتا ہے۔
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* 2. QCF V2 & V4 Typography Engine */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
-                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
-                  <Type className="w-4 h-4" />
-                  <span>۲. مصحف مدینہ گلفس اور متحرک فونٹ لوڈر (QCF V2 & V4 COLRv1 Loader)</span>
-                </h2>
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  عام یونی کوڈ عربی کے بجائے ہر قرآنی لفظ اپنے صفحہ نمبر (<code className="font-app">1..604</code>) کے مخصوص گلف کوڈ (<code className="font-app">code_v2</code>) اور آیت کے اختتامی نشان (<code className="font-app">end_code_v2</code>) سے رینڈر ہوتا ہے۔ <code className="font-app">src/utils/qcfFontLoader.ts</code> ہر صفحے کے لیے <code className="font-app">/fonts/qcf-v2/p&#123;page&#125;.woff2</code> (معیاری مصحف) یا <code className="font-app">/fonts/qcf-v4-tajweed/p&#123;page&#125;.woff2</code> (رنگین تجوید COLRv1) کو آن ڈیمانڈ براؤزر کے <code className="font-app">FontFace</code> API میں لوڈ کرتا ہے۔
-                </p>
-              </div>
-
-              {/* 3. Scripts & Data Fetching Pipelines */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+              {/* 2. Pipeline Scripts Reference */}
+              <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-2 text-xs">
                 <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
                   <Terminal className="w-4 h-4" />
-                  <span>۳. ڈیٹا حصول، نارملائزیشن اور سیڈنگ اسکرپٹس (Data Pipelines in scripts/)</span>
+                  <span>۲. ڈیٹا حصول و پراسیسنگ اسکرپٹس (scripts/)</span>
                 </h2>
-                <div className="space-y-2 text-xs" dir="ltr">
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
-                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_all_114_surahs.mjs & seed_word_lines.mjs & seed_ayah_end_glyphs.mjs</div>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1">
-                      Fetches all 114 Surahs, 6,236 Ayahs, and 77,429 word tokens from Quran.com v4 API & Quranic Arabic Corpus, populating exact Madani page numbers (<code className="font-app">page_madani</code>), 15-line Mushaf line numbers (<code className="font-app">line_number</code>), QCF V2 glyph codes (<code className="font-app">code_v2</code>), and verse-end markers (<code className="font-app">end_code_v2</code>).
-                    </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]" dir="ltr">
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
+                    <strong className="text-emerald-600 font-app">scripts/seed_all_114_surahs.mjs</strong>
+                    <div className="text-slate-500 dark:text-slate-400">114 Surahs, 6,236 Ayahs, 77,429 words, lines & QCF codes.</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
-                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_multi_translations.mjs & seed_audio_segments_114.mjs</div>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1">
-                      Seeds 9 complete translations (6 Urdu + 3 English), 4 Word-by-Word gloss sets (<code className="font-app">ur</code>, <code className="font-app">ur2</code>, <code className="font-app">en</code>, <code className="font-app">en2</code>), and millisecond-level word-by-word audio timestamp segments for Mishary Rashid Alafasy.
-                    </p>
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
+                    <strong className="text-emerald-600 font-app">scripts/setup_fts5.mjs</strong>
+                    <div className="text-slate-500 dark:text-slate-400">Builds FTS5 virtual tables with unicode61 diacritic-insensitive search.</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
-                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_bayan_ibnkathir_all.mjs, seed_eql_tafasir.mjs & seed_saadi_tafsir.mjs</div>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1">
-                      Ingests and normalizes all 6 Urdu Tafaseer (<em>Bayan ul Quran</em>, <em>Tafheem ul Quran</em>, <em>Ma&apos;ariful Quran</em>, <em>Tafsir Ibn Kathir</em>, <em>Tafseer e Sa&apos;di</em>, and <em>Taisir ul Quran</em>) into clean per-ayah HTML records (6,236 rows each = 37,416 total rows), stripping embedded duplicate headers/translation wrappers in grouped commentaries like <em>Tafseer e Sa&apos;di</em>.
-                    </p>
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
+                    <strong className="text-emerald-600 font-app">scripts/sanitize_tafasir_watermarks.mjs</strong>
+                    <div className="text-slate-500 dark:text-slate-400">Purges 3rd-party scraped artifacts and breadcrumbs across all tafasir.</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
-                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/setup_fts5.mjs & download_qcf_v2_fonts.mjs</div>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1">
-                      Builds the SQLite FTS5 virtual tables (<code className="font-app">ayahs_fts</code>, <code className="font-app">translations_fts</code>, <code className="font-app">tafasir_fts</code>) with <code className="font-app">unicode61 remove_diacritics 2</code> for instant Arabic/Urdu search, and downloads all 604 QCF V2 & V4 WOFF2 page fonts into <code className="font-app">public/fonts/</code>.
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
-                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_lexical_search.mjs & server/lexicalSearch.mjs (v1.1)</div>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1">
-                      Seeds normalized <code className="font-app">text_clean</code> columns, generates the 14,771-token <code className="font-app">lexical_dictionary</code> table, and powers the Precision Word Search Engine with Tanzil-style operators (<code className="font-app">root:</code>, <code className="font-app">lem:</code>, wildcards <code className="font-app">?</code>/<code className="font-app">*</code>, <code className="font-app">NEAR/n</code>, <code className="font-app">OR |</code>, <code className="font-app">-NOT</code>, strict Tashkeel match, and 114-Surah dispersion heatmap).
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/70">
-                    <div className="font-bold text-emerald-600 dark:text-emerald-400 font-app">scripts/seed_ahmedyar_irab.mjs & server/corpusTreebank.mjs (v1.2)</div>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1">
-                      Ingests all 340 complete passages of Professor Hafiz Ahmed Yar&#39;s monumental Urdu grammatical treatise (<code className="font-app">urdu_irab_ahmedyar</code>: <em>لغات، اعراب و رسمِ قرآن</em>) and powers the interactive SVG Dependency Treebank (<code className="font-app">corpus.quran.com</code> style) with sub-word morphemes and 10 Classical Sarf Verb Forms (الأوزان العشرة).
-                    </p>
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
+                    <strong className="text-emerald-600 font-app">scripts/seed_lexical_search.mjs</strong>
+                    <div className="text-slate-500 dark:text-slate-400">Generates 14,771-token lexical dictionary & Tanzania-style search syntax.</div>
                   </div>
                 </div>
               </div>
 
-              {/* 4. How to Expand the Setup */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+              {/* 3. System Expansion */}
+              <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-2 text-xs">
                 <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
                   <FolderGit2 className="w-4 h-4" />
-                  <span>۴. سسٹم میں توسیع کا طریقہ (How to Add New Tafaseer, Translations & Reciters)</span>
+                  <span>۳. سسٹم میں نئی تفاسیر و تراجم کی شمولیت (System Expansion)</span>
                 </h2>
-                <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed list-disc pr-5">
+                <ul className="space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed list-disc pr-5">
                   <li>
-                    <strong>نئی تفسیر شامل کرنا (Adding a 7th+ Tafsir):</strong> ٹیبل <code className="font-app">tafasir</code> میں ہر آیت (<code className="font-app">ayah_id = 1..6236</code>) کے لیے نئی <code className="font-app">tafsir_slug</code>، <code className="font-app">tafsir_name</code>، <code className="font-app">author_name</code> اور <code className="font-app">content_html</code> درج کریں، پھر <code className="font-app">node scripts/setup_fts5.mjs</code> چلائیں اور <code className="font-app">src/App.tsx</code> میں <code className="font-app">DEFAULT_TAFSIR_ORDER</code> میں نیا سلگ شامل کر دیں۔
+                    <strong>ساتویں تفسیر شامل کرنا:</strong> ٹیبل <code className="font-app">tafasir</code> میں آیات کے لیے نیا <code className="font-app">tafsir_slug</code>، <code className="font-app">author_name</code> اور <code className="font-app">content_html</code> درج کریں، پھر <code className="font-app">node scripts/setup_fts5.mjs</code> چلائیں۔
                   </li>
                   <li>
-                    <strong>نیا ترجمہ شامل کرنا (Adding a New Translation):</strong> ٹیبل <code className="font-app">translations</code> میں ۶,۲۳۶ آیات کے لیے نیا <code className="font-app">author_id</code> اور <code className="font-app">text</code> داخل کریں، <code className="font-app">node scripts/setup_fts5.mjs</code> چلائیں، اور <code className="font-app">SubHeaderToolbar.tsx</code> و <code className="font-app">SidebarDrawer.tsx</code> کے ڈراپ ڈاؤن میں آپشن کا اضافہ کریں۔
-                  </li>
-                  <li>
-                    <strong>ڈیسک ٹاپ ایپ بلڈ کرنا (Building Desktop Installers):</strong> کمانڈ <code className="font-app">npm run desktop:dev</code> سے ڈیسک ٹاپ موڈ میں ٹیسٹ کریں اور <code className="font-app">npm run desktop:build</code> کے ذریعے Windows (<code className="font-app">.exe</code>)، macOS (<code className="font-app">.dmg</code>) یا Linux (<code className="font-app">.AppImage</code> / <code className="font-app">.deb</code>) انسٹالر تیار کریں۔
+                    <strong>نیا ترجمہ شامل کرنا:</strong> ٹیبل <code className="font-app">translations</code> میں نیا <code className="font-app">author_id</code> اور <code className="font-app">text</code> داخل کر کے انڈیکس اپڈیٹ کریں۔
                   </li>
                 </ul>
               </div>
+
             </div>
           )}
 
