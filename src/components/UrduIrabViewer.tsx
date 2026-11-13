@@ -170,7 +170,7 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
       {/* ======================================================== */}
       {parsedData?.matnVerse && (
         <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 text-center select-none shadow-xs">
-          <p className="font-qcf text-xl sm:text-2xl text-emerald-900 dark:text-emerald-200 leading-[2.4] font-bold">
+          <p className="font-ibm text-xl sm:text-2xl text-emerald-900 dark:text-emerald-200 leading-[2.4] font-bold">
             {parsedData.matnVerse}
           </p>
         </div>
@@ -199,7 +199,7 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
                   }`}
                 >
                   <span className="font-mono text-[10px] opacity-60">#{idx + 1}</span>
-                  <span className="font-qcf text-sm font-bold">{w.word}</span>
+                  <span className="font-ibm text-sm font-bold">{w.word}</span>
                 </button>
               );
             })}
@@ -230,7 +230,7 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
                     <span className="w-6 h-6 rounded-lg bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-mono text-[11px] font-bold">
                       {idx + 1}
                     </span>
-                    <span className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-950 dark:text-emerald-200 font-qcf text-lg sm:text-xl font-bold border border-emerald-300/60 dark:border-emerald-800/80 shadow-xs">
+                    <span className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-950 dark:text-emerald-200 font-ibm text-lg sm:text-xl font-bold border border-emerald-300/60 dark:border-emerald-800/80 shadow-xs">
                       [ {w.word} ]
                     </span>
                     {w.sectionType && (

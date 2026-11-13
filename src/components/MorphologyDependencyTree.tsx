@@ -210,7 +210,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                   }`}
                 >
                   {/* Arabic Token */}
-                  <div className="font-qcf text-base sm:text-lg mb-1 leading-tight font-bold">
+                  <div className="font-ibm text-base sm:text-lg mb-1 leading-tight font-bold text-slate-900 dark:text-slate-100">
                     {n.text_uthmani}
                   </div>
 
@@ -243,7 +243,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
         <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 space-y-3 animate-fadeIn">
           <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-2">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-qcf font-bold text-slate-900 dark:text-white">
+              <span className="text-xl font-ibm font-bold text-slate-900 dark:text-white">
                 {selectedNode.text_uthmani}
               </span>
               <span className={`text-[10px] px-2.5 py-0.5 rounded-lg font-bold ${getCategoryBadge(selectedNode.category)}`}>
@@ -269,7 +269,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                   key={sIdx}
                   className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs flex items-center gap-2"
                 >
-                  <span className="font-qcf text-base text-emerald-600 dark:text-emerald-400 font-bold">
+                  <span className="font-ibm text-base text-emerald-600 dark:text-emerald-400 font-bold">
                     {seg.text}
                   </span>
                   <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
@@ -337,14 +337,14 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-ibm">
                       {selectedRoot.paradigms.map((p: SarfParadigmItem) => (
                         <tr key={p.form} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
-                          <td className="p-2.5 font-bold text-emerald-600">
-                            {p.wazan} <span className="text-[10px] text-slate-400">({p.form})</span>
+                          <td className="p-2.5 font-bold text-emerald-600 font-ibm">
+                            {p.wazan} <span className="text-[10px] text-slate-400 font-mono">({p.form})</span>
                           </td>
-                          <td className="p-2.5 font-qcf text-sm">{p.madi}</td>
-                          <td className="p-2.5 font-qcf text-sm">{p.mudari}</td>
-                          <td className="p-2.5 text-slate-600 dark:text-slate-300">{p.masdar}</td>
-                          <td className="p-2.5 font-qcf text-sm">{p.ism_fail}</td>
-                          <td className="p-2.5 text-[11px] text-slate-500">{p.meaning}</td>
+                          <td className="p-2.5 font-ibm font-bold text-sm text-slate-800 dark:text-slate-100">{p.madi}</td>
+                          <td className="p-2.5 font-ibm font-bold text-sm text-slate-800 dark:text-slate-100">{p.mudari}</td>
+                          <td className="p-2.5 text-slate-600 dark:text-slate-300 font-ibm font-semibold">{p.masdar}</td>
+                          <td className="p-2.5 font-ibm font-bold text-sm text-slate-800 dark:text-slate-100">{p.ism_fail}</td>
+                          <td className="p-2.5 text-[11px] text-slate-500 font-ibm">{p.meaning}</td>
                         </tr>
                       ))}
                     </tbody>

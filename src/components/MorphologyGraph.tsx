@@ -2,6 +2,7 @@ import React from 'react';
 import { Word } from '../types/quran';
 import { GitBranch, ArrowDown } from 'lucide-react';
 import { getQcfFontFamily } from '../utils/qcfFontLoader';
+import { decodeCorpusLemma } from '../utils/lemmaHelper';
 
 interface MorphologyGraphProps {
   word: Word;
@@ -69,8 +70,7 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
   const tense = grammarParts.find(p => p.includes('ماض') || p.includes('مضارع') || p.includes('أمر'));
   const irab = grammarParts.find(p => p.includes('مرفوع') || p.includes('منصوب') || p.includes('مجرور') || p.includes('مجزوم'));
 
-  let cleanLemma = word.lemma || '';
-  cleanLemma = cleanLemma.replace(/[~oaieu123]/g, '').trim();
+  const cleanLemma = decodeCorpusLemma(word.lemma);
 
   segments.push({
     type: 'stem',

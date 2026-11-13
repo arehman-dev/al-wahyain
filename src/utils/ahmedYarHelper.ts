@@ -90,13 +90,13 @@ export function enhanceAhmedYarGrammar(textHtml: string): string {
   // Format Arabic markers nicely
   res = res.replace(
     /<span class="arabic-marker">([^<]+)<\/span>/gi,
-    '<span class="font-arabic text-base text-emerald-900 dark:text-emerald-300 font-bold px-1">$1</span>'
+    '<span class="font-ibm text-base text-emerald-900 dark:text-emerald-300 font-bold px-1">$1</span>'
   );
 
   // Format Quran markers
   res = res.replace(
     /<span class="quran-marker">([^<]+)<\/span>/gi,
-    '<span class="font-qcf text-lg text-emerald-800 dark:text-emerald-300 font-bold px-1">$1</span>'
+    '<span class="font-ibm text-[1.1em] text-emerald-800 dark:text-emerald-300 font-bold px-1">$1</span>'
   );
 
   // Format English markers

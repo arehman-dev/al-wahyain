@@ -424,12 +424,12 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Arrow navigation
-      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'j') {
+      // Arrow navigation (Standard LTR: Right = Forward/Next, Left = Backward/Prev)
+      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'k' || e.key.toLowerCase() === 'l') {
         handleNextAyah();
         return;
       }
-      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'k') {
+      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'j' || e.key.toLowerCase() === 'h') {
         handlePrevAyah();
         return;
       }

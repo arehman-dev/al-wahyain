@@ -7,6 +7,7 @@ import { MorphologyDependencyTree } from './MorphologyDependencyTree';
 import { UrduIrabViewer } from './UrduIrabViewer';
 import { fetchAyahTreebank } from '../services/api';
 import { loadQcfPageFont, getQcfFontFamily } from '../utils/qcfFontLoader';
+import { decodeCorpusLemma } from '../utils/lemmaHelper';
 
 interface MorphologyViewProps {
   currentAyah: Ayah;
@@ -283,7 +284,10 @@ export const MorphologyView: React.FC<MorphologyViewProps> = ({
 
               {selectedWord.lemma && (
                 <div className="text-xs text-slate-600 dark:text-slate-400 pt-1">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">الكلمة المعجمية:</span> {selectedWord.lemma}
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">الكلمة المعجمية:</span>{' '}
+                  <span className="font-ibm font-bold text-sm text-slate-900 dark:text-white px-1">
+                    {decodeCorpusLemma(selectedWord.lemma)}
+                  </span>
                 </div>
               )}
             </div>

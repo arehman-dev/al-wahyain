@@ -235,19 +235,21 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         {/* ======================================================== */}
         {/* CENTER (Screen-Centered): Surah (with Prev/Next Surah) + Ayah (with Prev/Next Ayah) + Fast Jump */}
         {/* ======================================================== */}
-        <div dir="rtl" className="flex items-center justify-center gap-2 justify-self-center">
+        <div className="flex items-center justify-center gap-2 justify-self-center">
           
           {/* 1. Surah Selector with Prev/Next Surah Icons */}
-          <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+          <div dir="ltr" className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
             <button
               onClick={onPrevSurah}
               disabled={currentSurahId <= 1}
+              title="پچھلی سورت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
-              <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
+              <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
             </button>
 
             <select
+              dir="rtl"
               value={currentSurahId}
               onChange={(e) => onSelectSurah(Number(e.target.value))}
               aria-label="سورت منتخب کریں"
@@ -263,20 +265,22 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onNextSurah}
               disabled={currentSurahId >= 114}
+              title="اگلی سورت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
+              <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
             </button>
           </div>
 
           {/* 2. Ayah Selector with Prev/Next Ayah Icons */}
-          <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+          <div dir="ltr" className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
             <button
               onClick={onPrevAyah}
               disabled={currentSurahId === 1 && currentAyahNumber <= (isQuranOrSarf ? 1 : 0)}
+              title="پچھلی آیت (Left Arrow)"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
-              <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
+              <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
             </button>
 
             <select
@@ -301,9 +305,10 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onNextAyah}
               disabled={currentSurahId === 114 && currentAyahNumber >= versesCount}
+              title="اگلی آیت (Right Arrow)"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />
+              <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
             </button>
           </div>
 
@@ -352,17 +357,18 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
         {/* ======================================================== */}
         <div dir="rtl" className="flex items-center gap-1.5 justify-self-end flex-nowrap">
           
-          {/* 1. Mushaf Mode: Single Continuous Page Stepper (2-page mode removed per 2.1) */}
+          {/* 1. Mushaf Mode: Single Continuous Page Stepper */}
           {(activeMode === 'quran' || activeMode === 'mushaf') && (
-            <div className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
+            <div dir="ltr" className="flex items-center bg-slate-200/65 dark:bg-slate-800/75 rounded-xl p-0.5 border border-slate-300/60 dark:border-slate-700/60">
               <button
                 onClick={onPrevPage}
                 disabled={activePage <= 1}
+                title="پچھلا صفحہ"
                 className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-30 transition-colors cursor-pointer"
               >
-                <ChevronRight className="w-4 h-4" strokeWidth={1.85} />
+                <ChevronLeft className="w-4 h-4" strokeWidth={1.85} />
               </button>
-              <div className="flex items-center gap-1 px-2 text-xs">
+              <div className="flex items-center gap-1 px-2 text-xs" dir="rtl">
                 <span className="text-slate-500 dark:text-slate-400 text-[11px] font-semibold">صفحہ</span>
                 <input
                   type="number"
@@ -382,9 +388,10 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               <button
                 onClick={onNextPage}
                 disabled={activePage >= 604}
+                title="اگلا صفحہ"
                 className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-30 transition-colors cursor-pointer"
               >
-                <ChevronLeft className="w-4 h-4" strokeWidth={1.85} />
+                <ChevronRight className="w-4 h-4" strokeWidth={1.85} />
               </button>
             </div>
           )}

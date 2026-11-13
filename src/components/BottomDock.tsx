@@ -196,12 +196,13 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         {/* ======================================================== */}
         {/* CENTER (Screen-Centered): Audio Playback Controls        */}
         {/* ======================================================== */}
-        <div dir="rtl" className="flex items-center justify-center gap-1.5 justify-self-center">
+        <div dir="ltr" className="flex items-center justify-center gap-1.5 justify-self-center">
           <button
             onClick={onPrevAyah}
+            title="پچھلی آیت (Left Arrow)"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
-            <SkipForward className="w-4 h-4" strokeWidth={1.85} />
+            <SkipBack className="w-4 h-4" strokeWidth={1.85} />
           </button>
 
           <button
@@ -223,9 +224,10 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={onNextAyah}
+            title="اگلی آیت (Right Arrow)"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
-            <SkipBack className="w-4 h-4" strokeWidth={1.85} />
+            <SkipForward className="w-4 h-4" strokeWidth={1.85} />
           </button>
 
           <button

@@ -168,16 +168,21 @@ html.theme-oled {
   cursor: pointer;
 }
 
-/* Strictly QCF V2 Font Everywhere for Quranic Text & Hand Cursor on Hover */
+/* Strictly QCF V2 Font Everywhere for Quranic Text */
 .font-qcf,
 .font-uthmani,
-.font-indopak,
-.font-arabic {
+.font-indopak {
   font-family: 'KFGQPC HAFS Uthmanic Script', 'QCF V2', 'QPC V2', 'IBM Plex Sans Arabic', serif;
   line-height: 2.35;
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv01", "cv02", "calt", "liga";
-  cursor: pointer;
+}
+
+/* Classical & Scholarly Arabic Typography (Full Unicode Arabic, Urdu & Persian coverage) */
+.font-arabic {
+  font-family: 'IBM Plex Sans Arabic', 'KFGQPC HAFS Uthmanic Script', serif;
+  line-height: 2.2;
+  text-rendering: optimizeLegibility;
 }
 
 /* App UI typography */
