@@ -82,6 +82,11 @@ export function enhanceTafsirHtml(
 
   let processed = html;
 
+  // Defensive runtime sanitization: Strip scraped watermarks and breadcrumbs if present
+  processed = processed
+    .replace(/\s*eQuran\s*Library\s*·\s*Quran\s*(?:&amp;|&)\s*Hadith\s*Library\s*/gi, '')
+    .replace(/Tafseer\s*·\s*(?:Tafheem-ul-Quran(?:\s*(?:سورة|سورۃ)\s*[^\d\n\r<]+\s*\d*|\s*\d+)?|Maarif-ul-Quran|Taiseer-ul-Quran)\s*/gi, '</p><p class="mb-4 leading-relaxed">');
+
   // 1. Match bracketed numeric references like [15-الحجر:49] or [40-غافر:16] or [114-الناس:1-2]
   // Pattern: \[(\d+)[-–]([^:\]]+):(\d+)(?:-\d+)?\]
   processed = processed.replace(

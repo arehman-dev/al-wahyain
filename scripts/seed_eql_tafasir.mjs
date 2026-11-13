@@ -44,11 +44,15 @@ const CONFIGS = [
 
 function cleanEqlHtml(rawHtml) {
   if (!rawHtml) return '';
+  const watermarkRegex = /\s*eQuran\s*Library\s*·\s*Quran\s*(?:&amp;|&)\s*Hadith\s*Library\s*/gi;
+  const breadcrumbRegex = /Tafseer\s*·\s*(?:Tafheem-ul-Quran(?:\s*(?:سورة|سورۃ)\s*[^\d\n\r<]+\s*\d*|\s*\d+)?|Maarif-ul-Quran|Taiseer-ul-Quran)\s*/gi;
+
   const pRegex = /<p[^>]*>([\s\S]*?)<\/p>/gi;
   const paras = [];
   let m;
   while ((m = pRegex.exec(rawHtml)) !== null) {
-    const text = m[1].replace(/<[^>]+>/g, '').trim();
+    let text = m[1].replace(/<[^>]+>/g, '').trim();
+    text = text.replace(watermarkRegex, '').replace(breadcrumbRegex, '').trim();
     if (text.length > 20 && !text.startsWith('eQuran') && /[\u0600-\u06FF]/.test(text)) {
       paras.push(text);
     }
