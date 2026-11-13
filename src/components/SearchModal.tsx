@@ -502,7 +502,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       </span>
                     </div>
                     <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
-                      {item.ayah_from === item.ayah_to ? `${item.surah_id}:${item.ayah_from}` : `${item.surah_id}:${item.ayah_from}-${item.ayah_to}`}
+                      {item.ayah_from === 0 
+                        ? `${item.surah_id}:0-intro` 
+                        : item.ayah_from === item.ayah_to 
+                        ? `${item.surah_id}:${item.ayah_from}` 
+                        : `${item.surah_id}:${item.ayah_from}-${item.ayah_to}`}
                     </span>
                   </div>
 

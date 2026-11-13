@@ -460,11 +460,11 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    // 5. GET /api/tafasir/:surah/:ayah
-    const tafsirMatch = pathname.match(/^\/api\/tafasir\/(\d+)\/(\d+)$/);
+    // 5. GET /api/tafasir/:surah/:ayah (supports e.g. /api/tafasir/2/0-intro or /api/tafasir/2/0)
+    const tafsirMatch = pathname.match(/^\/api\/tafasir\/(\d+)\/(0-intro|\d+)$/i);
     if (req.method === 'GET' && tafsirMatch) {
       const surahId = parseInt(tafsirMatch[1], 10);
-      const ayahNumber = parseInt(tafsirMatch[2], 10);
+      const ayahNumber = tafsirMatch[2].toLowerCase() === '0-intro' ? 0 : parseInt(tafsirMatch[2], 10);
 
       const rows = db.prepare(`
         SELECT * FROM tafasir 

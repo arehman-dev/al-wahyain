@@ -113,8 +113,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
     const raw = fastJumpText.trim();
     if (!raw) return;
 
-    // Direct intro jump (e.g. "0", "intro", "تعارف", "مقدمہ") - only allowed in translation and tafsir modes
-    if (!isQuranOrSarf && (raw === '0' || raw.toLowerCase() === 'intro' || raw === 'تعارف' || raw === 'مقدمہ')) {
+    // Direct intro jump (e.g. "0-intro", "0", "intro", "تعارف", "مقدمہ") - only allowed in translation and tafsir modes
+    if (!isQuranOrSarf && (raw.toLowerCase() === '0-intro' || raw === '0' || raw.toLowerCase() === 'intro' || raw === 'تعارف' || raw === 'مقدمہ')) {
       onSelectAyah(0);
       setFastJumpText('');
       setFastJumpError(false);
@@ -122,6 +122,19 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
     }
 
     const minAyah = isQuranOrSarf ? 1 : 0;
+
+    // Check for e.g. 2:0-intro or 2:0
+    const matchIntro = raw.match(/^(\d{1,3})[:\-/.\s](?:0-intro|0|intro|تعارف|مقدمہ)$/i);
+    if (matchIntro && !isQuranOrSarf) {
+      const sId = parseInt(matchIntro[1], 10);
+      if (sId >= 1 && sId <= 114) {
+        onSelectSurah(sId);
+        setTimeout(() => onSelectAyah(0), 30);
+        setFastJumpText('');
+        setFastJumpError(false);
+        return;
+      }
+    }
 
     const matchKey = raw.match(/^(\d{1,3})[:\-/.\s](\d{1,3})$/);
     if (matchKey) {
@@ -273,8 +286,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
               className="bg-transparent text-slate-800 dark:text-slate-100 text-xs font-bold px-1.5 py-0.5 focus:outline-none cursor-pointer"
             >
               {!isQuranOrSarf && (
-                <option value={0} className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400">
-                  تعارف
+                <option value={0} className="dark:bg-slate-900 font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                  0-intro
                 </option>
               )}
               {ayahNumbers.map((num) => (

@@ -318,12 +318,12 @@ export const App: React.FC = () => {
 
   // Highlight Handlers
   const handleAddHighlight = async (text: string, color: HighlightColor, tafsirSlug: string = 'general') => {
-    if (!currentAyah) return;
+    if (!currentAyah && currentAyahNumber !== 0) return;
     const newHl: Omit<TafsirHighlight, 'created_at'> = {
       id: `hl_${Date.now()}`,
       surah_id: currentSurahId,
       ayah_number: currentAyahNumber,
-      verse_key: currentAyah.verse_key,
+      verse_key: currentAyahNumber === 0 ? `${currentSurahId}:0-intro` : currentAyah?.verse_key || `${currentSurahId}:${currentAyahNumber}`,
       tafsir_slug: tafsirSlug,
       text: text.trim(),
       color

@@ -141,8 +141,8 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
               <span className="text-slate-500 dark:text-slate-400">
                 — {entry.author_name}
               </span>
-              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">
-                (مقدمہ و تعارفِ سورت)
+              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold font-mono">
+                (0-intro • مقدمہ و تعارفِ سورت)
               </span>
             </div>
 
@@ -199,6 +199,9 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
         {/* Metadata Header Row */}
         <div className="flex items-center justify-between gap-3 mb-3 text-xs font-ibm">
           <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-mono font-bold text-xs">
+              0-intro
+            </span>
             <span className="font-app font-bold text-sm text-emerald-700 dark:text-emerald-400">
               ۞ سورة {currentSurah.name_arabic}
             </span>

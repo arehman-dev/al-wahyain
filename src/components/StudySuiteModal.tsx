@@ -126,7 +126,9 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
       md += `*کوئی ہائی لائٹ محفوظ نہیں۔*\n\n`;
     } else {
       highlights.forEach((h, idx) => {
-        md += `### ${idx + 1}. [${h.tafsir_slug}] سورہ ${h.surah_name_urdu || h.surah_id} (آیت ${h.ayah_number}) [${h.verse_key}]\n`;
+        const verseLabel = h.ayah_number === 0 ? '0-intro' : `آیت ${h.ayah_number}`;
+        const keyLabel = h.ayah_number === 0 ? `${h.surah_id}:0-intro` : h.verse_key;
+        md += `### ${idx + 1}. [${h.tafsir_slug}] سورہ ${h.surah_name_urdu || h.surah_id} (${verseLabel}) [${keyLabel}]\n`;
         md += `> "${h.text}"\n\n`;
         md += `*تاریخ:* ${new Date(h.created_at).toLocaleDateString('ur-PK')}\n\n`;
       });
@@ -322,7 +324,7 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
                           {hl.surah_name_urdu || `سورہ ${hl.surah_id}`}
                         </span>
                         <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
-                          {hl.verse_key}
+                          {hl.ayah_number === 0 ? `${hl.surah_id}:0-intro` : hl.verse_key}
                         </span>
                         <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${style.badge}`}>
                           {style.label}

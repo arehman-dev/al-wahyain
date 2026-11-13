@@ -332,7 +332,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
     actions.push({
       id: `tafsir-${tr.surah_id}-${tr.ayah_from}-${tr.tafsir_slug}`,
       type: 'tafsir',
-      title: `${tr.author_name} — سورة ${tr.surah_name_urdu} [${tr.surah_id}:${tr.ayah_from}]`,
+      title: `${tr.author_name} — سورة ${tr.surah_name_urdu} [${tr.surah_id}:${tr.ayah_from === 0 ? '0-intro' : tr.ayah_from}]`,
       subtitle: tr.snippet,
       icon: <Library className="w-4 h-4 text-indigo-500" />,
       badge: 'تفسیر',

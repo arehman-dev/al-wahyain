@@ -75,7 +75,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
           {currentAyah ? (
             <>آیت <span className="font-app">{currentAyah.ayah_number}</span></>
           ) : (
-            <span className="text-emerald-400">مقدمہ</span>
+            <span className="text-emerald-400 font-mono">0-intro</span>
           )}
         </span>
         <span className="text-slate-400 font-ibm text-[10px]">
@@ -87,7 +87,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
       <button
         onClick={isPlaying ? onPause : onPlay}
         disabled={!currentAyah}
-        title={!currentAyah ? 'مقدمہ کے لیے تلاوت دستیاب نہیں ہے' : undefined}
+        title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : undefined}
         className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all ${
           !currentAyah
             ? 'opacity-40 border-slate-700 text-slate-500 cursor-not-allowed'

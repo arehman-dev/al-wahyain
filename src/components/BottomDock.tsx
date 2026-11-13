@@ -207,7 +207,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <button
             onClick={() => isPlaying ? onPause() : onPlay()}
             disabled={!currentAyah}
-            title={!currentAyah ? 'مقدمہ کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause)' : 'چلائیں (Play)'}
+            title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause)' : 'چلائیں (Play)'}
             className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all ${
               !currentAyah 
                 ? 'border-slate-300/40 dark:border-slate-700/40 text-slate-400 dark:text-slate-600 opacity-40 cursor-not-allowed' 
@@ -275,8 +275,8 @@ export const BottomDock: React.FC<BottomDockProps> = ({
                 ({currentAyah.ayah_number})
               </span>
             ) : (
-              <span className="text-emerald-600 dark:text-emerald-400 font-app text-[11px] font-bold">
-                (مقدمہ و تعارف)
+              <span className="text-emerald-600 dark:text-emerald-400 font-mono text-[11px] font-bold">
+                (0-intro)
               </span>
             )}
           </div>
