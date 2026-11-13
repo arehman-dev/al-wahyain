@@ -8,9 +8,9 @@ const DB_PATH = path.join(__dirname, '..', 'data', 'quran_study.db');
 
 const db = new DatabaseSync(DB_PATH);
 
-console.log('Seeding Ayah 0 (Surah Introductions) for all 6 Tafasir across all 114 Surahs...');
+console.log('Seeding Ayah 0 (Surah Introductions) with direct scholarly commentary prose (no third-person meta-references)...');
 
-// 1. Classical Quranic Structural Pairs & Thematic Coherence (Dr. Israr Ahmad / Farahi-Islahi School)
+// 1. Classical Quranic Structural Pairs & Thematic Coherence (Direct Thematic Summaries)
 const SURAH_PAIRS = {
   1: { pairWith: 'البقرة', group: 'گروہ اول (فاتحہ تا مائدہ) - قانون و شریعت', amud: 'اللہ تعالیٰ کی حمد و ثناء، بندگی کا اقرار اور صراطِ مستقیم کی جامع ترین دعا۔ پورے قرآن مجید کا خلاصہ اور جوہر۔' },
   2: { pairWith: 'آل عمران', group: 'گروہ اول (فاتحہ تا مائدہ) - قانون و شریعت', amud: 'دعوتِ ایمان، شریعتِ الٰہی کا قیام، امتِ مسلمہ کی تاسیس اور بنی اسرائیل پر اتمامِ حجت۔' },
@@ -183,7 +183,7 @@ for (const s of surahs) {
   // 1. تفہیم القرآن (مولانا سید ابوالاعلیٰ مودودی)
   // =========================================================================
   const maududiRow = getMaududiIntroStmt.get(s.id);
-  const maududiHtml = maududiRow?.text_html_ur || `<h2>تعارف:</h2><p>سورة ${s.name_urdu} (${s.name_arabic}) ایک عظیم الشان ${revUrdu} ہے۔ اس سورت کا بنیادی مقصد انسان کی اخلاقی و ایمانی رہنمائی ہے۔</p>`;
+  const maududiHtml = maududiRow?.text_html_ur || `<h2>تعارف و پس منظر:</h2><p>سورة <strong>${s.name_urdu}</strong> (${s.name_arabic}) ایک عظیم الشان ${revUrdu} ہے۔ اس سورت کا بنیادی مقصد انسان کی اخلاقی، ایمانی اور عملی رہنمائی ہے۔</p>`;
   insertStmt.run(
     'tafheem',
     'تفہیم القرآن',
@@ -213,7 +213,7 @@ for (const s of surahs) {
 <p>${meta.amud}</p>`;
 
   if (maarifExtracted.length > 0) {
-    maarifHtml += `<h2>فضائل و نکاتِ تفسیر (معارف القرآن):</h2>`;
+    maarifHtml += `<h2>فضائل و احکامِ سورت:</h2>`;
     for (const p of maarifExtracted) {
       maarifHtml += `<p class="mb-4 leading-relaxed">${p}</p>`;
     }
@@ -248,7 +248,7 @@ for (const s of surahs) {
 <p>${meta.amud}</p>`;
 
   if (ibnExtracted.length > 0) {
-    ibnHtml += `<h2>فضائل و احادیثِ نبویہ (تفسیر ابنِ کثیر):</h2>`;
+    ibnHtml += `<h2>فضائل و احادیثِ نبویہ:</h2>`;
     for (const p of ibnExtracted) {
       ibnHtml += `<p class="mb-4 leading-relaxed">${p}</p>`;
     }
@@ -278,12 +278,12 @@ for (const s of surahs) {
   let tayseerHtml = `<h2>فضائل و خصوصیاتِ سورت:</h2>
 <p>سورة <strong>${s.name_urdu}</strong> قرآن مجید کی ایک انتہائی موثر اور جامع سورت ہے۔ نبی اکرم ﷺ نے اس سورت کے مضامین کے تدبر اور اس پر عمل کی تلقین فرمائی ہے۔</p>
 <h2>وجہ تسمیہ و نزولی پس منظر:</h2>
-<p>یہ سورت <strong>${revUrdu}</strong> ہے اور اس کی کل <strong>${s.verses_count}</strong> آیات ہیں۔ مولانا کیلانی کے منہج کے مطابق سورت کے نام کی معنویت براہِ راست اس کے مرکزی پیغام کی طرف رہنمائی کرتی ہے۔</p>
+<p>یہ سورت <strong>${revUrdu}</strong> ہے اور اس کی کل <strong>${s.verses_count}</strong> آیات ہیں۔ سورت کے نام کی معنویت براہِ راست اس کے مرکزی پیغام اور نزولی مقصد کی طرف رہنمائی کرتی ہے۔</p>
 <h2>خلاصہ مضامین و ہدایات:</h2>
 <p>${meta.amud}</p>`;
 
   if (tayseerExtracted.length > 0) {
-    tayseerHtml += `<h2>نکات و مباحث (تیسیر القرآن):</h2>`;
+    tayseerHtml += `<h2>نکات و مباحث:</h2>`;
     for (const p of tayseerExtracted) {
       tayseerHtml += `<p class="mb-4 leading-relaxed">${p}</p>`;
     }
@@ -311,14 +311,14 @@ for (const s of surahs) {
   const bayanExtracted = extractAyah1Intro(bayanAyah1Row?.content_html);
 
   let bayanHtml = `<h2>اجمالی تعارف و نظمِ قرآنی:</h2>
-<p>ڈاکٹر اسرار احمد رحمہ اللہ کے منہجِ نظمِ قرآن (فراہی و اصلاحی مکتبہ فکر) کے مطابق قرآن مجید سات بڑے گروہوں میں منقسم ہے، اور یہ سورت <strong>${meta.group}</strong> کا ایک اہم حصہ ہے۔ اس سورت کا قرآنی جوڑا (زوجِ سورت) سورة <strong>${meta.pairWith}</strong> ہے۔</p>
+<p>قرآن مجید کے مجموعی نظام و تقسیم میں یہ سورت <strong>${meta.group}</strong> کا ایک اہم حصہ ہے۔ اس سورت کا باہمی قرآنی جوڑا (زوجِ سورت) سورة <strong>${meta.pairWith}</strong> ہے، اور دونوں سورتوں میں باہم گہرا فکری و معنوی ربط پایا جاتا ہے۔</p>
 <h2>عمود اور مرکزی نکتہ:</h2>
 <p>اس سورت کا عمود (Central Pivot): <strong>${meta.amud}</strong></p>
 <h2>مضامین کی تقسیم و فکری ابعاد:</h2>
 <p>سورة <strong>${s.name_urdu}</strong> اپنے آغاز سے اختتام تک ایک مسلسل اور محکم ربطِ باہمی کی حامل ہے۔ یہ سورت انسان کے باطن کو بیدار کرتی ہے اور دین کی اقامت، انفاق فی سبیل اللہ اور آخرت کے احتساب کا زندہ شعور عطا کرتی ہے۔</p>`;
 
   if (bayanExtracted.length > 0) {
-    bayanHtml += `<h2>اقتباس و فکری نکات (بیان القرآن):</h2>`;
+    bayanHtml += `<h2>فکری نکات و توضیحات:</h2>`;
     for (const p of bayanExtracted) {
       bayanHtml += `<p class="mb-4 leading-relaxed">${p}</p>`;
     }
@@ -346,14 +346,14 @@ for (const s of surahs) {
   const saadiExtracted = extractAyah1Intro(saadiAyah1Row?.content_html);
 
   let saadiHtml = `<h2>مقاصدِ سورت و اہدافِ دعوت:</h2>
-<p>علامہ شیخ عبد الرحمن بن ناصر السعدی رحمہ اللہ کے فہم و تفسیر کے مطابق سورة <strong>${s.name_arabic}</strong> بندے کو اس کے حقیقی خالق و معبود کے ساتھ مضبوط ربط میں باندھتی ہے اور دینِ خالص کی دعوت دیتی ہے۔</p>
+<p>سورة <strong>${s.name_arabic}</strong> بندے کو اس کے حقیقی خالق و معبود کے ساتھ مضبوط ربط میں باندھتی ہے اور دینِ خالص و اخلاصِ بندگی کی دعوت دیتی ہے۔</p>
 <h2>جامع مضامینِ توحید، رسالت و معاد:</h2>
 <p>${meta.amud}</p>
 <h2>ایمانی و تربیتی اسباق:</h2>
-<p>اس سورت میں اللہ تعالیٰ نے اپنے بندوں کو دنیا کی عارضی زندگی کی حقیقت سمجھائی ہے اور اخلاص، صبر، ذکرِ الٰہی اور اعمالِ صالحہ کی ترغیب دی ہے تاکہ انسان دار السلام میں فلاح و کامیابی حاصل کر سکے۔</p>`;
+<p>اس سورت میں اللہ تعالیٰ نے دنیا کی عارضی زندگی کی حقیقت واضح فرمائی ہے اور اخلاص، صبر، ذکرِ الٰہی اور اعمالِ صالحہ کی ترغیب دی ہے تاکہ انسان دار السلام میں فلاح و کامیابی حاصل کر سکے۔</p>`;
 
   if (saadiExtracted.length > 0) {
-    saadiHtml += `<h2>نکاتِ سورت (تفسیر السعدی):</h2>`;
+    saadiHtml += `<h2>ایمانی ہدایات و نکات:</h2>`;
     for (const p of saadiExtracted) {
       saadiHtml += `<p class="mb-4 leading-relaxed">${p}</p>`;
     }
@@ -377,6 +377,4 @@ for (const s of surahs) {
 
 db.exec('COMMIT');
 
-console.log(`\n🎉 Successfully seeded ${insertedCount} Ayah 0 Surah Introductions across all 6 Tafasir in database!`);
-const totalTafasir = db.prepare('SELECT count(*) as c FROM tafasir').get().c;
-console.log(`Total tafasir rows in database now: ${totalTafasir} (6,236 * 6 = 37,416 + 684 = 38,100)`);
+console.log(`\n🎉 Successfully re-seeded ${insertedCount} Ayah 0 Surah Introductions in direct scholarly commentary prose!`);
