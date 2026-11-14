@@ -855,14 +855,15 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && pathname === '/api/highlights') {
       const body = await parseBody(req);
       const { id, surah_id, ayah_number, verse_key, tafsir_slug, text, color } = body;
-      if (!id || !surah_id || !ayah_number || !text) {
+      if (!id || !surah_id || ayah_number === undefined || isNaN(Number(ayah_number)) || !text) {
         return jsonResponse(res, { error: 'id, surah_id, ayah_number, and text required' }, 400);
       }
-      const vk = verse_key || `${surah_id}:${ayah_number}`;
+      const num = Number(ayah_number);
+      const vk = verse_key || (num === 0 ? `${surah_id}:0-intro` : `${surah_id}:${num}`);
       db.prepare(`
         INSERT OR REPLACE INTO user_db.highlights (id, surah_id, ayah_number, verse_key, tafsir_slug, text, color, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-      `).run(id, surah_id, ayah_number, vk, tafsir_slug || 'general', text, color || 'yellow');
+      `).run(id, surah_id, num, vk, tafsir_slug || 'general', text, color || 'yellow');
       return jsonResponse(res, { success: true, id });
     }
 

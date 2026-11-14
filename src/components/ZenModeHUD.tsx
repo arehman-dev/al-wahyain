@@ -92,10 +92,10 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
         disabled={!currentAyah}
         title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause / Space)' : 'چلائیں (Play / Space)'}
         aria-label="تلاوت چلائیں یا روکیں"
-        className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all ${
+        className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all duration-150 active:scale-90 ${
           !currentAyah
             ? 'opacity-40 border-slate-700 text-slate-500 cursor-not-allowed'
-            : 'border-emerald-500 text-emerald-400 bg-emerald-500/15 hover:bg-emerald-500/25 cursor-pointer'
+            : 'border-emerald-500 text-emerald-400 bg-emerald-500/15 hover:bg-emerald-500/25 cursor-pointer shadow-xs'
         }`}
       >
         {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
@@ -107,7 +107,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
           onClick={onPrevAyah}
           title={navArrowMode === 'rtl' ? 'پچھلی آیت (دائیں تیر → / K)' : 'پچھلی آیت (بائیں تیر ← / J)'}
           aria-label="پچھلی آیت"
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-150 active:scale-95 cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -115,7 +115,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
           onClick={onNextAyah}
           title={navArrowMode === 'rtl' ? 'اگلی آیت (بائیں تیر ← / J)' : 'اگلی آیت (دائیں تیر → / K)'}
           aria-label="اگلی آیت"
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-150 active:scale-95 cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -126,7 +126,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
         onClick={cycleTheme}
         title="تھیم تبدیل کریں (T)"
         aria-label="تھیم تبدیل کریں"
-        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-150 active:scale-95 cursor-pointer"
       >
         {themeMode === 'light' && <Sun className="w-3.5 h-3.5 text-amber-400" />}
         {themeMode === 'sepia' && <Coffee className="w-3.5 h-3.5 text-amber-600" />}
@@ -140,7 +140,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
           onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
           title="فونٹ چھوٹا کریں"
           aria-label="فونٹ چھوٹا کریں"
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-150 active:scale-95 cursor-pointer"
         >
           <ZoomOut className="w-3.5 h-3.5" />
         </button>
@@ -148,7 +148,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
           onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
           title="فونٹ بڑا کریں"
           aria-label="فونٹ بڑا کریں"
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-150 active:scale-95 cursor-pointer"
         >
           <ZoomIn className="w-3.5 h-3.5" />
         </button>
@@ -159,7 +159,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
         onClick={onExitZenMode}
         title="نارمل موڈ میں واپس جائیں (Esc / Z)"
         aria-label="نارمل موڈ میں واپس جائیں"
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-red-950/80 border border-slate-700 hover:border-red-800 text-slate-300 hover:text-red-200 transition-all font-semibold cursor-pointer"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-red-950/80 border border-slate-700 hover:border-red-800 text-slate-300 hover:text-red-200 transition-all duration-150 active:scale-95 font-semibold cursor-pointer shadow-xs"
       >
         <Minimize2 className="w-3.5 h-3.5" />
         <span className="hidden sm:inline">نارمل موڈ</span>

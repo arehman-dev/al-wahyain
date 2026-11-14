@@ -10,18 +10,18 @@ import { MorphologyView } from './components/MorphologyView';
 import { TafsirView } from './components/TafsirView';
 import { QuickPeekDrawer } from './components/QuickPeekDrawer';
 import { NoteEditorDrawer } from './components/NoteEditorDrawer';
-import { OmnibarModal } from './components/OmnibarModal';
-import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { SurahIntroView } from './components/SurahIntroView';
 import { NavArrowMode, CustomShortcutsMap } from './types/shortcuts';
 
-// Lazy-loaded secondary study modals for optimized initial payload (< 400 kB)
+// Lazy-loaded secondary study modals for optimized initial payload
 const TafsirSettingsModal = lazy(() => import('./components/TafsirSettingsModal').then(m => ({ default: m.TafsirSettingsModal })));
 const RootExplorerModal = lazy(() => import('./components/RootExplorerModal').then(m => ({ default: m.RootExplorerModal })));
 const TajweedLegendModal = lazy(() => import('./components/TajweedLegendModal').then(m => ({ default: m.TajweedLegendModal })));
 const SourcesAttributionModal = lazy(() => import('./components/SourcesAttributionModal').then(m => ({ default: m.SourcesAttributionModal })));
 const StudySuiteModal = lazy(() => import('./components/StudySuiteModal').then(m => ({ default: m.StudySuiteModal })));
 const ExportShareModal = lazy(() => import('./components/ExportShareModal').then(m => ({ default: m.ExportShareModal })));
+const OmnibarModal = lazy(() => import('./components/OmnibarModal').then(m => ({ default: m.OmnibarModal })));
+const KeyboardShortcutsModal = lazy(() => import('./components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 import { 
   getStoredNavArrowMode, 
   setStoredNavArrowMode, 
@@ -1117,6 +1117,40 @@ export const App: React.FC = () => {
             tafasir={tafasir}
           />
         )}
+
+        {/* Global Omnibar Command Palette */}
+        {showSearchModal && (
+          <OmnibarModal
+            isOpen={showSearchModal}
+            onClose={() => setShowSearchModal(false)}
+            surahs={surahs}
+            onSelectSurahAyah={(surahId, ayahNumber) => {
+              handleSelectSurah(surahId);
+              handleSelectAyah(ayahNumber);
+            }}
+            onSelectPage={(page) => setActiveMushafPage(page)}
+            onChangeMode={(mode) => setActiveMode(mode)}
+            onChangeTheme={(theme) => setThemeMode(theme)}
+            onToggleZenMode={() => setIsZenMode(prev => !prev)}
+            onToggleTajweed={() => setShowTajweed(prev => !prev)}
+            onToggleScript={() => {}}
+            onSelectReadingMode={(mode) => setOverallReadingMode(mode)}
+          />
+        )}
+
+        {/* Keyboard Shortcuts Modal */}
+        {showShortcutsModal && (
+          <KeyboardShortcutsModal
+            isOpen={showShortcutsModal}
+            onClose={() => setShowShortcutsModal(false)}
+            navArrowMode={navArrowMode}
+            customShortcuts={customShortcuts}
+            onOpenPreferences={() => {
+              setSidebarTab('preferences');
+              setShowSidebar(true);
+            }}
+          />
+        )}
       </Suspense>
 
       {/* Quick Peek Ayah Drawer */}
@@ -1136,24 +1170,6 @@ export const App: React.FC = () => {
         }}
       />
 
-      {/* Global Omnibar Command Palette */}
-      <OmnibarModal
-        isOpen={showSearchModal}
-        onClose={() => setShowSearchModal(false)}
-        surahs={surahs}
-        onSelectSurahAyah={(surahId, ayahNumber) => {
-          handleSelectSurah(surahId);
-          handleSelectAyah(ayahNumber);
-        }}
-        onSelectPage={(page) => setActiveMushafPage(page)}
-        onChangeMode={(mode) => setActiveMode(mode)}
-        onChangeTheme={(theme) => setThemeMode(theme)}
-        onToggleZenMode={() => setIsZenMode(prev => !prev)}
-        onToggleTajweed={() => setShowTajweed(prev => !prev)}
-        onToggleScript={() => {}}
-        onSelectReadingMode={(mode) => setOverallReadingMode(mode)}
-      />
-
       {/* Note Editor Drawer (Available on Ayah 0 through 286) */}
       {effectiveAyah && (
         <NoteEditorDrawer
@@ -1163,18 +1179,6 @@ export const App: React.FC = () => {
           onNoteSaved={reloadStudyData}
         />
       )}
-
-      {/* Keyboard Shortcuts Modal */}
-      <KeyboardShortcutsModal
-        isOpen={showShortcutsModal}
-        onClose={() => setShowShortcutsModal(false)}
-        navArrowMode={navArrowMode}
-        customShortcuts={customShortcuts}
-        onOpenPreferences={() => {
-          setSidebarTab('preferences');
-          setShowSidebar(true);
-        }}
-      />
 
     </div>
   );

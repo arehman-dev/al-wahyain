@@ -388,15 +388,15 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           <div className="space-y-4">
             {/* Brand Header */}
             <div className="flex items-center gap-2.5 pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="w-8 h-8 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center shadow-xs">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div>
                 <h2 className="font-bold text-sm text-slate-900 dark:text-white leading-tight">
                   Al-Wahyain
                 </h2>
-                <p className="text-[10px] text-slate-400 font-mono">
-                  v1.2.2 • Local-First
+                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">
+                  v1.2.5 • Local-First
                 </p>
               </div>
             </div>
@@ -405,10 +405,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
             <nav className="flex md:flex-col gap-1 overflow-x-auto">
               <button
                 onClick={() => onSelectTab('about')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
                   activeTab === 'about'
-                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 <Info className="w-4 h-4 shrink-0" />
@@ -417,27 +417,27 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               <button
                 onClick={() => onSelectTab('verification')}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
                   activeTab === 'verification'
-                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
                   <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                   <span>Text Verification</span>
                 </div>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono font-semibold">
                   Verified
                 </span>
               </button>
 
               <button
                 onClick={() => onSelectTab('preferences')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
                   activeTab === 'preferences'
-                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 <SlidersHorizontal className="w-4 h-4 shrink-0" />
@@ -446,10 +446,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               <button
                 onClick={() => onSelectTab('references')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
                   activeTab === 'references'
-                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 <Library className="w-4 h-4 shrink-0" />
@@ -458,10 +458,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               <button
                 onClick={() => onSelectTab('docs')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
                   activeTab === 'docs'
-                    ? 'border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 <Code2 className="w-4 h-4 shrink-0" />

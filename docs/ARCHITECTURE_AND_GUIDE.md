@@ -1,6 +1,6 @@
-# الوحيين (Al-Wahyain) — Comprehensive Architecture, Data Pipeline & Expansion Guide
+# Al-Wahyain — Comprehensive Architecture, Data Pipeline & Expansion Guide
 
-This document provides an exhaustive, end-to-end technical reference for **Al-Wahyain (`الوحيين`)**. It covers the internal application logic, the dual-database SQLite + FTS5 engine, the QCF V2/V4 font rendering system, every data-fetching and normalization script in `scripts/`, the REST API contract, the Electron Desktop architecture, and step-by-step instructions for expanding the platform with new Tafaseer, translations, or reciters.
+This document provides an exhaustive, end-to-end technical reference for **Al-Wahyain**. It covers the internal application logic, the dual-database SQLite + FTS5 engine, the QCF V2/V4 font rendering system, every data-fetching and normalization script in `scripts/`, the REST API contract, the Electron Desktop architecture, and step-by-step instructions for expanding the platform with new commentaries, translations, or reciters.
 
 ---
 
@@ -10,7 +10,7 @@ This document provides an exhaustive, end-to-end technical reference for **Al-Wa
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                        FRONTEND (React 19 + TypeScript)                    │
 │  ┌──────────────┐  ┌──────────────────┐  ┌──────────────┐  ┌────────────┐  │
-│  │ 1. Mushaf    │  │ 2. Translation   │  │ 3. Sarf/Nahw │  │ 4. Tafsir  │  │
+│  │ 1. Mushaf    │  │ 2. Translation   │  │ 3. Sarf/Nahw │  │ 4. Tafseer │  │
 │  │ (QCF V2/V4   │  │ (Dual Transl. +  │  │ (Morphology  │  │ (Focus &   │  │
 │  │  604 Pages)  │  │  4 WBW Glosses)  │  │  Tree+Roots) │  │  Stacked)  │  │
 │  └──────┬───────┘  └────────┬─────────┘  └──────┬───────┘  └─────┬──────┘  │
@@ -18,6 +18,7 @@ This document provides an exhaustive, end-to-end technical reference for **Al-Wa
 │                                       ▼                                    │
 │             Dynamic QCF FontFace Loader (src/utils/qcfFontLoader.ts)       │
 │        Loads /fonts/qcf-v2/p{1..604}.woff2 & /fonts/qcf-v4-tajweed/...     │
+│                                                                            │
 └───────────────────────────────────────┬────────────────────────────────────┘
                                         │ HTTP JSON (/api/*) on 127.0.0.1
                                         ▼
@@ -44,16 +45,16 @@ This document provides an exhaustive, end-to-end technical reference for **Al-Wa
 ## 2. Typography & Calligraphic Rendering Engine
 
 ### 2.1 Why Standard Unicode Arabic Is Not Enough for a Medina Mushaf
-Standard Unicode fonts render the Uthmani text dynamically using OpenType shaping tables, which often causes slight variations in ligatures, waqf marks, and line widths compared to the printed **1426 AH / 1441 AH King Fahd Complex Medina Mushaf**.
+Standard Unicode fonts render Arabic text dynamically using OpenType shaping tables, which frequently causes subtle variations in ligatures, waqf stop markers, and line justifications compared to the official printed **1426 AH / 1441 AH King Fahd Complex Medina Mushaf**.
 
 To achieve **100% page-for-page, line-for-line fidelity** with the printed Medina Mushaf:
 1. Each of the **604 pages** of the Mushaf has its own dedicated font file:
    - **Standard Mushaf (`QCF V2`)**: `public/fonts/qcf-v2/p1.woff2` through `p604.woff2`.
    - **Color Tajweed (`QCF V4 COLRv1`)**: `public/fonts/qcf-v4-tajweed/p1.woff2` through `p604.woff2`.
 2. In the database (`words` and `ayahs` tables):
-   - Every word stores its `page_number` (`1..604`), `line_number` (`1..15`), and `code_v2` (page-specific PUA glyph sequence).
-   - Every ayah stores `page_madani` and `end_code_v2` (the ornate verse-end calligraphy glyph for that page).
-3. **[`src/utils/qcfFontLoader.ts`](../src/utils/qcfFontLoader.ts)** dynamically registers a browser `FontFace` (`QCF2_P{page}` or `QCF4_TAJWEED_P{page}`) as soon as a page or verse comes into view, preloading adjacent pages (`page - 1`, `page + 1`) for instant page turns.
+   - Every word stores its `page_number` (`1..604`), `line_number` (`1..15`), and `code_v2` (page-specific Private Use Area glyph sequence).
+   - Every ayah stores `page_madani` and `end_code_v2` (the ornate verse-end calligraphy glyph for that specific page).
+3. **[`src/utils/qcfFontLoader.ts`](../src/utils/qcfFontLoader.ts)** dynamically registers a browser `FontFace` (`QCF2_P{page}` or `QCF4_TAJWEED_P{page}`) as soon as a page or verse comes into view, preloading adjacent pages (`page - 1`, `page + 1`) for instantaneous page transitions.
 
 ### 2.2 QCF V4 COLRv1 Tajweed Theme Palettes
 In [`src/index.css`](../src/index.css), the COLRv1 vector color layers automatically adapt to the active reading atmosphere using CSS `font-palette`:
@@ -63,8 +64,8 @@ In [`src/index.css`](../src/index.css), the COLRv1 vector color layers automatic
 
 ### 2.3 UI & Commentary Typography
 Configured in [`tailwind.config.js`](../tailwind.config.js) and [`src/index.css`](../src/index.css):
-- **Urdu & Arabic UI / Translations / Tafsir Prose**: `IBM Plex Sans Arabic` (bundled locally in `public/fonts/ibm-plex-sans-arabic-*.woff2`).
-- **English UI & All Numeric Badges**: `Montserrat` in standard English digits (`1, 2, 3...`).
+- **Arabic Script, Translations & Tafseer Prose**: `IBM Plex Sans Arabic` (bundled locally in `public/fonts/ibm-plex-sans-arabic-*.woff2`).
+- **English UI & All Numeric Badges**: `Montserrat` with standard Latin digits (`1, 2, 3...`).
 
 ---
 
@@ -110,7 +111,7 @@ Configured in [`tailwind.config.js`](../tailwind.config.js) and [`src/index.css`
 6. **`surah_introductions` (114 rows)**:
    - `id` (`INTEGER PRIMARY KEY`), `surah_id` (`INTEGER UNIQUE`)
    - `title_ur`, `title_en`
-   - `source_ur` (*تفہیم القرآن*), `source_en` (*Tafhim al-Qur'an*)
+   - `source_ur` (*Tafheem-ul-Quran*), `source_en` (*Tafhim al-Qur'an*)
    - `short_text_ur`, `short_text_en`
    - `text_html_ur`, `text_html_en` (Full HTML formatted introductions with standard classical sections: Name, Revelation Period, Historical Context, Main Themes)
 
@@ -131,12 +132,12 @@ Configured in [`tailwind.config.js`](../tailwind.config.js) and [`src/index.css`
 | Method & Endpoint | Description |
 | :--- | :--- |
 | `GET /api/surahs` | Returns all 114 Surahs ordered by `id`. |
-| `GET /api/surah/:id/intro` | Returns Surah metadata and full Urdu/English introduction and historical context (*تفہیم القرآن*). |
+| `GET /api/surah/:id/intro` | Returns Surah metadata and full English and Urdu introduction and historical context (*Tafheem-ul-Quran*). |
 | `GET /api/surahs/:id/ayahs` | Returns all Ayahs for Surah `:id`, hydrated with nested `translations[]` and `words[]` (including `code_v2`, `page_number`, `line_number`, `morphology`). |
 | `GET /api/pages/:pageNumber` | Returns all Ayahs and Words located on Madani Mushaf page `:pageNumber` (`1..604`) for exact 15-line rendering. |
-| `GET /api/ayahs/:surah/:ayah/tafsir` | Returns all 6 Urdu Tafaseer entries for `:surah::ayah`. If a commentary spans a group of verses and the current verse stores a pointer/short text, automatically resolves the linked commentary from the group's primary ayah. |
+| `GET /api/ayahs/:surah/:ayah/tafsir` | Returns all 6 Urdu Tafaseer entries for `:surah::ayah`. If a commentary spans a group of verses and the current verse stores a pointer, automatically resolves the linked commentary from the group's primary ayah. |
 | `GET /api/ayahs/:surah/:ayah/peek` | Lightweight endpoint for cross-reference hover/click popovers (`text_uthmani`, `page_madani`, `end_code_v2`, `qcf_v2_text`, primary translation, and brief Tafsir snippets). |
-| `GET /api/roots/:root` | Lexical concordance for an Arabic root (e.g. `ر ح م`): returns total occurrences, distinct Surahs, POS distribution, derived morphological forms, and up to 150 verse occurrences with `qcf_v2_text` and `page_madani`. |
+| `GET /api/roots/:root` | Lexical concordance for an Arabic root (e.g. `r-h-m`): returns total occurrences, distinct Surahs, POS distribution, derived morphological forms, and verse occurrences with `qcf_v2_text` and `page_madani`. |
 | `GET /api/search?q=...&scope=...&surah=...&tafsir=...` | Multi-scope FTS5 search (`all`, `quran`, `translation`, `tafsir`, `root`) with automatic fallback to `LIKE` matching for partial substrings. |
 | `GET / POST / DELETE /api/bookmarks` | CRUD operations on `user_db.bookmarks`. |
 | `GET / POST / DELETE /api/notes` | CRUD operations on `user_db.notes`. |
@@ -163,22 +164,22 @@ Every script used to build, fetch, normalize, and index the corpus is preserved 
 7. **`scripts/seed_audio_segments_114.mjs`**:
    - Populates `audio_url` and millisecond word-level timestamp segments (`audio_segments`) for Shaykh Mishary Rashid Alafasy across all 114 Surahs.
 8. **`scripts/seed_bayan_ibnkathir_all.mjs`**:
-   - Seeds complete *Bayan ul Quran* (Dr. Israr Ahmad) and *Tafsir Ibn Kathir* (Maulana Muhammad Junagarhi) across all 114 Surahs.
+   - Seeds complete *Bayan-ul-Quran* (Dr. Israr Ahmad) and *Tafsir Ibn Kathir* (Maulana Muhammad Junagarhi) across all 114 Surahs.
 9. **`scripts/seed_eql_tafasir.mjs`**:
-   - Fetches and cleans *Ma'ariful Quran* (`maarifulquran`), *Tafheem ul Quran* (`tafheem`), and *Taisir ul Quran* (`taisirulquran`) across all 114 Surahs (6,236 ayahs each).
+   - Fetches and cleans *Ma'ariful Quran* (`maarifulquran`), *Tafheem-ul-Quran* (`tafheem`), and *Taysir-ul-Quran* (`taisirulquran`) across all 114 Surahs (6,236 ayahs each).
 10. **`scripts/seed_saadi_tafsir.mjs`**:
-    - Fetches and normalizes *Tafseer e Sa'di* (`saadi`, QUL resource 309 — *Taysir al-Karim al-Rahman* by Shaykh Abdur-Rahman al-Sa'di) across all 6,236 ayahs.
-    - Specifically strips embedded duplicate multi-ayah Arabic/translation table wrappers (`<table>`, `<p class="ur">`, `<p class="ar">`) from grouped commentaries so *Tafseer e Sa'di* follows the exact same clean per-ayah commentary architecture as the other 5 Tafaseer.
+    - Fetches and normalizes *Tafsir As-Sa'di* (`saadi`, QUL resource 309 — *Taysir al-Karim al-Rahman* by Shaykh Abdur-Rahman al-Sa'di) across all 6,236 ayahs.
+    - Specifically strips embedded duplicate multi-ayah Arabic/translation table wrappers (`<table>`, `<p class="ur">`, `<p class="ar">`) from grouped commentaries so *Tafsir As-Sa'di* follows the exact same clean per-ayah commentary architecture as the other 5 Tafaseer.
 11. **`scripts/setup_fts5.mjs`**:
     - Drops and rebuilds the SQLite FTS5 virtual tables (`ayahs_fts`, `translations_fts`, `tafasir_fts`) using `tokenize='unicode61 remove_diacritics 2'` across all 6,236 ayahs, 56,124 translations, and 37,416 Tafsir records.
 12. **`scripts/seed_surah_introductions.mjs`**:
-    - Scrapes, normalizes, and seeds all 114 Surah introductions (Urdu and English from Maulana Maududi's *Tafhim-ul-Quran*) into the `surah_introductions` table in `data/quran_study.db`.
+    - Normalizes and seeds all 114 Surah introductions (Urdu and English from Maulana Maududi's *Tafheem-ul-Quran*) into the `surah_introductions` table in `data/quran_study.db`.
 
 ---
 
 ## 6. How to Expand the Setup (Step-by-Step Guide)
 
-### 6.1 How to Add a 7th+ Tafsir
+### 6.1 How to Add a 7th+ Commentary
 1. **Insert into `tafasir` table**:
    Write a Node.js script in `scripts/seed_my_new_tafsir.mjs` that inserts 6,236 rows into `tafasir`:
    ```js
@@ -186,17 +187,17 @@ Every script used to build, fetch, normalize, and index the corpus is preserved 
    const db = new DatabaseSync('data/quran_study.db');
    const stmt = db.prepare(`
      INSERT INTO tafasir (ayah_id, surah_id, ayah_number, tafsir_slug, tafsir_name, author_name, content_html, source_attribution, source_url)
-     VALUES (?, ?, ?, 'my_tafsir_slug', 'نامِ تفسیر', 'نامِ مفسر', ?, 'Source Name', 'https://example.com')
+     VALUES (?, ?, ?, 'my_tafsir_slug', 'Commentary Name', 'Author Name', ?, 'Source Name', 'https://example.com')
    `);
    ```
-   *(Tip: If the source groups multiple ayahs together, either insert the clean commentary on each ayah of the group or insert a short reference string `اس آیت کی تفسیر آیات X تا Y کے تحت ملاحظہ فرمائیں۔` on the secondary ayahs—`server/index.mjs` automatically resolves grouped references!)*
+   *(Tip: If the source groups multiple ayahs together, either insert the clean commentary on each ayah of the group or insert a cross-reference pointer on secondary ayahs. The backend API automatically resolves grouped references seamlessly.)*
 2. **Rebuild the FTS5 Search Index**:
    ```bash
    node scripts/setup_fts5.mjs
    ```
 3. **Register the Slug in Frontend Defaults**:
-   - In [`src/App.tsx`](../src/App.tsx), add `'my_tafsir_slug'` to `DEFAULT_TAFSIR_ORDER` and `DEFAULT_VISIBLE_TAFASIR`.
-   - In [`src/components/TafsirSettingsModal.tsx`](../src/components/TafsirSettingsModal.tsx) and [`src/components/SearchModal.tsx`](../src/components/SearchModal.tsx), add its display label and metadata.
+   - In [`src/types/quran.ts`](../src/types/quran.ts), add `'my_tafsir_slug'` to `DEFAULT_TAFSIR_ORDER`.
+   - In [`src/components/TafsirSettingsModal.tsx`](../src/components/TafsirSettingsModal.tsx) and [`src/components/SearchModal.tsx`](../src/components/SearchModal.tsx), add its display label and author metadata.
 
 ### 6.2 How to Add a New Translation
 1. Insert 6,236 rows into `translations` with a unique `author_id` (e.g. `'kanzul_iman'` or `'pickthall'`).

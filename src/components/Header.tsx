@@ -79,10 +79,12 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 1. Zen Mode */}
           <button
             onClick={onToggleZenMode}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+            title={isZenMode ? "نارمل موڈ میں واپس جائیں (Z / Esc)" : "زین موڈ (مکمل یکسوئی) (Z)"}
+            aria-label="زین موڈ"
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150 active:scale-95 cursor-pointer ${
               isZenMode 
-                ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' 
-                : 'border border-transparent text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70'
+                ? 'border border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shadow-xs' 
+                : 'border border-slate-300/40 dark:border-slate-700/50 hover:border-emerald-500/40 bg-slate-200/40 dark:bg-slate-800/50 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400'
             }`}
           >
             {isZenMode ? <Minimize2 className="w-4 h-4" strokeWidth={1.85} /> : <Maximize2 className="w-4 h-4" strokeWidth={1.85} />}
@@ -91,7 +93,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 2. Theme Toggler */}
           <button
             onClick={cycleTheme}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+            title={themeLabels[themeMode] + ' (T)'}
+            aria-label="تھیم تبدیل کریں"
+            className="w-8 h-8 rounded-xl flex items-center justify-center border border-slate-300/40 dark:border-slate-700/50 hover:border-emerald-500/40 bg-slate-200/40 dark:bg-slate-800/50 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-150 active:scale-95 cursor-pointer"
           >
             {themeMode === 'light' && <Sun className="w-4 h-4 text-amber-500" strokeWidth={1.85} />}
             {themeMode === 'sepia' && <Coffee className="w-4 h-4 text-amber-700" strokeWidth={1.85} />}
@@ -99,31 +103,35 @@ export const Header: React.FC<HeaderProps> = ({
             {themeMode === 'oled' && <Eye className="w-4 h-4 text-emerald-400" strokeWidth={1.85} />}
           </button>
 
-          {/* 3. All Bookmarks (Study Suite) — With Name */}
+          {/* 3. All Bookmarks (Study Suite) — With Badge */}
           <button
             onClick={onOpenStudySuite}
-            className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800/70 hover:bg-amber-500/15 text-slate-700 dark:text-slate-200 hover:text-amber-600 dark:hover:text-amber-400 border border-slate-300/60 dark:border-slate-700/60 text-xs font-semibold transition-all cursor-pointer"
+            title="محفوظ شدہ آیات و مطالعہ گاہ (B)"
+            aria-label="بک مارکس و مطالعہ گاہ"
+            className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/50 dark:bg-slate-800/60 hover:bg-amber-500/15 text-slate-700 dark:text-slate-200 hover:text-amber-600 dark:hover:text-amber-400 border border-slate-300/50 dark:border-slate-700/60 hover:border-amber-500/40 text-xs font-semibold transition-all duration-150 active:scale-95 cursor-pointer"
           >
             <Bookmark 
               className="w-3.5 h-3.5 text-amber-500 shrink-0" 
               strokeWidth={1.85} 
               fill={bookmarksCount > 0 ? 'currentColor' : 'none'} 
             />
-            <span>بک مارکس</span>
+            <span className="hidden sm:inline">بک مارکس</span>
             {bookmarksCount > 0 && (
-              <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-bold font-app">
+              <span className="px-1.5 py-0.5 bg-amber-500 text-white rounded-full text-[10px] font-bold font-app leading-none shadow-xs">
                 {bookmarksCount}
               </span>
             )}
           </button>
 
-          {/* 4. Search (Ctrl+K) — With Name */}
+          {/* 4. Search (Ctrl+K) */}
           <button
             onClick={onOpenSearch}
-            className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800/70 hover:bg-emerald-500/15 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300/60 dark:border-slate-700/60 text-xs font-semibold transition-all cursor-pointer"
+            title="فوری تلاش (Ctrl+K)"
+            aria-label="قرآنی تلاش"
+            className="h-8 px-2.5 rounded-xl flex items-center gap-1.5 bg-slate-200/50 dark:bg-slate-800/60 hover:bg-emerald-500/15 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300/50 dark:border-slate-700/60 hover:border-emerald-500/40 text-xs font-semibold transition-all duration-150 active:scale-95 cursor-pointer"
           >
             <Search className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" strokeWidth={1.85} />
-            <span>تلاش</span>
+            <span className="hidden sm:inline">تلاش</span>
           </button>
         </div>
 
@@ -132,14 +140,16 @@ export const Header: React.FC<HeaderProps> = ({
         {/* ======================================================== */}
         <nav 
           dir="rtl"
-          className="justify-self-center flex items-center bg-slate-200/65 dark:bg-slate-800/75 p-1 rounded-xl border border-slate-300/60 dark:border-slate-700/60 shrink-0"
+          className="justify-self-center flex items-center bg-slate-200/70 dark:bg-slate-800/80 p-0.5 rounded-2xl border border-slate-300/50 dark:border-slate-700/60 shadow-xs shrink-0"
         >
           <button
             onClick={() => onChangeMode('quran')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            title="مصحف موڈ (1)"
+            aria-label="مصحف موڈ"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition-all duration-150 active:scale-95 cursor-pointer ${
               activeMode === 'quran' || activeMode === 'mushaf'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 font-bold shadow-xs border border-slate-200/70 dark:border-slate-700/70'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium hover:bg-white/40 dark:hover:bg-slate-700/40 border border-transparent'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -148,10 +158,12 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('translation')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            title="ترجمہ و لفظی ترجمہ موڈ (2)"
+            aria-label="ترجمہ موڈ"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition-all duration-150 active:scale-95 cursor-pointer ${
               activeMode === 'translation'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 font-bold shadow-xs border border-slate-200/70 dark:border-slate-700/70'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium hover:bg-white/40 dark:hover:bg-slate-700/40 border border-transparent'
             }`}
           >
             <Languages className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -160,10 +172,12 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('sarf')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            title="صرف و نحو و شجرہ موڈ (3)"
+            aria-label="صرف و نحو موڈ"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition-all duration-150 active:scale-95 cursor-pointer ${
               activeMode === 'sarf' || activeMode === 'morphology'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 font-bold shadow-xs border border-slate-200/70 dark:border-slate-700/70'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium hover:bg-white/40 dark:hover:bg-slate-700/40 border border-transparent'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -172,10 +186,12 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onChangeMode('tafseer')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            title="تقابلی تفاسیر موڈ (4)"
+            aria-label="تفسیر موڈ"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition-all duration-150 active:scale-95 cursor-pointer ${
               activeMode === 'tafseer' || activeMode === 'tafsir'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 font-bold shadow-xs border border-slate-200/70 dark:border-slate-700/70'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium hover:bg-white/40 dark:hover:bg-slate-700/40 border border-transparent'
             }`}
           >
             <Library className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -191,7 +207,8 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => onOpenSidebar('verification')}
             title="توثیق و تحقیقِ متن (Text Verification)"
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+            aria-label="توثیق و تحقیقِ متن"
+            className="w-8 h-8 rounded-xl flex items-center justify-center border border-slate-300/40 dark:border-slate-700/50 hover:border-emerald-500/40 bg-slate-200/40 dark:bg-slate-800/50 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-150 active:scale-95 cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4" strokeWidth={1.85} />
           </button>
@@ -199,7 +216,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Preferences */}
           <button
             onClick={() => onOpenSidebar('preferences')}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+            title="ترجیحات و ترتیبات (Preferences)"
+            aria-label="ترجیحات و ترتیبات"
+            className="w-8 h-8 rounded-xl flex items-center justify-center border border-slate-300/40 dark:border-slate-700/50 hover:border-emerald-500/40 bg-slate-200/40 dark:bg-slate-800/50 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-150 active:scale-95 cursor-pointer"
           >
             <SlidersHorizontal className="w-4 h-4" strokeWidth={1.85} />
           </button>
@@ -207,7 +226,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Keyboard Shortcuts */}
           <button
             onClick={onOpenShortcuts}
-            className="hidden sm:flex w-8 h-8 rounded-xl items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+            title="کی بورڈ شارٹ کٹس (? / /)"
+            aria-label="کی بورڈ شارٹ کٹس"
+            className="hidden sm:flex w-8 h-8 rounded-xl items-center justify-center border border-slate-300/40 dark:border-slate-700/50 hover:border-emerald-500/40 bg-slate-200/40 dark:bg-slate-800/50 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-150 active:scale-95 cursor-pointer"
           >
             <Keyboard className="w-4 h-4" strokeWidth={1.85} />
           </button>
@@ -217,13 +238,14 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Minimalist Brand Emblem & Title */}
           <div 
             onClick={() => onOpenSidebar('about')}
-            className="hidden sm:flex items-center gap-2 cursor-pointer group px-1.5 py-1 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
+            title="الوحيين — تعارف و تکنیکی دستاویزات"
+            className="hidden sm:flex items-center gap-2 cursor-pointer group px-2 py-1 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
           >
             <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
               الوحيين
             </span>
             {/* Minimalist 2D Geometric Open Mushaf & Rehal Icon */}
-            <div className="w-7 h-7 rounded-lg bg-emerald-600/10 dark:bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-emerald-600/10 dark:bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:border-emerald-500/60 transition-colors">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
                 <path d="M12 4.5C9.5 3 5.5 3 3 4.5v13c2.5-1.5 6.5-1.5 9 0 2.5-1.5 6.5-1.5 9 0v-13c-2.5-1.5-6.5-1.5-9 0z" />
                 <path d="M12 4.5v13" />
@@ -235,7 +257,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Sidebar Drawer Menu Button */}
           <button
             onClick={() => onOpenSidebar('about')}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all cursor-pointer"
+            title="مینیو کھولیں (Sidebar)"
+            aria-label="مینیو کھولیں"
+            className="w-8 h-8 rounded-xl flex items-center justify-center border border-slate-300/40 dark:border-slate-700/50 hover:border-emerald-500/40 bg-slate-200/40 dark:bg-slate-800/50 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-150 active:scale-95 cursor-pointer"
           >
             <Menu className="w-4 h-4" strokeWidth={1.85} />
           </button>
