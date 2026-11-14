@@ -16,6 +16,7 @@ import {
   Languages
 } from 'lucide-react';
 import { Surah, AppMode, TafsirLayoutMode } from '../types/quran';
+import { NavArrowMode } from '../types/shortcuts';
 
 interface SubHeaderToolbarProps {
   surahs: Surah[];
@@ -28,6 +29,7 @@ interface SubHeaderToolbarProps {
   onPrevAyah: () => void;
   onNextAyah: () => void;
   activeMode: AppMode;
+  navArrowMode?: NavArrowMode;
 
   // Bookmark & Note (Placed at Left of Sub-Header per 3.2 & 3.4)
   isBookmarked: boolean;
@@ -74,6 +76,7 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
   onPrevAyah,
   onNextAyah,
   activeMode,
+  navArrowMode = 'rtl',
   isBookmarked,
   onToggleBookmark,
   hasNote,
@@ -274,6 +277,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onPrevAyah}
               disabled={currentSurahId === 1 && currentAyahNumber <= (isQuranOrSarf ? 1 : 0)}
+              title={navArrowMode === 'rtl' ? 'پچھلی آیت (دائیں تیر → / K)' : 'پچھلی آیت (بائیں تیر ← / J)'}
+              aria-label="پچھلی آیت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -301,6 +306,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onNextAyah}
               disabled={currentSurahId === 114 && currentAyahNumber >= versesCount}
+              title={navArrowMode === 'rtl' ? 'اگلی آیت (بائیں تیر ← / J)' : 'اگلی آیت (دائیں تیر → / K)'}
+              aria-label="اگلی آیت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />

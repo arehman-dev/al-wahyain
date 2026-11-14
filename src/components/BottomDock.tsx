@@ -14,6 +14,7 @@ import {
   MoveHorizontal
 } from 'lucide-react';
 import { Ayah, Surah } from '../types/quran';
+import { NavArrowMode } from '../types/shortcuts';
 
 interface BottomDockProps {
   currentSurah: Surah | undefined;
@@ -23,6 +24,7 @@ interface BottomDockProps {
   onPause: () => void;
   onNextAyah: () => void;
   onPrevAyah: () => void;
+  navArrowMode?: NavArrowMode;
   onWordTimeUpdate: (wordIndex: number | null) => void;
   onOpenExportModal?: () => void;
   onOpenSearch: () => void;
@@ -40,6 +42,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   onPause,
   onNextAyah,
   onPrevAyah,
+  navArrowMode = 'rtl',
   onWordTimeUpdate,
   onOpenExportModal,
   onOpenSearch,
@@ -224,7 +227,8 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
           <button
             onClick={onPrevAyah}
-            title="پچھلی آیت"
+            title={navArrowMode === 'rtl' ? 'پچھلی آیت (دائیں تیر → / K)' : 'پچھلی آیت (بائیں تیر ← / J)'}
+            aria-label="پچھلی آیت"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <SkipForward className="w-4 h-4" strokeWidth={1.85} />
@@ -234,7 +238,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           <button
             onClick={() => isPlaying ? onPause() : onPlay()}
             disabled={!currentAyah}
-            title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause)' : 'چلائیں (Play)'}
+            title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause / Space)' : 'چلائیں (Play / Space)'}
             className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all shadow-xs shrink-0 ${
               !currentAyah 
                 ? 'border-slate-300/40 dark:border-slate-700/40 text-slate-400 dark:text-slate-600 opacity-40 cursor-not-allowed' 
@@ -251,7 +255,8 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           {/* Left Flank (in RTL): Next Ayah & Playback Speed */}
           <button
             onClick={onNextAyah}
-            title="اگلی آیت"
+            title={navArrowMode === 'rtl' ? 'اگلی آیت (بائیں تیر ← / J)' : 'اگلی آیت (دائیں تیر → / K)'}
+            aria-label="اگلی آیت"
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
           >
             <SkipBack className="w-4 h-4" strokeWidth={1.85} />

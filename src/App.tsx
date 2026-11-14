@@ -19,6 +19,15 @@ import { NoteEditorDrawer } from './components/NoteEditorDrawer';
 import { ExportShareModal } from './components/ExportShareModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { SurahIntroView } from './components/SurahIntroView';
+import { NavArrowMode, CustomShortcutsMap } from './types/shortcuts';
+import { 
+  getStoredNavArrowMode, 
+  setStoredNavArrowMode, 
+  getStoredCustomShortcuts, 
+  setStoredCustomShortcuts, 
+  getEffectiveShortcut, 
+  eventMatchesShortcut 
+} from './utils/shortcutsHelper';
 import { 
   Surah, 
   Ayah, 
@@ -104,6 +113,33 @@ export const App: React.FC = () => {
   // Sidebar Drawer State (About, Preferences, References & Data Sources)
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [sidebarTab, setSidebarTab] = useState<SidebarTab>('about');
+
+  // Navigation Direction & Custom Shortcuts
+  const [navArrowMode, setNavArrowMode] = useState<NavArrowMode>(getStoredNavArrowMode);
+  const [customShortcuts, setCustomShortcuts] = useState<CustomShortcutsMap>(getStoredCustomShortcuts);
+
+  const handleChangeNavArrowMode = (mode: NavArrowMode) => {
+    setNavArrowMode(mode);
+    setStoredNavArrowMode(mode);
+  };
+
+  const handleUpdateShortcut = (id: string, key: string) => {
+    setCustomShortcuts(prev => {
+      const next = { ...prev };
+      if (!key) {
+        delete next[id];
+      } else {
+        next[id] = key;
+      }
+      setStoredCustomShortcuts(next);
+      return next;
+    });
+  };
+
+  const handleResetShortcuts = () => {
+    setCustomShortcuts({});
+    setStoredCustomShortcuts({});
+  };
 
   useEffect(() => {
     localStorage.setItem('qs_reading_mode', overallReadingMode);
@@ -410,82 +446,116 @@ export const App: React.FC = () => {
         return;
       }
 
-      // Search: Ctrl+K / Cmd+K
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      // Next Ayah
+      const nextKey = getEffectiveShortcut('nav_next_ayah', customShortcuts, navArrowMode);
+      if (
+        eventMatchesShortcut(e, nextKey) || 
+        (!customShortcuts['nav_next_ayah'] && (navArrowMode === 'rtl' ? e.key.toLowerCase() === 'j' : e.key.toLowerCase() === 'k' || e.key.toLowerCase() === 'l'))
+      ) {
+        handleNextAyah();
+        return;
+      }
+
+      // Prev Ayah
+      const prevKey = getEffectiveShortcut('nav_prev_ayah', customShortcuts, navArrowMode);
+      if (
+        eventMatchesShortcut(e, prevKey) || 
+        (!customShortcuts['nav_prev_ayah'] && (navArrowMode === 'rtl' ? e.key.toLowerCase() === 'k' : e.key.toLowerCase() === 'j' || e.key.toLowerCase() === 'h'))
+      ) {
+        handlePrevAyah();
+        return;
+      }
+
+      // Search: Omnibar (Ctrl+K / custom key)
+      const searchKey = getEffectiveShortcut('search_omnibar', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, searchKey) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
         e.preventDefault();
         setShowSearchModal(prev => !prev);
         return;
       }
 
-      // Space: Play/Pause audio
-      if (e.code === 'Space') {
+      // Audio: Play/Pause (Space / custom key)
+      const audioKey = getEffectiveShortcut('audio_play_pause', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, audioKey)) {
         e.preventDefault();
         setIsPlaying(prev => !prev);
         return;
       }
 
-      // Arrow navigation (Standard LTR: Right = Forward/Next, Left = Backward/Prev)
-      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'k' || e.key.toLowerCase() === 'l') {
-        handleNextAyah();
-        return;
-      }
-      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'j' || e.key.toLowerCase() === 'h') {
-        handlePrevAyah();
-        return;
-      }
-
       // Page Navigation ([ and ] or PageUp/PageDown)
-      if (e.key === 'PageDown' || e.key === ']') {
+      const nextPageKey = getEffectiveShortcut('nav_next_page', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, nextPageKey) || e.key === ']') {
         setActiveMushafPage(p => Math.min(604, p + 1));
         return;
       }
-      if (e.key === 'PageUp' || e.key === '[') {
+      const prevPageKey = getEffectiveShortcut('nav_prev_page', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, prevPageKey) || e.key === '[') {
         setActiveMushafPage(p => Math.max(1, p - 1));
         return;
       }
 
-      // B: Toggle Bookmark
-      if (e.key.toLowerCase() === 'b') {
+      // Bookmark
+      const bookmarkKey = getEffectiveShortcut('study_bookmark', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, bookmarkKey)) {
         e.preventDefault();
         handleToggleBookmark();
         return;
       }
 
-      // N: Toggle Note Drawer
-      if (e.key.toLowerCase() === 'n') {
+      // Notes Drawer
+      const noteKey = getEffectiveShortcut('study_note', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, noteKey)) {
         e.preventDefault();
         setShowNoteDrawer(prev => !prev);
         return;
       }
 
-      // Z: Toggle Zen Mode
-      if (e.key.toLowerCase() === 'z') {
+      // Zen Mode
+      const zenKey = getEffectiveShortcut('view_zen', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, zenKey)) {
         e.preventDefault();
         setIsZenMode(prev => !prev);
         return;
       }
 
-      // ?: Open Shortcuts modal
-      if (e.key === '?') {
+      // Shortcuts Modal
+      const helpKey = getEffectiveShortcut('help_shortcuts', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, helpKey)) {
         e.preventDefault();
         setShowShortcutsModal(prev => !prev);
         return;
       }
 
-      // Numbers 1, 2, 3, 4: Switch 4 Primary Tabs
-      if (['1', '2', '3', '4'].includes(e.key) && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+      // Modes (1, 2, 3, 4)
+      const m1Key = getEffectiveShortcut('mode_mushaf', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, m1Key)) {
         e.preventDefault();
-        if (e.key === '1') setActiveMode('quran');
-        if (e.key === '2') setActiveMode('translation');
-        if (e.key === '3') setActiveMode('sarf');
-        if (e.key === '4') setActiveMode('tafseer');
+        setActiveMode('quran');
+        return;
+      }
+      const m2Key = getEffectiveShortcut('mode_translation', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, m2Key)) {
+        e.preventDefault();
+        setActiveMode('translation');
+        return;
+      }
+      const m3Key = getEffectiveShortcut('mode_sarf', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, m3Key)) {
+        e.preventDefault();
+        setActiveMode('sarf');
+        return;
+      }
+      const m4Key = getEffectiveShortcut('mode_tafsir', customShortcuts, navArrowMode);
+      if (eventMatchesShortcut(e, m4Key)) {
+        e.preventDefault();
+        setActiveMode('tafseer');
         return;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNextAyah, handlePrevAyah, handleToggleBookmark, activeMode]);
+  }, [handleNextAyah, handlePrevAyah, handleToggleBookmark, activeMode, customShortcuts, navArrowMode]);
 
   // Stacked Tafsir Handlers
   const handleToggleTafsir = (slug: string) => {
@@ -573,6 +643,7 @@ export const App: React.FC = () => {
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
           activeMode={activeMode}
+          navArrowMode={navArrowMode}
           isBookmarked={isCurrentAyahBookmarked}
           onToggleBookmark={handleToggleBookmark}
           hasNote={hasCurrentAyahNote}
@@ -842,6 +913,7 @@ export const App: React.FC = () => {
           onPause={() => setIsPlaying(false)}
           onNextAyah={handleNextAyah}
           onPrevAyah={handlePrevAyah}
+          navArrowMode={navArrowMode}
           onWordTimeUpdate={setActivePlayingWordIndex}
           onOpenExportModal={() => setShowExportModal(true)}
           onOpenSearch={() => setShowSearchModal(true)}
@@ -862,6 +934,11 @@ export const App: React.FC = () => {
         onSelectTab={setSidebarTab}
         themeMode={themeMode}
         onChangeThemeMode={setThemeMode}
+        navArrowMode={navArrowMode}
+        onChangeNavArrowMode={handleChangeNavArrowMode}
+        customShortcuts={customShortcuts}
+        onUpdateShortcut={handleUpdateShortcut}
+        onResetShortcuts={handleResetShortcuts}
         showTajweed={showTajweed}
         onToggleTajweed={() => setShowTajweed(prev => !prev)}
         showWordByWord={showWordByWord}
@@ -1026,6 +1103,12 @@ export const App: React.FC = () => {
       <KeyboardShortcutsModal
         isOpen={showShortcutsModal}
         onClose={() => setShowShortcutsModal(false)}
+        navArrowMode={navArrowMode}
+        customShortcuts={customShortcuts}
+        onOpenPreferences={() => {
+          setSidebarTab('preferences');
+          setShowSidebar(true);
+        }}
       />
 
     </div>

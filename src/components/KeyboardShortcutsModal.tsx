@@ -1,29 +1,28 @@
 import React from 'react';
-import { X, Keyboard, Command } from 'lucide-react';
+import { X, Keyboard, SlidersHorizontal } from 'lucide-react';
+import { NavArrowMode, CustomShortcutsMap } from '../types/shortcuts';
+import { 
+  SHORTCUT_DEFINITIONS, 
+  getEffectiveShortcut, 
+  formatKeyForDisplay 
+} from '../utils/shortcutsHelper';
 
 interface KeyboardShortcutsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  navArrowMode?: NavArrowMode;
+  customShortcuts?: CustomShortcutsMap;
+  onOpenPreferences?: () => void;
 }
 
 export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   isOpen,
-  onClose
+  onClose,
+  navArrowMode = 'rtl',
+  customShortcuts = {},
+  onOpenPreferences
 }) => {
   if (!isOpen) return null;
-
-  const shortcuts = [
-    { key: 'Ctrl + K / ⌘ + K', desc: 'قرآن و تفاسیر میں تلاش (Global Search)' },
-    { key: 'Space', desc: 'تلاوت شروع / موقوف کریں (Play / Pause Audio)' },
-    { key: '← / → (یا J / K)', desc: 'اگلی / پچھلی آیت پر جائیں (Next / Prev Ayah)' },
-    { key: 'PageUp / PageDown (یا [ / ])', desc: 'مصحف کا پچھلا / اگلا صفحہ (Prev / Next Page)' },
-    { key: '1 / 2 / 3 / 4', desc: 'مطالعہ موڈز تبدیل کریں (1: قرآن، 2: ترجمہ، 3: صرف، 4: تفسیر)' },
-    { key: 'B', desc: 'آیت کو محفوظ کریں (Toggle Bookmark)' },
-    { key: 'N', desc: 'ذاتی تفسیری نوٹ لکھیں (Add / Edit Note)' },
-    { key: 'Z', desc: 'زین موڈ (Toggle Focus / Zen Mode)' },
-    { key: '?', desc: 'کی بورڈ شارٹ کٹس کا یہ جدول کھولیں' },
-    { key: 'Esc', desc: 'کھلی ہوئی ونڈو یا تلاش بند کریں' },
-  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
@@ -38,36 +37,69 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
               <Keyboard className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-slate-900 dark:text-white">کی بورڈ شارٹ کٹس (Power-User Hotkeys)</h3>
-              <p className="text-[11px] text-slate-400">تیز ترین اور کی بورڈ پر مبنی مطالعہ کے لیے</p>
+              <h3 className="font-bold text-sm text-slate-900 dark:text-white">کی بورڈ شارٹ کٹس (Keyboard Hotkeys)</h3>
+              <p className="text-[11px] text-slate-400">
+                سمتِ رُخ: <span className="text-emerald-600 dark:text-emerald-400 font-bold">{navArrowMode === 'rtl' ? 'قرآنی سمت (RTL)' : 'معیاری سمت (LTR)'}</span>
+              </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            aria-label="بند کریں"
+            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Shortcuts List */}
-        <div className="p-4 sm:p-5 space-y-2 max-h-[65vh] overflow-y-auto">
-          {shortcuts.map((s, idx) => (
-            <div 
-              key={idx}
-              className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all text-xs"
-            >
-              <span className="text-slate-700 dark:text-slate-300 font-medium">{s.desc}</span>
-              <kbd className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-lg font-mono text-[11px] font-bold shadow-xs" dir="ltr">
-                {s.key}
-              </kbd>
-            </div>
-          ))}
+        <div className="p-4 sm:p-5 space-y-2 max-h-[60vh] overflow-y-auto">
+          {SHORTCUT_DEFINITIONS.map((def) => {
+            const effectiveKey = getEffectiveShortcut(def.id, customShortcuts, navArrowMode);
+            const isCustomized = Boolean(customShortcuts[def.id]);
+
+            return (
+              <div 
+                key={def.id}
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all text-xs"
+              >
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-800 dark:text-slate-200 font-bold">{def.nameUrdu}</span>
+                    <span className="text-[10px] text-slate-400">({def.nameEn})</span>
+                    {isCustomized && (
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-medium">
+                        تخصیص
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{def.descriptionUrdu}</p>
+                </div>
+                <kbd className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-lg font-mono text-[11px] font-bold shadow-xs shrink-0" dir="ltr">
+                  {formatKeyForDisplay(effectiveKey)}
+                </kbd>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Footer */}
-        <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-center text-[11px] text-slate-400">
-          شارٹ کٹس کسی بھی اسکرین پر براہِ راست کام کرتے ہیں (سوائے ٹیکسٹ فیلڈز کے)
+        {/* Footer Actions */}
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 flex items-center justify-between text-xs">
+          <span className="text-[11px] text-slate-400">
+            ٹیکسٹ فیلڈز کے علاوہ ہر اسکرین پر فعال ہیں
+          </span>
+          {onOpenPreferences && (
+            <button
+              onClick={() => {
+                onClose();
+                onOpenPreferences();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-all cursor-pointer text-xs"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>شارٹ کٹس میں ترمیم کریں</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
