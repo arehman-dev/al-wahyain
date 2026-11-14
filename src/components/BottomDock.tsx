@@ -127,12 +127,12 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         onEnded={handleEnded}
       />
 
-      <div className="w-full h-full grid grid-cols-3 items-center">
+      <div className="relative w-full h-full flex items-center justify-between">
 
         {/* ======================================================== */}
         {/* LEFT SIDE (Left -> Right): Zen -> Search -> Share -> Padding Slider */}
         {/* ======================================================== */}
-        <div className="flex items-center gap-1.5 justify-self-start">
+        <div className="flex items-center gap-1.5 z-10 shrink-0">
           
           {/* 1. Zen Mode (Icon-only per 3.4) */}
           <button
@@ -195,43 +195,16 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
         {/* ======================================================== */}
         {/* CENTER (Screen-Centered): Audio Playback Controls        */}
+        {/* Play/Pause is the exact center, nearby buttons aligned   */}
+        {/* symmetrically with reference to Play/Pause               */}
         {/* ======================================================== */}
-        <div dir="rtl" className="flex items-center justify-center gap-1.5 justify-self-center">
-          <button
-            onClick={onPrevAyah}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
-          >
-            <SkipForward className="w-4 h-4" strokeWidth={1.85} />
-          </button>
-
-          <button
-            onClick={() => isPlaying ? onPause() : onPlay()}
-            disabled={!currentAyah}
-            title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause)' : 'چلائیں (Play)'}
-            className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all ${
-              !currentAyah 
-                ? 'border-slate-300/40 dark:border-slate-700/40 text-slate-400 dark:text-slate-600 opacity-40 cursor-not-allowed' 
-                : 'border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 active:scale-95 cursor-pointer'
-            }`}
-          >
-            {isPlaying ? (
-              <Pause className="w-4 h-4" strokeWidth={1.85} />
-            ) : (
-              <Play className="w-4 h-4" strokeWidth={1.85} />
-            )}
-          </button>
-
-          <button
-            onClick={onNextAyah}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
-          >
-            <SkipBack className="w-4 h-4" strokeWidth={1.85} />
-          </button>
-
+        <div dir="rtl" className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 select-none">
+          {/* Right Flank (in RTL): Repeat & Previous Ayah */}
           <button
             onClick={cycleRepeat}
             disabled={!currentAyah}
-            className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-all ${
+            title="تکرار (Repeat)"
+            className={`hidden sm:flex items-center justify-center gap-1 h-7 px-2 min-w-[48px] rounded-lg border text-[11px] font-app font-bold transition-all ${
               !currentAyah
                 ? 'opacity-30 cursor-not-allowed border-slate-300 dark:border-slate-700 text-slate-400'
                 : repeatCount > 1 || repeatCount === Infinity
@@ -250,9 +223,45 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           </button>
 
           <button
+            onClick={onPrevAyah}
+            title="پچھلی آیت"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+          >
+            <SkipForward className="w-4 h-4" strokeWidth={1.85} />
+          </button>
+
+          {/* Focal Centerpiece: Play / Pause Button */}
+          <button
+            onClick={() => isPlaying ? onPause() : onPlay()}
+            disabled={!currentAyah}
+            title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause)' : 'چلائیں (Play)'}
+            className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all shadow-xs shrink-0 ${
+              !currentAyah 
+                ? 'border-slate-300/40 dark:border-slate-700/40 text-slate-400 dark:text-slate-600 opacity-40 cursor-not-allowed' 
+                : 'border-emerald-500 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 active:scale-95 cursor-pointer ring-1 ring-emerald-500/20'
+            }`}
+          >
+            {isPlaying ? (
+              <Pause className="w-4.5 h-4.5" strokeWidth={1.85} />
+            ) : (
+              <Play className="w-4.5 h-4.5" strokeWidth={1.85} />
+            )}
+          </button>
+
+          {/* Left Flank (in RTL): Next Ayah & Playback Speed */}
+          <button
+            onClick={onNextAyah}
+            title="اگلی آیت"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/70 transition-all cursor-pointer"
+          >
+            <SkipBack className="w-4 h-4" strokeWidth={1.85} />
+          </button>
+
+          <button
             onClick={cycleSpeed}
             disabled={!currentAyah}
-            className={`hidden sm:flex items-center gap-1 h-7 px-2 rounded-lg border text-[11px] font-app font-bold transition-colors ${
+            title="رفتارِ تلاوت (Speed)"
+            className={`hidden sm:flex items-center justify-center gap-1 h-7 px-2 min-w-[48px] rounded-lg border text-[11px] font-app font-bold transition-colors ${
               !currentAyah
                 ? 'opacity-30 cursor-not-allowed border-slate-300 dark:border-slate-700 text-slate-400'
                 : 'border-slate-300/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 cursor-pointer'
@@ -266,7 +275,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         {/* ======================================================== */}
         {/* RIGHT SIDE: Current Surah/Ayah & Reciter Info            */}
         {/* ======================================================== */}
-        <div dir="rtl" className="flex items-center gap-2.5 min-w-0 justify-self-end">
+        <div dir="rtl" className="flex items-center gap-2.5 min-w-0 justify-end z-10 shrink-0">
           <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold truncate">
             <span className={`w-2 h-2 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
             <span>سورة {currentSurah?.name_arabic || 'الفاتحة'}</span>
