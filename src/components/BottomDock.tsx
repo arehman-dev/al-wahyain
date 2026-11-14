@@ -56,10 +56,16 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   const [repeatCount, setRepeatCount] = useState<number>(1);
   const [currentRepeat, setCurrentRepeat] = useState<number>(1);
   const [showPaddingSlider, setShowPaddingSlider] = useState<boolean>(true);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
 
   // Sync audio source
   useEffect(() => {
-    if (!audioRef.current || !currentAyah?.audio_url) return;
+    if (!audioRef.current || !currentAyah?.audio_url) {
+      setCurrentTime(0);
+      setDuration(0);
+      return;
+    }
     audioRef.current.src = currentAyah.audio_url;
     audioRef.current.playbackRate = playbackRate;
 
@@ -80,7 +86,12 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
-    const timeMs = audioRef.current.currentTime * 1000;
+    const cur = audioRef.current.currentTime;
+    setCurrentTime(cur);
+    const dur = audioRef.current.duration;
+    if (dur && !isNaN(dur)) setDuration(dur);
+
+    const timeMs = cur * 1000;
 
     if (currentAyah?.audio_segments && currentAyah.audio_segments.length > 0) {
       const activeSegment = currentAyah.audio_segments.find(
@@ -89,6 +100,31 @@ export const BottomDock: React.FC<BottomDockProps> = ({
       onWordTimeUpdate(activeSegment ? activeSegment[0] : null);
     }
   };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current && !isNaN(audioRef.current.duration)) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const formatTime = (secs: number) => {
+    if (isNaN(secs) || secs < 0) return '0:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !duration || isNaN(duration)) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    const targetTime = pct * duration;
+    audioRef.current.currentTime = targetTime;
+    setCurrentTime(targetTime);
+  };
+
+  const progressPercent = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
 
   const handleEnded = () => {
     if (repeatCount === Infinity || currentRepeat < repeatCount) {
@@ -127,8 +163,25 @@ export const BottomDock: React.FC<BottomDockProps> = ({
       <audio
         ref={audioRef}
         onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleEnded}
       />
+
+      {/* Audio Timeline Scrubber Bar */}
+      <div 
+        onClick={handleSeek}
+        className={`absolute top-0 left-0 right-0 h-1 hover:h-2 transition-all cursor-pointer group z-30 ${
+          currentAyah?.audio_url ? 'bg-slate-300/40 dark:bg-slate-700/40' : 'hidden'
+        }`}
+        title={duration > 0 ? `${formatTime(currentTime)} / ${formatTime(duration)} (وقت تبدیل کرنے کے لیے کلک کریں)` : undefined}
+      >
+        <div 
+          className="h-full bg-emerald-500 group-hover:bg-emerald-400 transition-[width] duration-100 relative"
+          style={{ width: `${progressPercent}%` }}
+        >
+          <span className="opacity-0 group-hover:opacity-100 absolute -right-1 -top-0.5 w-2.5 h-2.5 bg-emerald-600 dark:bg-emerald-300 rounded-full shadow transition-opacity" />
+        </div>
+      </div>
 
       <div className="relative w-full h-full flex items-center justify-between">
 
@@ -281,6 +334,13 @@ export const BottomDock: React.FC<BottomDockProps> = ({
         {/* RIGHT SIDE: Current Surah/Ayah & Reciter Info            */}
         {/* ======================================================== */}
         <div dir="rtl" className="flex items-center gap-2.5 min-w-0 justify-end z-10 shrink-0">
+          {/* Subtle Audio Duration Indicator */}
+          {duration > 0 && currentAyah && (
+            <span dir="ltr" className="hidden lg:inline-flex items-center text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400 tabular-nums px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800/70 border border-slate-300/50 dark:border-slate-700/50">
+              {formatTime(currentTime)} / {formatTime(duration)}
+            </span>
+          )}
+
           <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold truncate">
             <span className={`w-2 h-2 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
             <span>سورة {currentSurah?.name_arabic || 'الفاتحة'}</span>

@@ -16,6 +16,7 @@ import {
   Rows3
 } from 'lucide-react';
 import { Surah, Ayah, ReadingTheme, OverallReadingMode } from '../types/quran';
+import { NavArrowMode } from '../types/shortcuts';
 import { toArabicDigits } from '../utils/juzMapping';
 
 interface ZenModeHUDProps {
@@ -27,6 +28,7 @@ interface ZenModeHUDProps {
   onPause: () => void;
   onPrevAyah: () => void;
   onNextAyah: () => void;
+  navArrowMode?: NavArrowMode;
   themeMode: ReadingTheme;
   onChangeThemeMode: (theme: ReadingTheme) => void;
   readingMode: OverallReadingMode;
@@ -45,6 +47,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
   onPause,
   onPrevAyah,
   onNextAyah,
+  navArrowMode = 'rtl',
   themeMode,
   onChangeThemeMode,
   readingMode,
@@ -87,7 +90,8 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
       <button
         onClick={isPlaying ? onPause : onPlay}
         disabled={!currentAyah}
-        title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : undefined}
+        title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause / Space)' : 'چلائیں (Play / Space)'}
+        aria-label="تلاوت چلائیں یا روکیں"
         className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all ${
           !currentAyah
             ? 'opacity-40 border-slate-700 text-slate-500 cursor-not-allowed'
@@ -97,17 +101,21 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
         {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
       </button>
 
-      {/* 3. Navigation Controls */}
+      {/* 3. Navigation Controls with orientation-aware tooltips */}
       <div className="flex items-center gap-1">
         <button
           onClick={onPrevAyah}
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+          title={navArrowMode === 'rtl' ? 'پچھلی آیت (دائیں تیر → / K)' : 'پچھلی آیت (بائیں تیر ← / J)'}
+          aria-label="پچھلی آیت"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
         <button
           onClick={onNextAyah}
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+          title={navArrowMode === 'rtl' ? 'اگلی آیت (بائیں تیر ← / J)' : 'اگلی آیت (دائیں تیر → / K)'}
+          aria-label="اگلی آیت"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -116,7 +124,9 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
       {/* 4. Theme Cycle */}
       <button
         onClick={cycleTheme}
-        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+        title="تھیم تبدیل کریں (T)"
+        aria-label="تھیم تبدیل کریں"
+        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
       >
         {themeMode === 'light' && <Sun className="w-3.5 h-3.5 text-amber-400" />}
         {themeMode === 'sepia' && <Coffee className="w-3.5 h-3.5 text-amber-600" />}
@@ -128,13 +138,17 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
       <div className="hidden md:flex items-center gap-0.5 border-r border-slate-700 pr-2">
         <button
           onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+          title="فونٹ چھوٹا کریں"
+          aria-label="فونٹ چھوٹا کریں"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
         >
           <ZoomOut className="w-3.5 h-3.5" />
         </button>
         <button
           onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
-          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+          title="فونٹ بڑا کریں"
+          aria-label="فونٹ بڑا کریں"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
         >
           <ZoomIn className="w-3.5 h-3.5" />
         </button>
@@ -143,7 +157,9 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
       {/* 7. Exit Zen Mode */}
       <button
         onClick={onExitZenMode}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-red-950/80 border border-slate-700 hover:border-red-800 text-slate-300 hover:text-red-200 transition-all font-semibold"
+        title="نارمل موڈ میں واپس جائیں (Esc / Z)"
+        aria-label="نارمل موڈ میں واپس جائیں"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-red-950/80 border border-slate-700 hover:border-red-800 text-slate-300 hover:text-red-200 transition-all font-semibold cursor-pointer"
       >
         <Minimize2 className="w-3.5 h-3.5" />
         <span className="hidden sm:inline">نارمل موڈ</span>

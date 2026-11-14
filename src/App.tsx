@@ -745,6 +745,7 @@ export const App: React.FC = () => {
           onPause={() => setIsPlaying(false)}
           onPrevAyah={handlePrevAyah}
           onNextAyah={handleNextAyah}
+          navArrowMode={navArrowMode}
           themeMode={themeMode}
           onChangeThemeMode={setThemeMode}
           readingMode={overallReadingMode}
