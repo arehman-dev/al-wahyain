@@ -18,6 +18,22 @@ export const SHORTCUT_DEFINITIONS: ShortcutDefinition[] = [
     descriptionUrdu: 'قرآنی متن کے رخ پر پچھلی آیت کی جانب واپس آئیے'
   },
   {
+    id: 'nav_next_surah',
+    nameUrdu: 'اگلی سورت',
+    nameEn: 'Next Surah',
+    category: 'nav',
+    defaultKey: 'Shift+ArrowLeft', // Under RTL default
+    descriptionUrdu: 'فہرست میں اگلی سورت کے آغاز پر جائیے'
+  },
+  {
+    id: 'nav_prev_surah',
+    nameUrdu: 'پچھلی سورت',
+    nameEn: 'Previous Surah',
+    category: 'nav',
+    defaultKey: 'Shift+ArrowRight', // Under RTL default
+    descriptionUrdu: 'فہرست میں پچھلی سورت کے آغاز پر جائیے'
+  },
+  {
     id: 'audio_play_pause',
     nameUrdu: 'تلاوت چلائیں / روکیں',
     nameEn: 'Play / Pause Recitation',
@@ -162,6 +178,12 @@ export const getEffectiveShortcut = (
   if (shortcutId === 'nav_prev_ayah') {
     return navArrowMode === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
   }
+  if (shortcutId === 'nav_next_surah') {
+    return navArrowMode === 'rtl' ? 'Shift+ArrowLeft' : 'Shift+ArrowRight';
+  }
+  if (shortcutId === 'nav_prev_surah') {
+    return navArrowMode === 'rtl' ? 'Shift+ArrowRight' : 'Shift+ArrowLeft';
+  }
 
   const def = SHORTCUT_DEFINITIONS.find(d => d.id === shortcutId);
   return def ? def.defaultKey : '';
@@ -212,6 +234,7 @@ export const eventMatchesShortcut = (e: KeyboardEvent, shortcutString: string): 
   if (needsAlt && !hasAlt) return false;
   if (!needsAlt && hasAlt) return false;
   if (needsShift && !hasShift) return false;
+  if (!needsShift && hasShift && mainKey.length > 1) return false;
 
   // Key match
   if (mainKey.toLowerCase() === 'space') {

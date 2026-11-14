@@ -245,6 +245,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onPrevSurah}
               disabled={currentSurahId <= 1}
+              title={navArrowMode === 'rtl' ? 'پچھلی سورت (Shift + دائیں تیر → / })' : 'پچھلی سورت (Shift + بائیں تیر ← / {)'}
+              aria-label="پچھلی سورت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.85} />
@@ -266,6 +268,8 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
             <button
               onClick={onNextSurah}
               disabled={currentSurahId >= 114}
+              title={navArrowMode === 'rtl' ? 'اگلی سورت (Shift + بائیں تیر ← / {)' : 'اگلی سورت (Shift + دائیں تیر → / })'}
+              aria-label="اگلی سورت"
               className="p-1 rounded-lg hover:bg-white dark:hover:bg-slate-900 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.85} />

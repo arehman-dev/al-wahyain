@@ -1097,13 +1097,19 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
                         عربی رسم الخط دائیں سے بائیں پڑھا جاتا ہے؛ لہٰذا آگے بڑھنے کے لیے بائیں طرف (←) اور پیچھے لوٹنے کے لیے دائیں طرف (→) ہوگا۔
                       </p>
-                      <div className="flex items-center gap-2 pt-1 font-mono text-[11px]" dir="ltr">
-                        <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1 font-mono text-[10px]" dir="ltr">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
                           ← Next Ayah
                         </span>
-                        <span className="text-slate-400">|</span>
-                        <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
                           → Prev Ayah
+                        </span>
+                        <span className="text-slate-400">|</span>
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                          Shift+← Next Surah
+                        </span>
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                          Shift+→ Prev Surah
                         </span>
                       </div>
                     </div>
@@ -1126,13 +1132,19 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
                         عمومی میڈیا پلیئرز کے مطابق؛ دائیں تیر (→) اگلی آیت (Next) اور بائیں تیر (←) پچھلی آیت (Prev) پر لے جائے گا۔
                       </p>
-                      <div className="flex items-center gap-2 pt-1 font-mono text-[11px]" dir="ltr">
-                        <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1 font-mono text-[10px]" dir="ltr">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
                           ← Prev Ayah
                         </span>
-                        <span className="text-slate-400">|</span>
-                        <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200">
                           → Next Ayah
+                        </span>
+                        <span className="text-slate-400">|</span>
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                          Shift+← Prev Surah
+                        </span>
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                          Shift+→ Next Surah
                         </span>
                       </div>
                     </div>

@@ -428,6 +428,23 @@ export const App: React.FC = () => {
     }
   }, [currentAyahNumber, currentSurahId, surahs, activeMode]);
 
+  // Navigation: Next / Prev Surah
+  const handlePrevSurah = useCallback(() => {
+    if (currentSurahId > 1) {
+      setCurrentSurahId(prev => prev - 1);
+      setCurrentAyahNumber(1);
+      setIsPlaying(false);
+    }
+  }, [currentSurahId]);
+
+  const handleNextSurah = useCallback(() => {
+    if (currentSurahId < 114) {
+      setCurrentSurahId(prev => prev + 1);
+      setCurrentAyahNumber(1);
+      setIsPlaying(false);
+    }
+  }, [currentSurahId]);
+
   // Audio Handlers
   const handlePlayAyah = (ayah: Ayah) => {
     setCurrentAyahNumber(ayah.ayah_number);
@@ -443,6 +460,28 @@ export const App: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)) {
+        return;
+      }
+
+      // Next Surah
+      const nextSurahKey = getEffectiveShortcut('nav_next_surah', customShortcuts, navArrowMode);
+      if (
+        eventMatchesShortcut(e, nextSurahKey) ||
+        (!customShortcuts['nav_next_surah'] && (navArrowMode === 'rtl' ? e.key === '{' : e.key === '}'))
+      ) {
+        e.preventDefault();
+        handleNextSurah();
+        return;
+      }
+
+      // Prev Surah
+      const prevSurahKey = getEffectiveShortcut('nav_prev_surah', customShortcuts, navArrowMode);
+      if (
+        eventMatchesShortcut(e, prevSurahKey) ||
+        (!customShortcuts['nav_prev_surah'] && (navArrowMode === 'rtl' ? e.key === '}' : e.key === '{'))
+      ) {
+        e.preventDefault();
+        handlePrevSurah();
         return;
       }
 
@@ -555,7 +594,7 @@ export const App: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNextAyah, handlePrevAyah, handleToggleBookmark, activeMode, customShortcuts, navArrowMode]);
+  }, [handleNextAyah, handlePrevAyah, handleNextSurah, handlePrevSurah, handleToggleBookmark, activeMode, customShortcuts, navArrowMode]);
 
   // Stacked Tafsir Handlers
   const handleToggleTafsir = (slug: string) => {
@@ -586,22 +625,6 @@ export const App: React.FC = () => {
       tayseer: false
     });
   };
-
-  const handlePrevSurah = useCallback(() => {
-    if (currentSurahId > 1) {
-      setCurrentSurahId(prev => prev - 1);
-      setCurrentAyahNumber(1);
-      setIsPlaying(false);
-    }
-  }, [currentSurahId]);
-
-  const handleNextSurah = useCallback(() => {
-    if (currentSurahId < 114) {
-      setCurrentSurahId(prev => prev + 1);
-      setCurrentAyahNumber(1);
-      setIsPlaying(false);
-    }
-  }, [currentSurahId]);
 
   return (
     <div className="min-h-screen bg-slate-100/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/25 selection:text-emerald-950 dark:selection:bg-emerald-500/35 dark:selection:text-emerald-100 font-app">
