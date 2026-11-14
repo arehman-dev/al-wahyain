@@ -199,13 +199,12 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           {/* Bookmark Icon Button (No Label per 3.4) */}
           <button
             onClick={onToggleBookmark}
-            disabled={currentAyahNumber === 0}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-              currentAyahNumber === 0
-                ? 'opacity-30 cursor-not-allowed text-slate-400'
-                : isBookmarked
-                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 cursor-pointer'
-                : 'text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 cursor-pointer'
+            title={isBookmarked ? 'بُک مارک خارج کریں (B)' : 'بُک مارک میں شامل کریں (B)'}
+            aria-label="بُک مارک"
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+              isBookmarked
+                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                : 'text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 border border-transparent'
             }`}
           >
             <Bookmark 
@@ -218,13 +217,12 @@ export const SubHeaderToolbar: React.FC<SubHeaderToolbarProps> = ({
           {/* Note Icon Button (No Label per 3.4) */}
           <button
             onClick={onOpenNoteDrawer}
-            disabled={currentAyahNumber === 0}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-              currentAyahNumber === 0
-                ? 'opacity-30 cursor-not-allowed text-slate-400'
-                : hasNote
-                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 cursor-pointer'
-                : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 cursor-pointer'
+            title={hasNote ? 'تفسیری نوٹ دیکھیں / ترمیم کریں (N)' : 'تفسیری نوٹ تحریر کریں (N)'}
+            aria-label="تفسیری نوٹ"
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+              hasNote
+                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/70 border border-transparent'
             }`}
           >
             <FileEdit 

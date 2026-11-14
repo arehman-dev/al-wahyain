@@ -70,13 +70,13 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
   // Sync play/pause state
   useEffect(() => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !currentAyah?.audio_url) return;
     if (isPlaying) {
       audioRef.current.play().catch(console.error);
     } else {
       audioRef.current.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentAyah?.audio_url]);
 
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;

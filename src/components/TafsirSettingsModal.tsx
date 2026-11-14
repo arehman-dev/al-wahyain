@@ -1,5 +1,8 @@
 import React from 'react';
 import { SlidersHorizontal, ArrowUp, ArrowDown, RotateCcw, X } from 'lucide-react';
+import { DEFAULT_TAFSIR_ORDER } from '../types/quran';
+
+export { DEFAULT_TAFSIR_ORDER };
 
 export interface TafsirMetadata {
   slug: string;
@@ -15,8 +18,6 @@ export const ALL_KNOWN_TAFASEER: TafsirMetadata[] = [
   { slug: 'saadi', name: 'تفسیر السعدی', author: 'شیخ عبدالرحمٰن بن ناصر السعدی' },
   { slug: 'tayseer', name: 'تیسیر القرآن', author: 'مولانا عبد الرحمن کیلانی' },
 ];
-
-export const DEFAULT_TAFSIR_ORDER = ['bayan_ul_quran', 'tafheem', 'maarif', 'ibn_kathir', 'saadi', 'tayseer'];
 
 interface TafsirSettingsModalProps {
   isOpen: boolean;
@@ -103,9 +104,6 @@ export const TafsirSettingsModal: React.FC<TafsirSettingsModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-sm text-slate-900 dark:text-white">
                         {meta.name}
-                      </span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                        {meta.author}
                       </span>
                     </div>
                   </label>

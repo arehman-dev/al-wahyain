@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { Header, SidebarTab } from './components/Header';
 import { SubHeaderToolbar } from './components/SubHeaderToolbar';
 import { BottomDock } from './components/BottomDock';
@@ -8,18 +8,20 @@ import { ZenModeHUD } from './components/ZenModeHUD';
 import { TranslationView } from './components/TranslationView';
 import { MorphologyView } from './components/MorphologyView';
 import { TafsirView } from './components/TafsirView';
-import { TafsirSettingsModal, DEFAULT_TAFSIR_ORDER } from './components/TafsirSettingsModal';
 import { QuickPeekDrawer } from './components/QuickPeekDrawer';
-import { RootExplorerModal } from './components/RootExplorerModal';
-import { TajweedLegendModal } from './components/TajweedLegendModal';
-import { SourcesAttributionModal } from './components/SourcesAttributionModal';
-import { OmnibarModal } from './components/OmnibarModal';
-import { StudySuiteModal } from './components/StudySuiteModal';
 import { NoteEditorDrawer } from './components/NoteEditorDrawer';
-import { ExportShareModal } from './components/ExportShareModal';
+import { OmnibarModal } from './components/OmnibarModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { SurahIntroView } from './components/SurahIntroView';
 import { NavArrowMode, CustomShortcutsMap } from './types/shortcuts';
+
+// Lazy-loaded secondary study modals for optimized initial payload (< 400 kB)
+const TafsirSettingsModal = lazy(() => import('./components/TafsirSettingsModal').then(m => ({ default: m.TafsirSettingsModal })));
+const RootExplorerModal = lazy(() => import('./components/RootExplorerModal').then(m => ({ default: m.RootExplorerModal })));
+const TajweedLegendModal = lazy(() => import('./components/TajweedLegendModal').then(m => ({ default: m.TajweedLegendModal })));
+const SourcesAttributionModal = lazy(() => import('./components/SourcesAttributionModal').then(m => ({ default: m.SourcesAttributionModal })));
+const StudySuiteModal = lazy(() => import('./components/StudySuiteModal').then(m => ({ default: m.StudySuiteModal })));
+const ExportShareModal = lazy(() => import('./components/ExportShareModal').then(m => ({ default: m.ExportShareModal })));
 import { 
   getStoredNavArrowMode, 
   setStoredNavArrowMode, 
@@ -40,7 +42,8 @@ import {
   Bookmark, 
   AyahNote, 
   TafsirHighlight, 
-  HighlightColor 
+  HighlightColor,
+  DEFAULT_TAFSIR_ORDER
 } from './types/quran';
 import { 
   fetchSurahs, 
@@ -311,6 +314,21 @@ export const App: React.FC = () => {
   const isQuranOrSarf = activeMode === 'quran' || activeMode === 'mushaf' || activeMode === 'sarf' || activeMode === 'morphology';
   const currentSurah = surahs.find(s => s.id === currentSurahId);
   const currentAyah = ayahs.find(a => a.ayah_number === currentAyahNumber) || (currentAyahNumber === 0 ? null : (ayahs[0] || null));
+  const effectiveAyah: Ayah | null = currentAyah || (currentAyahNumber === 0 && currentSurah ? {
+    id: 0,
+    surah_id: currentSurahId,
+    ayah_number: 0,
+    verse_key: `${currentSurahId}:0-intro`,
+    text_uthmani: `مقدمة سورة ${currentSurah.name_arabic}`,
+    text_indopak: `مقدمہ سورت ${currentSurah.name_urdu}`,
+    page_madani: 1,
+    juz_number: 1,
+    hizb_number: 1,
+    rub_el_hizb: 1,
+    sajdah: false,
+    translations: [],
+    words: []
+  } : null);
 
   // In Quran and Sarf mode, ensure verse 0 is never selected
   useEffect(() => {
@@ -338,13 +356,16 @@ export const App: React.FC = () => {
 
   // Bookmark toggle handler
   const handleToggleBookmark = async () => {
-    if (!currentAyah) return;
+    if (!currentAyah && currentAyahNumber !== 0) return;
+    const verseKey = currentAyahNumber === 0 
+      ? `${currentSurahId}:0-intro` 
+      : currentAyah?.verse_key || `${currentSurahId}:${currentAyahNumber}`;
     try {
       if (isCurrentAyahBookmarked) {
         await removeBookmark(currentSurahId, currentAyahNumber);
         setBookmarks(prev => prev.filter(b => !(b.surah_id === currentSurahId && b.ayah_number === currentAyahNumber)));
       } else {
-        await addBookmark(currentSurahId, currentAyahNumber, currentAyah.verse_key);
+        await addBookmark(currentSurahId, currentAyahNumber, verseKey);
         reloadStudyData();
       }
     } catch (err) {
@@ -517,7 +538,12 @@ export const App: React.FC = () => {
       const audioKey = getEffectiveShortcut('audio_play_pause', customShortcuts, navArrowMode);
       if (eventMatchesShortcut(e, audioKey)) {
         e.preventDefault();
-        setIsPlaying(prev => !prev);
+        if (currentAyahNumber === 0) {
+          setCurrentAyahNumber(1);
+          setIsPlaying(true);
+        } else {
+          setIsPlaying(prev => !prev);
+        }
         return;
       }
 
@@ -1000,38 +1026,97 @@ export const App: React.FC = () => {
       {/* MODALS & DRAWERS                                         */}
       {/* ======================================================== */}
 
-      {/* Tafsir Order & Selection Settings Modal */}
-      <TafsirSettingsModal
-        isOpen={showTafsirSettingsModal}
-        onClose={() => setShowTafsirSettingsModal(false)}
-        tafsirOrder={tafsirOrder}
-        onChangeOrder={(newOrder) => {
-          setTafsirOrder(newOrder);
-          localStorage.setItem('qs_tafsir_order', JSON.stringify(newOrder));
-        }}
-        visibleTafasir={visibleTafasir}
-        onToggleVisibility={(slug) => {
-          setVisibleTafasir(prev => {
-            const updated = { ...prev, [slug]: !prev[slug] };
-            localStorage.setItem('qs_tafsir_visibility', JSON.stringify(updated));
-            return updated;
-          });
-        }}
-        onResetDefaults={() => {
-          setTafsirOrder(DEFAULT_TAFSIR_ORDER);
-          localStorage.setItem('qs_tafsir_order', JSON.stringify(DEFAULT_TAFSIR_ORDER));
-          const allVisible = {
-            bayan_ul_quran: true,
-            tafheem: true,
-            maarif: true,
-            ibn_kathir: true,
-            saadi: true,
-            tayseer: true
-          };
-          setVisibleTafasir(allVisible);
-          localStorage.setItem('qs_tafsir_visibility', JSON.stringify(allVisible));
-        }}
-      />
+      {/* ======================================================== */}
+      {/* MODALS & DRAWERS (Lazy Loaded with Suspense)             */}
+      {/* ======================================================== */}
+      <Suspense fallback={null}>
+        {/* Tafsir Order & Selection Settings Modal */}
+        {showTafsirSettingsModal && (
+          <TafsirSettingsModal
+            isOpen={showTafsirSettingsModal}
+            onClose={() => setShowTafsirSettingsModal(false)}
+            tafsirOrder={tafsirOrder}
+            onChangeOrder={(newOrder) => {
+              setTafsirOrder(newOrder);
+              localStorage.setItem('qs_tafsir_order', JSON.stringify(newOrder));
+            }}
+            visibleTafasir={visibleTafasir}
+            onToggleVisibility={(slug) => {
+              setVisibleTafasir(prev => {
+                const updated = { ...prev, [slug]: !prev[slug] };
+                localStorage.setItem('qs_tafsir_visibility', JSON.stringify(updated));
+                return updated;
+              });
+            }}
+            onResetDefaults={() => {
+              setTafsirOrder(DEFAULT_TAFSIR_ORDER);
+              localStorage.setItem('qs_tafsir_order', JSON.stringify(DEFAULT_TAFSIR_ORDER));
+              const allVisible = {
+                bayan_ul_quran: true,
+                tafheem: true,
+                maarif: true,
+                ibn_kathir: true,
+                saadi: true,
+                tayseer: true
+              };
+              setVisibleTafasir(allVisible);
+              localStorage.setItem('qs_tafsir_visibility', JSON.stringify(allVisible));
+            }}
+          />
+        )}
+
+        {/* Root Concordance Explorer Modal */}
+        {selectedRoot && (
+          <RootExplorerModal
+            root={selectedRoot}
+            onClose={() => setSelectedRoot(null)}
+            onJumpToAyah={(surahId: number, ayahNumber: number) => {
+              setCurrentSurahId(surahId);
+              setCurrentAyahNumber(ayahNumber);
+              setSelectedRoot(null);
+            }}
+          />
+        )}
+
+        {/* Tajweed Legend Modal */}
+        {showTajweedLegend && (
+          <TajweedLegendModal
+            isOpen={showTajweedLegend}
+            onClose={() => setShowTajweedLegend(false)}
+          />
+        )}
+
+        {/* Sources & Scholarly Attribution Modal */}
+        {showAttributions && (
+          <SourcesAttributionModal
+            isOpen={showAttributions}
+            onClose={() => setShowAttributions(false)}
+          />
+        )}
+
+        {/* Study Suite & Bookmarks Drawer */}
+        {showStudySuiteModal && (
+          <StudySuiteModal
+            isOpen={showStudySuiteModal}
+            onClose={() => setShowStudySuiteModal(false)}
+            onJumpToAyah={(sId: number, aNum: number) => {
+              setCurrentSurahId(sId);
+              setCurrentAyahNumber(aNum);
+              setShowStudySuiteModal(false);
+            }}
+          />
+        )}
+
+        {/* Export / Share Modal (Available on Ayah 0 through 286) */}
+        {showExportModal && effectiveAyah && (
+          <ExportShareModal
+            isOpen={showExportModal}
+            onClose={() => setShowExportModal(false)}
+            ayah={effectiveAyah}
+            tafasir={tafasir}
+          />
+        )}
+      </Suspense>
 
       {/* Quick Peek Ayah Drawer */}
       <QuickPeekDrawer
@@ -1048,29 +1133,6 @@ export const App: React.FC = () => {
           setQuickPeekAyah(null);
           setActiveMode('sarf');
         }}
-      />
-
-      {/* Root Concordance Explorer Modal */}
-      <RootExplorerModal
-        root={selectedRoot}
-        onClose={() => setSelectedRoot(null)}
-        onJumpToAyah={(surahId: number, ayahNumber: number) => {
-          setCurrentSurahId(surahId);
-          setCurrentAyahNumber(ayahNumber);
-          setSelectedRoot(null);
-        }}
-      />
-
-      {/* Tajweed Legend Modal */}
-      <TajweedLegendModal
-        isOpen={showTajweedLegend}
-        onClose={() => setShowTajweedLegend(false)}
-      />
-
-      {/* Sources & Scholarly Attribution Modal */}
-      <SourcesAttributionModal
-        isOpen={showAttributions}
-        onClose={() => setShowAttributions(false)}
       />
 
       {/* Global Omnibar Command Palette */}
@@ -1091,34 +1153,13 @@ export const App: React.FC = () => {
         onSelectReadingMode={(mode) => setOverallReadingMode(mode)}
       />
 
-      {/* Study Suite & Bookmarks Drawer */}
-      <StudySuiteModal
-        isOpen={showStudySuiteModal}
-        onClose={() => setShowStudySuiteModal(false)}
-        onJumpToAyah={(sId: number, aNum: number) => {
-          setCurrentSurahId(sId);
-          setCurrentAyahNumber(aNum);
-          setShowStudySuiteModal(false);
-        }}
-      />
-
-      {/* Note Editor Drawer */}
-      {currentAyah && (
+      {/* Note Editor Drawer (Available on Ayah 0 through 286) */}
+      {effectiveAyah && (
         <NoteEditorDrawer
           isOpen={showNoteDrawer}
           onClose={() => setShowNoteDrawer(false)}
-          ayah={currentAyah}
+          ayah={effectiveAyah}
           onNoteSaved={reloadStudyData}
-        />
-      )}
-
-      {/* Export / Share Modal */}
-      {currentAyah && (
-        <ExportShareModal
-          isOpen={showExportModal}
-          onClose={() => setShowExportModal(false)}
-          ayah={currentAyah}
-          tafasir={tafasir}
         />
       )}
 

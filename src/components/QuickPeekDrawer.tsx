@@ -133,11 +133,8 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
                   key={t.id}
                   className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
                 >
-                  <div className="font-ibm font-bold text-base text-emerald-800 dark:text-emerald-400 mb-1">
+                  <div className="font-ibm font-bold text-base text-emerald-800 dark:text-emerald-400 mb-2">
                     {t.tafsir_name}
-                  </div>
-                  <div className="text-[11px] text-slate-400 mb-2 font-medium font-ibm">
-                    {t.author_name}
                   </div>
                   <div
                     className="font-ibm text-sm text-slate-700 dark:text-slate-300 line-clamp-4 leading-relaxed"

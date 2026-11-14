@@ -36,3 +36,6 @@ yarn-error.log*
 # Local Mushaf PDFs
 mushafs/
 *.pdf
+
+# Dynamically cached on-demand QCF v4 vector Tajweed fonts
+public/fonts/qcf_v4/

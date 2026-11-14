@@ -325,6 +325,8 @@ export interface ReadingHistoryEntry {
   timestamp: number;
 }
 
+export const DEFAULT_TAFSIR_ORDER = ['bayan_ul_quran', 'tafheem', 'maarif', 'ibn_kathir', 'saadi', 'tayseer'];
+
 export interface StudyState {
   currentSurahId: number;
   currentAyahNumber: number;

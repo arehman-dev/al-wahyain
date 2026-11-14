@@ -743,12 +743,12 @@ const server = http.createServer(async (req, res) => {
           b.ayah_number, 
           b.verse_key, 
           b.created_at, 
-          a.text_uthmani, 
-          a.text_indopak,
+          COALESCE(a.text_uthmani, 'مقدمة سورة ' || s.name_arabic) as text_uthmani, 
+          COALESCE(a.text_indopak, 'مقدمہ سورت ' || s.name_urdu) as text_indopak,
           (SELECT text FROM translations t WHERE t.surah_id = b.surah_id AND t.ayah_number = b.ayah_number AND t.author_id = 'taqi_usmani' LIMIT 1) as translation_text
         FROM user_db.bookmarks b
         JOIN surahs s ON b.surah_id = s.id
-        JOIN ayahs a ON (b.surah_id = a.surah_id AND b.ayah_number = a.ayah_number)
+        LEFT JOIN ayahs a ON (b.surah_id = a.surah_id AND b.ayah_number = a.ayah_number)
         ORDER BY b.id DESC
       `).all();
       return jsonResponse(res, bookmarks);
@@ -758,22 +758,23 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && pathname === '/api/bookmarks') {
       const body = await parseBody(req);
       const { surah_id, ayah_number, verse_key } = body;
-      if (!surah_id || !ayah_number) {
+      if (!surah_id || ayah_number === undefined || isNaN(Number(ayah_number))) {
         return jsonResponse(res, { error: 'surah_id and ayah_number required' }, 400);
       }
-      const vk = verse_key || `${surah_id}:${ayah_number}`;
+      const num = Number(ayah_number);
+      const vk = verse_key || (num === 0 ? `${surah_id}:0-intro` : `${surah_id}:${num}`);
       db.prepare(`
         INSERT OR IGNORE INTO user_db.bookmarks (surah_id, ayah_number, verse_key)
         VALUES (?, ?, ?)
-      `).run(surah_id, ayah_number, vk);
-      return jsonResponse(res, { success: true, surah_id, ayah_number });
+      `).run(surah_id, num, vk);
+      return jsonResponse(res, { success: true, surah_id, ayah_number: num });
     }
 
-    // DELETE /api/bookmarks/:surah/:ayah
-    const delBmMatch = pathname.match(/^\/api\/bookmarks\/(\d+)\/(\d+)$/);
+    // DELETE /api/bookmarks/:surah/:ayah (supports 0-intro or integer)
+    const delBmMatch = pathname.match(/^\/api\/bookmarks\/(\d+)\/(0-intro|\d+)$/i);
     if (req.method === 'DELETE' && delBmMatch) {
       const sId = parseInt(delBmMatch[1], 10);
-      const aNum = parseInt(delBmMatch[2], 10);
+      const aNum = delBmMatch[2].toLowerCase() === '0-intro' ? 0 : parseInt(delBmMatch[2], 10);
       db.prepare('DELETE FROM user_db.bookmarks WHERE surah_id = ? AND ayah_number = ?').run(sId, aNum);
       return jsonResponse(res, { success: true });
     }
@@ -791,10 +792,10 @@ const server = http.createServer(async (req, res) => {
           n.note_text, 
           n.tags, 
           n.updated_at, 
-          a.text_uthmani
+          COALESCE(a.text_uthmani, 'مقدمة سورة ' || s.name_arabic) as text_uthmani
         FROM user_db.notes n
         JOIN surahs s ON n.surah_id = s.id
-        JOIN ayahs a ON (n.surah_id = a.surah_id AND n.ayah_number = a.ayah_number)
+        LEFT JOIN ayahs a ON (n.surah_id = a.surah_id AND n.ayah_number = a.ayah_number)
         ORDER BY n.updated_at DESC
       `).all();
       return jsonResponse(res, notes);
@@ -804,10 +805,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && pathname === '/api/notes') {
       const body = await parseBody(req);
       const { surah_id, ayah_number, verse_key, note_text, tags } = body;
-      if (!surah_id || !ayah_number || note_text === undefined) {
+      if (!surah_id || ayah_number === undefined || isNaN(Number(ayah_number)) || note_text === undefined) {
         return jsonResponse(res, { error: 'surah_id, ayah_number, and note_text required' }, 400);
       }
-      const vk = verse_key || `${surah_id}:${ayah_number}`;
+      const num = Number(ayah_number);
+      const vk = verse_key || (num === 0 ? `${surah_id}:0-intro` : `${surah_id}:${num}`);
       db.prepare(`
         INSERT INTO user_db.notes (surah_id, ayah_number, verse_key, note_text, tags, updated_at)
         VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -815,15 +817,15 @@ const server = http.createServer(async (req, res) => {
           note_text = excluded.note_text, 
           tags = excluded.tags, 
           updated_at = CURRENT_TIMESTAMP
-      `).run(surah_id, ayah_number, vk, note_text, tags || '');
-      return jsonResponse(res, { success: true, surah_id, ayah_number });
+      `).run(surah_id, num, vk, note_text, tags || '');
+      return jsonResponse(res, { success: true, surah_id, ayah_number: num });
     }
 
-    // DELETE /api/notes/:surah/:ayah
-    const delNoteMatch = pathname.match(/^\/api\/notes\/(\d+)\/(\d+)$/);
+    // DELETE /api/notes/:surah/:ayah (supports 0-intro or integer)
+    const delNoteMatch = pathname.match(/^\/api\/notes\/(\d+)\/(0-intro|\d+)$/i);
     if (req.method === 'DELETE' && delNoteMatch) {
       const sId = parseInt(delNoteMatch[1], 10);
-      const aNum = parseInt(delNoteMatch[2], 10);
+      const aNum = delNoteMatch[2].toLowerCase() === '0-intro' ? 0 : parseInt(delNoteMatch[2], 10);
       db.prepare('DELETE FROM user_db.notes WHERE surah_id = ? AND ayah_number = ?').run(sId, aNum);
       return jsonResponse(res, { success: true });
     }
