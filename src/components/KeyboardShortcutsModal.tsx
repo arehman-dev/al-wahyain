@@ -33,13 +33,13 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/40">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center">
               <Keyboard className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-sm text-slate-900 dark:text-white">کی بورڈ شارٹ کٹس (Keyboard Hotkeys)</h3>
               <p className="text-[11px] text-slate-400">
-                سمتِ رُخ: <span className="text-emerald-600 dark:text-emerald-400 font-bold">{navArrowMode === 'rtl' ? 'قرآنی سمت (RTL)' : 'معیاری سمت (LTR)'}</span>
+                سمتِ رُخ: <span className="text-[#0e7490] dark:text-[#2ca4ab] font-bold">{navArrowMode === 'rtl' ? 'قرآنی سمت (RTL)' : 'معیاری سمت (LTR)'}</span>
               </p>
             </div>
           </div>
@@ -68,7 +68,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                     <span className="text-slate-800 dark:text-slate-200 font-bold">{def.nameUrdu}</span>
                     <span className="text-[10px] text-slate-400">({def.nameEn})</span>
                     {isCustomized && (
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-medium">
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-cyan-100 dark:bg-cyan-950/80 text-[#0e7490] dark:text-[#2ca4ab] font-medium">
                         تخصیص
                       </span>
                     )}
@@ -94,7 +94,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                 onClose();
                 onOpenPreferences();
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-all cursor-pointer text-xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 hover:bg-[#2ca4ab]/20 font-bold transition-all cursor-pointer text-xs"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>شارٹ کٹس میں ترمیم کریں</span>

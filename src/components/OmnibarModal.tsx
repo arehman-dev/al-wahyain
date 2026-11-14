@@ -136,7 +136,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
           ? `براہِ راست جمپ: سورة ${matchedSurah.name_arabic}، مقدمہ و پس منظر` 
           : `براہِ راست جمپ: سورة ${matchedSurah.name_arabic}، آیت ${aNum}`,
         subtitle: `${matchedSurah.name_simple} • ${sId}:${aNum}`,
-        icon: <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+        icon: <Compass className="w-4 h-4 text-[#2ca4ab]" />,
         badge: 'Enter',
         execute: () => {
           onSelectSurahAyah(sId, aNum);
@@ -185,7 +185,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
         type: 'surah',
         title: `سورة ${s.name_arabic} (${s.name_simple})`,
         subtitle: `${s.revelation_place === 'makkah' ? 'مکی' : 'مدنی'} • ${s.verses_count} آیات • صفحہ ${s.page_start}`,
-        icon: <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+        icon: <BookOpen className="w-4 h-4 text-[#2ca4ab]" />,
         badge: `سورة ${s.id}`,
         execute: () => {
           onSelectSurahAyah(s.id, 1);
@@ -201,35 +201,35 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       keywords: ['quran', 'قرآن', 'مصحف', 'تلاوت', '1'],
       title: 'قرآن و مصحف موڈ (1)',
       subtitle: 'مسلسل خالص عثمانی مصحف (QCF V2)',
-      icon: <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      icon: <BookOpen className="w-4 h-4 text-[#2ca4ab]" />,
       action: () => onChangeMode && onChangeMode('quran')
     },
     {
       keywords: ['translation', 'tarjuma', 'ترجمہ', 'لفظی', '2'],
       title: 'بامحاورہ و لفظی ترجمہ موڈ (2)',
       subtitle: 'مفتی تقی عثمانی، مولانا مودودی و دیگر تراجم',
-      icon: <Languages className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      icon: <Languages className="w-4 h-4 text-[#2ca4ab]" />,
       action: () => onChangeMode && onChangeMode('translation')
     },
     {
       keywords: ['sarf', 'nahw', 'صرف', 'نحو', 'لغت', 'گرامر', '3'],
       title: 'صرف، نحو و لغت موڈ (3)',
       subtitle: 'کلمات کی گرامر، صیغہ، مادہ اور ترکیبی درخت',
-      icon: <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      icon: <Sparkles className="w-4 h-4 text-[#2ca4ab]" />,
       action: () => onChangeMode && onChangeMode('sarf')
     },
     {
       keywords: ['tafsir', 'tafseer', 'تفسیر', 'تفاسیر', '4'],
       title: 'تقابلی تفاسیر موڈ (4)',
       subtitle: 'بیان القرآن، تفہیم، معارف القرآن، ابن کثیر، السعدی، تیسیر القرآن',
-      icon: <Library className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      icon: <Library className="w-4 h-4 text-[#2ca4ab]" />,
       action: () => onChangeMode && onChangeMode('tafseer')
     },
     {
       keywords: ['zen', 'focus', 'زین', 'فوکس'],
       title: 'زین فوکس موڈ (Zen Focus HUD)',
       subtitle: 'تمام ٹول بار چھپا کر مکمل یکسوئی',
-      icon: <Maximize2 className="w-4 h-4 text-emerald-500" />,
+      icon: <Maximize2 className="w-4 h-4 text-[#2ca4ab]" />,
       action: () => onToggleZenMode && onToggleZenMode()
     },
     {
@@ -257,7 +257,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       keywords: ['oled', 'او لیڈ', 'مڈ نائٹ'],
       title: 'مڈ نائٹ او لیڈ تھیم (OLED Black)',
       subtitle: 'خالص سیاہ پس منظر بیٹری بچت اور تاریکی کیلئے',
-      icon: <Eye className="w-4 h-4 text-emerald-400" />,
+      icon: <Eye className="w-4 h-4 text-[#2ca4ab]" />,
       action: () => onChangeTheme && onChangeTheme('oled')
     },
     {
@@ -318,7 +318,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       type: 'quran',
       title: qr.text_uthmani,
       subtitle: `سورة ${qr.surah_name_arabic} [${qr.surah_id}:${qr.ayah_number}] • ${qr.translation_text || ''}`,
-      icon: <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      icon: <FileText className="w-4 h-4 text-[#2ca4ab]" />,
       badge: `${qr.surah_id}:${qr.ayah_number}`,
       execute: () => {
         onSelectSurahAyah(qr.surah_id, qr.ayah_number);
@@ -375,7 +375,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
       >
         {/* Omnibar Input Bar */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-          <Search className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <Search className="w-5 h-5 text-[#2ca4ab] shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -388,7 +388,7 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
             placeholder="آیت تلاش کریں، سورۃ کا نام، جمپ (مثلاً 55:13)، یا کوئی کمانڈ..."
             className="flex-1 bg-transparent border-none outline-none text-sm sm:text-base text-slate-800 dark:text-slate-100 placeholder-slate-400"
           />
-          {loading && <Loader2 className="w-4 h-4 text-emerald-600 animate-spin shrink-0" />}
+          {loading && <Loader2 className="w-4 h-4 text-[#2ca4ab] animate-spin shrink-0" />}
           <div className="flex items-center gap-1.5 shrink-0">
             <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-slate-200/70 dark:bg-slate-800 text-slate-500 rounded border border-slate-300 dark:border-slate-700">
               Esc
@@ -421,14 +421,14 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors ${
                     isSelected 
-                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100' 
+                      ? 'bg-cyan-50/70 dark:bg-cyan-950/30 text-cyan-950 dark:text-cyan-100' 
                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={`shrink-0 p-1.5 rounded-lg ${
                       isSelected 
-                        ? 'bg-emerald-600/10 text-emerald-600 dark:text-emerald-400' 
+                        ? 'bg-[#2ca4ab]/15 text-[#0e7490] dark:text-[#2ca4ab]' 
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
                     }`}>
                       {act.icon}
@@ -449,14 +449,14 @@ export const OmnibarModal: React.FC<OmnibarModalProps> = ({
                     {act.badge && (
                       <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${
                         isSelected 
-                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10' 
+                          ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10' 
                           : 'border-transparent bg-slate-100 dark:bg-slate-800 text-slate-500'
                       }`}>
                         {act.badge}
                       </span>
                     )}
                     {isSelected && (
-                      <CornerDownLeft className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <CornerDownLeft className="w-3.5 h-3.5 text-[#2ca4ab]" />
                     )}
                   </div>
                 </div>

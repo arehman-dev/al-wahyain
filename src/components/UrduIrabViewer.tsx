@@ -72,7 +72,7 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
   if (loading) {
     return (
       <div className="w-full p-12 flex flex-col items-center justify-center gap-3 text-slate-400 font-ibm">
-        <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#2ca4ab]" />
         <span className="text-xs font-semibold">اعراب و لغاتِ پروفیسر حافظ احمد یارؒ لوڈ ہو رہا ہے...</span>
       </div>
     );
@@ -142,10 +142,10 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
           {/* Copy Entire Commentary */}
           <button
             onClick={() => handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), 'full_irab')}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 text-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#2ca4ab] dark:hover:text-[#2ca4ab] text-xs transition-colors cursor-pointer"
             title="مکمل اندراج کاپی کریں"
           >
-            {copiedId === 'full_irab' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedId === 'full_irab' ? <Check className="w-3.5 h-3.5 text-[#2ca4ab]" /> : <Copy className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">{copiedId === 'full_irab' ? 'کاپی شدہ' : 'کاپی'}</span>
           </button>
 
@@ -155,7 +155,7 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
               href={entry.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 text-xs transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#2ca4ab] dark:hover:text-[#2ca4ab] text-xs transition-colors cursor-pointer"
               title="تنظیم اسلامی ڈیجیٹل لائبریری پر اصل صفحہ دیکھیں"
             >
               <ExternalLink className="w-3.5 h-3.5" />
@@ -169,8 +169,8 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
       {/* 2. SACRED VERSE BANNER                                   */}
       {/* ======================================================== */}
       {parsedData?.matnVerse && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 text-center select-none shadow-xs">
-          <p className="font-ibm text-xl sm:text-2xl text-emerald-900 dark:text-emerald-200 leading-[2.4] font-bold">
+        <div className="p-4 sm:p-5 rounded-2xl bg-cyan-50/50 dark:bg-cyan-950/20 border border-cyan-100 dark:border-cyan-900/40 text-center select-none shadow-xs">
+          <p className="font-ibm text-xl sm:text-2xl text-cyan-950 dark:text-[#2ca4ab] leading-[2.4] font-bold">
             {parsedData.matnVerse}
           </p>
         </div>
@@ -182,7 +182,7 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
       {parsedData && parsedData.words.length > 1 && (
         <div className="space-y-2 select-none">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-semibold">
-            <Layers className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <Layers className="w-3.5 h-3.5 text-[#2ca4ab]" />
             <span>الفاظِ زیرِ تحقیق (سرسری رسائی کے لیے لفظ پر کلک کریں):</span>
           </div>
           <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
@@ -194,8 +194,8 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
                   onClick={() => handleScrollToWord(w.id)}
                   className={`px-3 py-1.5 rounded-xl border text-xs transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     isSelected
-                      ? 'border-emerald-500 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-bold shadow-xs'
-                      : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:border-emerald-300 hover:bg-emerald-50/40 dark:hover:bg-slate-800'
+                      ? 'border-[#2ca4ab] bg-[#2ca4ab]/15 text-[#0e7490] dark:text-[#2ca4ab] font-bold shadow-xs'
+                      : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:border-[#2ca4ab]/40 hover:bg-cyan-50/40 dark:hover:bg-slate-800'
                   }`}
                 >
                   <span className="font-mono text-[10px] opacity-60">#{idx + 1}</span>
@@ -220,17 +220,17 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
                 ref={(el) => { wordRefs.current[w.id] = el; }}
                 className={`rounded-2xl border transition-all p-4 sm:p-6 space-y-3.5 ${
                   isHighlight
-                    ? 'border-emerald-500/80 bg-emerald-50/30 dark:bg-emerald-950/15 shadow-sm ring-1 ring-emerald-500/20'
+                    ? 'border-[#2ca4ab]/80 bg-cyan-50/30 dark:bg-cyan-950/15 shadow-sm ring-1 ring-[#2ca4ab]/20'
                     : 'border-slate-200/70 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 {/* Word Card Header */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200/60 dark:border-slate-800/80 select-none">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="w-6 h-6 rounded-lg bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-mono text-[11px] font-bold">
+                    <span className="w-6 h-6 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center font-mono text-[11px] font-bold">
                       {idx + 1}
                     </span>
-                    <span className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-950 dark:text-emerald-200 font-ibm text-lg sm:text-xl font-bold border border-emerald-300/60 dark:border-emerald-800/80 shadow-xs">
+                    <span className="px-3 py-1 rounded-xl bg-cyan-100/80 dark:bg-cyan-950/80 text-cyan-950 dark:text-cyan-200 font-ibm text-lg sm:text-xl font-bold border border-[#2ca4ab]/40 dark:border-cyan-800/80 shadow-xs">
                       [ {w.word} ]
                     </span>
                     {w.sectionType && (
@@ -247,10 +247,10 @@ export const UrduIrabViewer: React.FC<UrduIrabViewerProps> = ({
 
                   <button
                     onClick={() => handleCopy(w.contentHtml.replace(/<[^>]+>/g, ''), w.id)}
-                    className="p-1.5 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-400 hover:text-[#2ca4ab] transition-colors cursor-pointer"
                     title="اس لفظ کا تجزیہ کاپی کریں"
                   >
-                    {copiedId === w.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedId === w.id ? <Check className="w-3.5 h-3.5 text-[#2ca4ab]" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
 

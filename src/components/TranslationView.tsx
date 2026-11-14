@@ -86,7 +86,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
   return (
     <div dir="rtl" className="w-full py-4">
       {/* Editorial Continuous Verses Stream — Zero Boxed Cards, Zero Extra Toolbars */}
-      <div className="divide-y divide-emerald-950/10 dark:divide-emerald-500/10">
+      <div className="divide-y divide-slate-200/70 dark:divide-slate-800/80">
         {ayahs.map((ayah) => {
           const isSelected = currentAyahNumber === ayah.ayah_number;
           const isAyahPlaying = isPlaying && activePlayingAyah === ayah.ayah_number;
@@ -108,7 +108,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className={`font-app font-bold text-xs transition-colors ${
                     isSelected
-                      ? 'text-emerald-600 dark:text-emerald-400 scale-105'
+                      ? 'text-[#0e7490] dark:text-[#2ca4ab] scale-105'
                       : 'text-slate-600 dark:text-slate-400'
                   }`}>
                     {ayah.verse_key}
@@ -120,7 +120,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
 
                   {rukuEnd && (
                     <span 
-                      className="px-2 py-0.5 rounded-md bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold text-[10px]"
+                      className="px-2 py-0.5 rounded-md bg-cyan-100/70 dark:bg-cyan-950/60 text-[#0e7490] dark:text-[#2ca4ab] font-bold text-[10px]"
                     >
                       ع {toArabicDigits(rukuEnd.surahRuku)}
                     </span>
@@ -163,7 +163,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                       : isWordActive
                       ? 'text-amber-600 dark:text-amber-400'
                       : isSelected || isAyahPlaying
-                      ? 'text-emerald-700 dark:text-emerald-400 group-hover/word:text-amber-600 dark:group-hover/word:text-amber-300'
+                      ? 'text-[#0e7490] dark:text-[#2ca4ab] group-hover/word:text-amber-600 dark:group-hover/word:text-amber-300'
                       : 'text-slate-900 dark:text-slate-100 group-hover/word:text-[#2ca4ab] dark:group-hover/word:text-[#2ca4ab]';
 
                     return (
@@ -189,7 +189,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                             <span className={`font-ibm text-xs font-semibold leading-tight transition-colors ${
                               isWordActive
                                 ? 'text-amber-600 dark:text-amber-400'
-                                : 'text-emerald-850 dark:text-emerald-300 group-hover/word:text-[#2ca4ab]'
+                                : 'text-slate-800 dark:text-slate-200 group-hover/word:text-[#2ca4ab]'
                             }`}>
                               {wbwLanguage === 'ur2' ? (w.translation_ur_2 || w.translation_ur || '—') : (w.translation_ur || '—')}
                             </span>
@@ -210,13 +210,13 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                       className={`ayah-end-num inline-flex items-center text-2xl select-none align-middle mr-1 font-qcf cursor-pointer transition-colors ${
                         isSelected
                           ? 'text-amber-600 dark:text-amber-400'
-                          : 'text-emerald-800 dark:text-emerald-400 hover:text-[#2ca4ab]'
+                          : 'text-[#0e7490] dark:text-[#2ca4ab] hover:text-[#258c91]'
                       }`}
                       style={{ fontFamily: getQcfFontFamily(ayah.page_madani, showTajweed) }}
                       dangerouslySetInnerHTML={{ __html: ayah.end_code_v2 }}
                     />
                   ) : (
-                    <span className="ayah-end-num inline-flex items-center text-2xl text-emerald-800 dark:text-emerald-400 select-none align-middle mr-1 cursor-pointer">
+                    <span className="ayah-end-num inline-flex items-center text-2xl text-[#0e7490] dark:text-[#2ca4ab] select-none align-middle mr-1 cursor-pointer">
                       ﴿{toArabicDigits(ayah.ayah_number)}﴾
                     </span>
                   )}
@@ -229,7 +229,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                     isSelected || isAyahPlaying
                       ? showTajweed
                         ? 'qcf-tajweed-verse-selected'
-                        : 'text-emerald-700 dark:text-emerald-400'
+                        : 'text-[#0e7490] dark:text-[#2ca4ab]'
                       : 'text-slate-900 dark:text-slate-100'
                   }`}
                 >
@@ -255,7 +255,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
                       className={`ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle cursor-pointer transition-colors ${
                         isSelected
                           ? 'text-amber-600 dark:text-amber-400'
-                          : 'text-emerald-800 dark:text-emerald-400 hover:text-[#2ca4ab]'
+                          : 'text-[#2ca4ab] dark:text-[#2ca4ab] hover:text-[#258c91]'
                       }`}
                       style={{ fontFamily: getQcfFontFamily(ayah.page_madani, showTajweed) }}
                       dangerouslySetInnerHTML={{ __html: ayah.end_code_v2 }}
@@ -296,7 +296,7 @@ export const TranslationView: React.FC<TranslationViewProps> = ({
               {/* SECONDARY TRANSLATION (Subtle Indent Margin)             */}
               {/* ======================================================== */}
               {secondaryTr && secondaryTr.author_id !== activeTr?.author_id && (
-                <div className="mt-3.5 pr-4 border-r-2 border-emerald-500/30 dark:border-emerald-500/40 text-right">
+                <div className="mt-3.5 pr-4 border-r-2 border-[#2ca4ab]/30 dark:border-[#2ca4ab]/40 text-right">
                   <p 
                     style={{ fontSize: `${Math.max(13, fontSize - 1)}px` }}
                     className={`text-slate-700 dark:text-slate-300 select-text ${

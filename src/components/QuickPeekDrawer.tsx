@@ -57,7 +57,7 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
             onClick={() => setActiveTab('tafsir')}
             className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
               activeTab === 'tafsir'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm'
+                ? 'bg-white dark:bg-slate-900 text-[#0e7490] dark:text-[#2ca4ab] shadow-sm'
                 : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
@@ -67,7 +67,7 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
             onClick={() => setActiveTab('morphology')}
             className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
               activeTab === 'morphology'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm'
+                ? 'bg-white dark:bg-slate-900 text-[#0e7490] dark:text-[#2ca4ab] shadow-sm'
                 : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
@@ -94,7 +94,7 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
               ))}
               {ayah.end_code_v2 ? (
                 <span
-                  className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle text-emerald-700 dark:text-emerald-400"
+                  className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle text-[#0e7490] dark:text-[#2ca4ab]"
                   style={pageFont ? { fontFamily: pageFont } : undefined}
                   dangerouslySetInnerHTML={{ __html: ayah.end_code_v2 }}
                 />
@@ -121,7 +121,7 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
               <span className="text-xs font-bold text-slate-500 font-ibm">تفاسیر کا خلاصہ</span>
               <button
                 onClick={onOpenFullTafsir}
-                className="text-xs text-emerald-600 hover:underline font-semibold cursor-pointer font-ibm"
+                className="text-xs text-[#0e7490] dark:text-[#2ca4ab] hover:underline font-semibold cursor-pointer font-ibm"
               >
                 پوری تفاسیر اسکرین پر جائیں ←
               </button>
@@ -133,7 +133,7 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
                   key={t.id}
                   className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
                 >
-                  <div className="font-ibm font-bold text-base text-emerald-800 dark:text-emerald-400 mb-2">
+                  <div className="font-ibm font-bold text-base text-[#0e7490] dark:text-[#2ca4ab] mb-2">
                     {t.tafsir_name}
                   </div>
                   <div
@@ -150,7 +150,7 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
               <span className="text-xs font-bold text-slate-500 font-ibm">الفاظ کی صرفی تفصیل</span>
               <button
                 onClick={onOpenFullMorphology}
-                className="text-xs text-emerald-600 hover:underline font-semibold cursor-pointer font-ibm"
+                className="text-xs text-[#0e7490] dark:text-[#2ca4ab] hover:underline font-semibold cursor-pointer font-ibm"
               >
                 مکمل صرفی اسکرین پر جائیں ←
               </button>
@@ -174,14 +174,14 @@ export const QuickPeekDrawer: React.FC<QuickPeekDrawerProps> = ({
                         {w.text_uthmani}
                       </div>
                     )}
-                    <div className="font-ibm text-xs font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5">
+                    <div className="font-ibm text-xs font-semibold text-[#0e7490] dark:text-[#2ca4ab] mt-0.5">
                       {w.translation_ur || w.translation_en}
                     </div>
                   </div>
 
                   <div className="text-left text-xs text-slate-500 font-ibm">
                     {w.root && (
-                      <span className="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold block mb-1 font-ibm">
+                      <span className="px-2 py-0.5 rounded bg-cyan-100/70 dark:bg-cyan-950 text-[#0e7490] dark:text-[#2ca4ab] font-bold block mb-1 font-ibm">
                         جذر: {w.root}
                       </span>
                     )}

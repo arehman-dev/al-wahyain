@@ -60,7 +60,7 @@ export const TajweedLegendModal: React.FC<TajweedLegendModalProps> = ({ isOpen, 
         {/* Header */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Palette className="w-5 h-5 text-emerald-600" />
+            <Palette className="w-5 h-5 text-[#2ca4ab]" />
             <h3 className="font-bold text-base text-slate-800 dark:text-slate-100">
               رموزِ تجوید اور رنگوں کی رہنمائی (Tajweed Color Rules)
             </h3>

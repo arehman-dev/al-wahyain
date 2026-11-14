@@ -81,7 +81,7 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
     badge: isVerb ? 'فعل' : 'اسم',
     color: isVerb 
       ? 'border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300'
-      : 'border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300'
+      : 'border-[#2ca4ab] bg-cyan-50/70 dark:bg-cyan-950/40 text-[#0e7490] dark:text-[#2ca4ab]'
   });
 
   // 3. Suffix / لاحقة (ضمائر متصلة، جمع، تثنية)
@@ -118,7 +118,7 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800 text-xs">
         <div className="flex items-center gap-2">
-          <GitBranch className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <GitBranch className="w-4 h-4 text-[#2ca4ab] dark:text-[#2ca4ab]" />
           <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100">
             الشجرة الصرفية والتركيب النحوي (Morphology Graph & Decomposition Tree)
           </h4>
@@ -133,7 +133,7 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
         
         {/* Top Node: Complete Word Compound */}
         <div className="relative flex flex-col items-center">
-          <div className="px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border-2 border-emerald-500 shadow-md flex flex-col items-center">
+          <div className="px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border-2 border-[#2ca4ab] shadow-xs flex flex-col items-center">
             <span className="text-xs text-slate-400 font-medium mb-1 font-ibm">المركب اللفظي الكامل (Word Token)</span>
             {word.code_v2 && word.page_number ? (
               <span
@@ -146,7 +146,7 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
                 {word.text_uthmani}
               </span>
             )}
-            <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mt-1 font-ibm">
+            <span className="text-xs font-semibold text-[#0e7490] dark:text-[#2ca4ab] mt-1 font-ibm">
               {word.translation_ur || word.translation_en || '—'}
             </span>
           </div>
@@ -227,7 +227,7 @@ export const MorphologyGraph: React.FC<MorphologyGraphProps> = ({
                     {part}
                   </span>
                   {pIdx < grammarParts.length - 1 && (
-                    <span className="text-emerald-500 font-bold">←</span>
+                    <span className="text-[#2ca4ab] font-bold">←</span>
                   )}
                 </React.Fragment>
               ))}

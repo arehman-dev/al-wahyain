@@ -74,7 +74,7 @@ export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = (
         {/* Header */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-600" />
+            <ShieldCheck className="w-5 h-5 text-[#2ca4ab]" />
             <h3 className="font-bold text-base text-slate-800 dark:text-slate-100">
               مآخذ، مراجع اور مصدقہ روابط (Data Sources & Official Citations)
             </h3>
@@ -107,7 +107,7 @@ export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = (
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:underline"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#0e7490] dark:text-[#2ca4ab] hover:underline"
                   >
                     <span>سرکاری ویب سائٹ</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -129,8 +129,8 @@ export const SourcesAttributionModal: React.FC<SourcesAttributionModalProps> = (
             ))}
           </div>
 
-          <div className="p-4 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 text-center">
-            <p className="urdu-nastaliq text-xs text-emerald-800 dark:text-emerald-300">
+          <div className="p-4 rounded-2xl bg-cyan-50/40 dark:bg-cyan-950/30 border border-cyan-200/50 dark:border-cyan-800/50 text-center">
+            <p className="urdu-nastaliq text-xs text-[#0e7490] dark:text-[#2ca4ab]">
               جزاهم الله خير الجزاء فی الدنیا والآخرة
             </p>
           </div>

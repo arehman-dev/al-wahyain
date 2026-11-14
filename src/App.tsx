@@ -653,7 +653,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-emerald-500/25 selection:text-emerald-950 dark:selection:bg-emerald-500/35 dark:selection:text-emerald-100 font-app">
+    <div className="min-h-screen bg-slate-100/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors selection:bg-[#2ca4ab]/25 selection:text-cyan-950 dark:selection:bg-[#2ca4ab]/35 dark:selection:text-cyan-100 font-app">
       
       {/* ======================================================== */}
       {/* BAR 1: TOP HEADER BAR (Header.tsx)                       */}
@@ -769,7 +769,7 @@ export const App: React.FC = () => {
         {loading ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-3 font-ibm">
-              <div className="w-12 h-12 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin mx-auto"></div>
+              <div className="w-12 h-12 rounded-full border-4 border-[#2ca4ab] border-t-transparent animate-spin mx-auto"></div>
               <p className="text-slate-500 font-semibold">متن اور تفاسیر لوڈ کی جا رہی ہیں...</p>
             </div>
           </div>
@@ -797,7 +797,7 @@ export const App: React.FC = () => {
                 <button 
                   key={s.id}
                   onClick={() => handleSelectSurah(s.id)} 
-                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                  className="px-3.5 py-2 bg-[#2ca4ab] hover:bg-[#258c91] text-white rounded-xl text-xs font-bold transition-all shadow-sm"
                 >
                   {s.name}
                 </button>

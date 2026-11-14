@@ -56,7 +56,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <div className="flex gap-3">
               <button
                 onClick={this.handleReset}
-                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-sm shadow-lg transition-all"
+                className="px-5 py-2.5 bg-[#2ca4ab] hover:bg-[#258c91] text-white rounded-xl font-bold text-sm shadow-lg transition-all"
               >
                 ڈیٹا ری سیٹ کریں اور دوبارہ لوڈ کریں (Reset & Reload)
               </button>

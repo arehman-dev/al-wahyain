@@ -73,12 +73,12 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
     >
       {/* 1. Surah & Ayah / Page Pill */}
       <div className="flex items-center gap-1.5 font-bold border-l border-slate-700 pl-3">
-        <span className="text-emerald-400">۞ {currentSurah?.name_arabic || 'القرآن'}</span>
+        <span className="text-[#2ca4ab]">۞ {currentSurah?.name_arabic || 'القرآن'}</span>
         <span className="text-slate-300 font-ibm text-[11px]">
           {currentAyah ? (
             <>آیت <span className="font-app">{currentAyah.ayah_number}</span></>
           ) : (
-            <span className="text-emerald-400 font-mono">0-intro</span>
+            <span className="text-[#2ca4ab] font-mono">0-intro</span>
           )}
         </span>
         <span className="text-slate-400 font-ibm text-[10px]">
@@ -86,19 +86,19 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
         </span>
       </div>
 
-      {/* 2. Audio Play / Pause */}
+      {/* 2. Audio Play / Pause Circular Disc */}
       <button
         onClick={isPlaying ? onPause : onPlay}
         disabled={!currentAyah}
         title={!currentAyah ? '0-intro کے لیے تلاوت دستیاب نہیں ہے' : isPlaying ? 'روکیں (Pause / Space)' : 'چلائیں (Play / Space)'}
         aria-label="تلاوت چلائیں یا روکیں"
-        className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all duration-150 active:scale-90 ${
+        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 ${
           !currentAyah
-            ? 'opacity-40 border-slate-700 text-slate-500 cursor-not-allowed'
-            : 'border-emerald-500 text-emerald-400 bg-emerald-500/15 hover:bg-emerald-500/25 cursor-pointer shadow-xs'
+            ? 'opacity-40 border border-slate-700 text-slate-500 cursor-not-allowed'
+            : 'bg-[#2ca4ab] text-white hover:bg-[#258c91] cursor-pointer shadow-xs'
         }`}
       >
-        {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
+        {isPlaying ? <Pause className="w-3.5 h-3.5 fill-white" /> : <Play className="w-3.5 h-3.5 ml-0.5 fill-white" />}
       </button>
 
       {/* 3. Navigation Controls with orientation-aware tooltips */}
@@ -131,7 +131,7 @@ export const ZenModeHUD: React.FC<ZenModeHUDProps> = ({
         {themeMode === 'light' && <Sun className="w-3.5 h-3.5 text-amber-400" />}
         {themeMode === 'sepia' && <Coffee className="w-3.5 h-3.5 text-amber-600" />}
         {themeMode === 'dark' && <Moon className="w-3.5 h-3.5 text-indigo-400" />}
-        {themeMode === 'oled' && <Eye className="w-3.5 h-3.5 text-emerald-400" />}
+        {themeMode === 'oled' && <Eye className="w-3.5 h-3.5 text-[#2ca4ab]" />}
       </button>
 
       {/* 5. Font Zoom */}

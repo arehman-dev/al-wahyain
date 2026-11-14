@@ -88,7 +88,7 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
             onClick={() => setFormat('whatsapp')}
             className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               format === 'whatsapp'
-                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'border-[#2ca4ab] bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] font-bold'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -99,7 +99,7 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
             onClick={() => setFormat('academic')}
             className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               format === 'academic'
-                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'border-[#2ca4ab] bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] font-bold'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -110,7 +110,7 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
             onClick={() => setFormat('markdown')}
             className={`flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               format === 'markdown'
-                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'border-[#2ca4ab] bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] font-bold'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -150,7 +150,7 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({
           </span>
           <button
             onClick={handleCopy}
-            className="px-5 py-2.5 border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 border border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 hover:bg-[#2ca4ab]/20 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
           >
             {copied ? (
               <>

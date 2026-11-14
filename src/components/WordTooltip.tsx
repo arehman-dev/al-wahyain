@@ -44,7 +44,7 @@ export const InteractiveWord: React.FC<InteractiveWordProps> = ({
     : isActive
     ? 'text-amber-600 dark:text-amber-400'
     : isVerseSelected
-    ? 'text-emerald-700 dark:text-emerald-400 hover:text-amber-600 dark:hover:text-amber-300'
+    ? 'text-[#0e7490] dark:text-[#2ca4ab] hover:text-amber-600 dark:hover:text-amber-300'
     : 'hover:text-[#2ca4ab] dark:hover:text-[#2ca4ab]';
 
   return (

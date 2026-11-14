@@ -88,13 +88,13 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
       {/* Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-xl bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center">
             <GitFork className="w-4 h-4" />
           </div>
           <div>
             <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
               <span>نحوی شجرہ (Syntactic Dependency Treebank)</span>
-              <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 font-mono">
+              <span className="text-xs px-2 py-0.5 rounded-md bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] border border-[#2ca4ab]/20 font-mono">
                 {verseKey}
               </span>
             </h3>
@@ -132,7 +132,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                 refY="3"
                 orient="auto"
               >
-                <polygon points="0 0, 6 3, 0 6" fill="#10b981" />
+                <polygon points="0 0, 6 3, 0 6" fill="#2ca4ab" />
               </marker>
               <marker
                 id="arrowhead-blue"
@@ -161,7 +161,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                   <path
                     d={`M ${x1} ${startY} Q ${midX} ${controlY} ${x2} ${startY}`}
                     fill="none"
-                    stroke="#10b981"
+                    stroke="#2ca4ab"
                     strokeWidth="1.8"
                     strokeDasharray={e.label_code === 'LINK' ? '3 3' : 'none'}
                     markerEnd="url(#arrowhead)"
@@ -175,7 +175,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                     rx="8"
                     fill="currentColor"
                     className="text-white dark:text-slate-900"
-                    stroke="#10b981"
+                    stroke="#2ca4ab"
                     strokeWidth="1"
                   />
                   <text
@@ -269,7 +269,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                   key={sIdx}
                   className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs flex items-center gap-2"
                 >
-                  <span className="font-ibm text-base text-emerald-600 dark:text-emerald-400 font-bold">
+                  <span className="font-ibm text-base text-[#0e7490] dark:text-[#2ca4ab] font-bold">
                     {seg.text}
                   </span>
                   <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
@@ -292,10 +292,10 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
         <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
           <button
             onClick={() => setShowSarfParadigms(prev => !prev)}
-            className="w-full flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer py-1"
+            className="w-full flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-[#2ca4ab] transition-colors cursor-pointer py-1"
           >
             <div className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-emerald-500" />
+              <Sparkles className="w-4 h-4 text-[#2ca4ab]" />
               <span>علم الصرف — مشتقات و افعال کے اوزان عشره (10 Classical Verb Forms)</span>
             </div>
             {showSarfParadigms ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -311,7 +311,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                     onClick={() => setSelectedRoot(r)}
                     className={`px-3 py-1 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                       selectedRoot?.root === r.root
-                        ? 'border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+                        ? 'border-[#2ca4ab] bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab]'
                         : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
                     }`}
                   >
@@ -337,7 +337,7 @@ export const MorphologyDependencyTree: React.FC<MorphologyDependencyTreeProps> =
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-ibm">
                       {selectedRoot.paradigms.map((p: SarfParadigmItem) => (
                         <tr key={p.form} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
-                          <td className="p-2.5 font-bold text-emerald-600 font-ibm">
+                          <td className="p-2.5 font-bold text-[#0e7490] dark:text-[#2ca4ab] font-ibm">
                             {p.wazan} <span className="text-[10px] text-slate-400 font-mono">({p.form})</span>
                           </td>
                           <td className="p-2.5 font-ibm font-bold text-sm text-slate-800 dark:text-slate-100">{p.madi}</td>

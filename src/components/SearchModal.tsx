@@ -184,7 +184,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       >
         {/* Search Input Bar */}
         <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2.5 sm:gap-3 bg-slate-50/50 dark:bg-slate-950/40 relative">
-          <Search className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <Search className="w-5 h-5 text-[#2ca4ab] shrink-0" />
           
           <input
             ref={inputRef}
@@ -207,7 +207,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             className="flex-1 bg-transparent border-none outline-none text-base sm:text-lg text-slate-900 dark:text-white placeholder-slate-400 font-medium"
           />
 
-          {loading && <Loader2 className="w-5 h-5 text-emerald-600 animate-spin shrink-0" />}
+          {loading && <Loader2 className="w-5 h-5 text-[#2ca4ab] animate-spin shrink-0" />}
 
           {/* Strict Diacritics Toggle (Harakat) */}
           {searchTab === 'lexical' && (
@@ -257,7 +257,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                 {autocomplete.roots.length > 0 && (
                   <div>
                     <div className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1 flex items-center gap-1">
-                      <Hash className="w-3 h-3 text-emerald-500" />
+                      <Hash className="w-3 h-3 text-[#2ca4ab]" />
                       <span>قرآنی روٹس (Roots)</span>
                     </div>
                     <div className="space-y-1">
@@ -265,12 +265,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                         <button
                           key={r.root}
                           onClick={() => handleSelectAutocomplete(`root:${r.root}`)}
-                          className="w-full text-right px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800/80 flex items-center justify-between transition-colors cursor-pointer group"
+                          className="w-full text-right px-2.5 py-1.5 rounded-xl hover:bg-cyan-50 dark:hover:bg-slate-800/80 flex items-center justify-between transition-colors cursor-pointer group"
                         >
-                          <span className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-emerald-600">
+                          <span className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#2ca4ab]">
                             جذر: <span className="font-qcf text-sm">{r.root_arabic || r.root}</span>
                           </span>
-                          <span className="text-[10px] font-app font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300">
+                          <span className="text-[10px] font-app font-bold px-1.5 py-0.5 rounded-md bg-cyan-100/70 dark:bg-cyan-950/70 text-[#0e7490] dark:text-[#2ca4ab]">
                             {r.occurrences_count} آیات
                           </span>
                         </button>
@@ -316,7 +316,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                             onSelectResult(s.id, 1);
                             onClose();
                           }}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-500/20 transition-all cursor-pointer"
+                          className="px-2.5 py-1 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] text-xs font-semibold hover:bg-[#2ca4ab]/20 transition-all cursor-pointer"
                         >
                           سورة {s.name_urdu} ({s.id})
                         </button>
@@ -343,7 +343,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   if (inputRef.current) inputRef.current.focus();
                 }}
                 title={chip.desc}
-                className="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono text-[10.5px] transition-all whitespace-nowrap cursor-pointer shadow-2xs"
+                className="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-cyan-50/70 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono text-[10.5px] transition-all whitespace-nowrap cursor-pointer shadow-2xs"
               >
                 {chip.label}
               </button>
@@ -358,7 +358,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               onClick={() => setSearchTab('lexical')}
               className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
                 searchTab === 'lexical'
-                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                  ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] font-bold'
                   : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
               }`}
             >
@@ -369,7 +369,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               onClick={() => setSearchTab('tafsir')}
               className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
                 searchTab === 'tafsir'
-                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                  ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] font-bold'
                   : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
               }`}
             >
@@ -380,7 +380,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               onClick={() => setSearchTab('thematic')}
               className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
                 searchTab === 'thematic'
-                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                  ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] font-bold'
                   : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
               }`}
             >
@@ -411,7 +411,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-2.5 py-1 rounded-lg font-medium border transition-all whitespace-nowrap cursor-pointer ${
                   selectedCategory === cat
-                    ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                    ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
                 }`}
               >
@@ -440,14 +440,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                     onSelectResult(item.surah_id, item.ayah_number);
                     onClose();
                   }}
-                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-emerald-200 dark:hover:border-slate-700/60 group"
+                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-cyan-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-cyan-200/50 dark:hover:border-slate-700/60 group"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                    <span className="font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab] flex items-center gap-1.5">
                       <span>سورة {item.surah_name_urdu}</span>
                       <span className="text-slate-400 font-normal">({item.surah_name_simple})</span>
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-cyan-100/70 dark:bg-cyan-950/80 text-[#0e7490] dark:text-[#2ca4ab] font-mono text-xs font-bold">
                       {item.verse_key}
                     </span>
                   </div>
@@ -490,18 +490,18 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                     onSelectResult(item.surah_id, item.ayah_from);
                     onClose();
                   }}
-                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-emerald-200 dark:hover:border-slate-700/60 group"
+                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-cyan-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-cyan-200/50 dark:hover:border-slate-700/60 group"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                      <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#0e7490] dark:group-hover:text-[#2ca4ab] transition-colors">
                         سورة {item.surah_name_urdu}
                       </span>
                       <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-medium">
                         {item.tafsir_name}
                       </span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-cyan-100/70 dark:bg-cyan-950/80 text-[#0e7490] dark:text-[#2ca4ab] font-mono text-xs font-bold">
                       {item.ayah_from === 0 
                         ? `${item.surah_id}:0-intro` 
                         : item.ayah_from === item.ayah_to 
@@ -535,16 +535,16 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                     onSelectResult(topic.surah_id, topic.ayah_number);
                     onClose();
                   }}
-                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-emerald-200 dark:hover:border-slate-700/60 group"
+                  className="pt-3.5 first:pt-0 p-3.5 rounded-2xl hover:bg-cyan-50/40 dark:hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-cyan-200/50 dark:hover:border-slate-700/60 group"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                      <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#0e7490] dark:group-hover:text-[#2ca4ab] transition-colors">
                         {topic.title_ur}
                       </span>
                       <span className="text-xs text-slate-400 font-sans">({topic.title_en})</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-cyan-100/70 dark:bg-cyan-950/80 text-[#0e7490] dark:text-[#2ca4ab] font-mono text-xs font-bold">
                       {topic.verse_key}
                     </span>
                   </div>

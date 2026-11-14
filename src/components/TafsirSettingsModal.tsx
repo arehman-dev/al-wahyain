@@ -59,7 +59,7 @@ export const TafsirSettingsModal: React.FC<TafsirSettingsModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-5 h-5 text-emerald-600" />
+            <SlidersHorizontal className="w-5 h-5 text-[#2ca4ab]" />
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               ترتیب اور انتخابِ تفاسیر
             </h3>
@@ -97,7 +97,7 @@ export const TafsirSettingsModal: React.FC<TafsirSettingsModalProps> = ({
                     type="checkbox"
                     checked={isVisible}
                     onChange={() => onToggleVisibility(slug)}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700 cursor-pointer"
+                    className="w-4 h-4 rounded text-[#2ca4ab] focus:ring-[#2ca4ab] border-slate-300 dark:border-slate-700 cursor-pointer accent-[#2ca4ab]"
                     id={`check-${slug}`}
                   />
                   <label htmlFor={`check-${slug}`} className="cursor-pointer">
@@ -143,7 +143,7 @@ export const TafsirSettingsModal: React.FC<TafsirSettingsModalProps> = ({
 
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl font-bold transition-colors cursor-pointer"
+            className="px-4 py-2 border border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 hover:bg-[#2ca4ab]/20 rounded-xl font-bold transition-colors cursor-pointer"
           >
             مکمل ہو گیا
           </button>

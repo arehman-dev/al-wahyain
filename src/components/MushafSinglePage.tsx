@@ -98,20 +98,20 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
   return (
     <div 
       dir="rtl"
-      className="relative flex flex-col justify-between bg-[#fdfbf7] dark:bg-[#0b1329] border-[5px] border-emerald-900/25 dark:border-emerald-600/25 rounded-3xl p-5 sm:p-8 shadow-xl transition-all select-none min-h-[680px]"
+      className="relative flex flex-col justify-between bg-[#fdfbf7] dark:bg-[#0b1329] border-[5px] border-[#2ca4ab]/25 dark:border-[#2ca4ab]/25 rounded-3xl p-5 sm:p-8 shadow-xl transition-all select-none min-h-[680px]"
     >
       {/* Decorative Traditional Islamic Corner Accents */}
-      <div className="absolute top-2.5 right-2.5 w-4 h-4 border-t-2 border-r-2 border-emerald-800/50 dark:border-emerald-500/50 pointer-events-none" />
-      <div className="absolute top-2.5 left-2.5 w-4 h-4 border-t-2 border-l-2 border-emerald-800/50 dark:border-emerald-500/50 pointer-events-none" />
-      <div className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-2 border-r-2 border-emerald-800/50 dark:border-emerald-500/50 pointer-events-none" />
-      <div className="absolute bottom-2.5 left-2.5 w-4 h-4 border-b-2 border-l-2 border-emerald-800/50 dark:border-emerald-500/50 pointer-events-none" />
+      <div className="absolute top-2.5 right-2.5 w-4 h-4 border-t-2 border-r-2 border-[#2ca4ab]/40 dark:border-[#2ca4ab]/40 pointer-events-none" />
+      <div className="absolute top-2.5 left-2.5 w-4 h-4 border-t-2 border-l-2 border-[#2ca4ab]/40 dark:border-[#2ca4ab]/40 pointer-events-none" />
+      <div className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-2 border-r-2 border-[#2ca4ab]/40 dark:border-[#2ca4ab]/40 pointer-events-none" />
+      <div className="absolute bottom-2.5 left-2.5 w-4 h-4 border-b-2 border-l-2 border-[#2ca4ab]/40 dark:border-[#2ca4ab]/40 pointer-events-none" />
 
       {/* 1. TOP HEADER FRAME: Juz Banner (Right), Surah Name (Center), Page Number (Left) — Zero Controls */}
-      <div className="pb-3 mb-4 border-b-2 border-emerald-800/20 dark:border-emerald-500/20 flex items-center justify-between text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 font-ibm">
-        <span className="text-emerald-900 dark:text-emerald-300 font-bold text-sm">
+      <div className="pb-3 mb-4 border-b-2 border-[#2ca4ab]/20 dark:border-[#2ca4ab]/20 flex items-center justify-between text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 font-ibm">
+        <span className="text-[#0e7490] dark:text-[#2ca4ab] font-bold text-sm">
           {activeJuzName}
         </span>
-        <span className="text-base sm:text-lg text-emerald-800 dark:text-emerald-400 font-extrabold tracking-wide">
+        <span className="text-base sm:text-lg text-[#0e7490] dark:text-[#2ca4ab] font-extrabold tracking-wide">
           ۞ {currentSurah?.name_arabic || 'سورة'} ۞
         </span>
         <span className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-ibm font-bold">
@@ -128,7 +128,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
             {pageRukus.map((item: any, idx) => (
               <div
                 key={`ruku-${idx}`}
-                className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/90 border-2 border-emerald-600 dark:border-emerald-400 flex flex-col items-center justify-center text-emerald-900 dark:text-emerald-200 shadow-md cursor-help"
+                className="w-10 h-10 rounded-full bg-cyan-100/70 dark:bg-cyan-950/90 border-2 border-[#2ca4ab] flex flex-col items-center justify-center text-[#0e7490] dark:text-[#2ca4ab] shadow-md cursor-help"
               >
                 <span className="text-[8px] font-mono font-bold leading-none -mb-0.5">
                   {toArabicDigits(item.ruku.surahRuku)}
@@ -185,8 +185,8 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                 {/* Surah Ornamental Header & Bismillah before Ayah 1 */}
                 {isSurahStart && (
                   <div className="my-4 select-none text-center block w-full">
-                    <div className="mx-auto max-w-sm border-2 border-emerald-700/50 dark:border-emerald-500/40 rounded-2xl py-2 px-4 bg-emerald-50/80 dark:bg-emerald-950/50 shadow-xs font-ibm">
-                      <div className="font-bold text-lg sm:text-xl text-emerald-950 dark:text-emerald-200">
+                    <div className="mx-auto max-w-sm border-2 border-[#2ca4ab]/50 dark:border-[#2ca4ab]/40 rounded-2xl py-2 px-4 bg-cyan-50/70 dark:bg-cyan-950/40 shadow-xs font-ibm">
+                      <div className="font-bold text-lg sm:text-xl text-cyan-950 dark:text-[#2ca4ab]">
                         سُورَةُ {ayah.surah_name_arabic || currentSurah?.name_arabic || 'السورة'}
                       </div>
                     </div>
@@ -206,7 +206,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                     isSelected
                       ? showTajweed
                         ? 'qcf-tajweed-verse-selected'
-                        : 'text-emerald-700 dark:text-emerald-400'
+                        : 'text-[#0e7490] dark:text-[#2ca4ab]'
                       : isAyahPlaying
                       ? 'text-amber-600 dark:text-amber-400'
                       : ''
@@ -238,7 +238,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
                         className={`text-xl sm:text-2xl transition-colors ${
                           isSelected
                             ? 'text-amber-600 dark:text-amber-400'
-                            : 'text-emerald-800 dark:text-emerald-300 hover:text-[#2ca4ab]'
+                            : 'text-[#2ca4ab] dark:text-[#2ca4ab] hover:text-[#258c91]'
                         }`}
                         dangerouslySetInnerHTML={{ __html: ayah.end_code_v2 }}
                       />
@@ -249,7 +249,7 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
 
                   {hasRukuEnd && (
                     <span 
-                      className="inline-flex items-center justify-center w-5 h-5 mx-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-[10px] text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-500/40 select-none align-middle font-ibm"
+                      className="inline-flex items-center justify-center w-5 h-5 mx-0.5 rounded-full bg-cyan-100 dark:bg-cyan-950 text-[10px] text-[#0e7490] dark:text-[#2ca4ab] font-bold border border-[#2ca4ab]/40 select-none align-middle font-ibm"
                     >
                       ع
                     </span>
@@ -270,11 +270,11 @@ export const MushafSinglePage: React.FC<MushafSinglePageProps> = ({
       </div>
 
       {/* 3. BOTTOM FOOTER FRAME: Page Number & Manzil (RTL) */}
-      <div className="pt-3 mt-4 border-t-2 border-emerald-800/20 dark:border-emerald-500/20 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 select-none font-ibm">
+      <div className="pt-3 mt-4 border-t-2 border-[#2ca4ab]/20 dark:border-[#2ca4ab]/20 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 select-none font-ibm">
         <span className="px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-semibold">
           {manzil.label}
         </span>
-        <span className="px-3.5 py-1 rounded-full bg-emerald-950/5 dark:bg-emerald-500/10 text-sm sm:text-base text-slate-800 dark:text-slate-100 font-app font-bold tracking-wide">
+        <span className="px-3.5 py-1 rounded-full bg-[#2ca4ab]/10 text-sm sm:text-base text-slate-800 dark:text-slate-100 font-app font-bold tracking-wide">
           {pageNumber}
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-ibm font-semibold">

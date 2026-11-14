@@ -139,7 +139,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
     return (
       <div key={entry.id} className="pt-2 pb-4">
         {showHeader && (
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-emerald-950/8 dark:border-white/5 text-xs font-ibm select-none">
+          <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/60 dark:border-white/5 text-xs font-ibm select-none">
             <div className="flex items-center gap-2">
               <span className="font-bold text-base text-slate-900 dark:text-white">
                 {entry.tafsir_name}
@@ -153,10 +153,10 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
 
             <button
               onClick={() => handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `tafsir-${entry.id}`)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-500 hover:text-[#0e7490] dark:hover:text-[#2ca4ab] hover:bg-cyan-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               {copiedId === `tafsir-${entry.id}` ? (
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <Check className="w-3.5 h-3.5 text-[#2ca4ab]" />
               ) : (
                 <Copy className="w-3.5 h-3.5" />
               )}
@@ -194,11 +194,11 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
       {/* ======================================================== */}
       {/* 1. SACRED MATN (متنِ مبارک مع اردو ترجمہ) — Zero Box Card  */}
       {/* ======================================================== */}
-      <section className="relative pb-6 border-b border-emerald-950/10 dark:border-emerald-500/15 select-none">
+      <section className="relative pb-6 border-b border-slate-200/80 dark:border-cyan-500/15 select-none">
         {/* Subtle Surah Progress Line */}
         <div className="w-full h-0.5 bg-slate-200/50 dark:bg-slate-800 mb-4 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-emerald-600 transition-all duration-300" 
+            className="h-full bg-[#2ca4ab] transition-all duration-300" 
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -206,7 +206,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
         {/* Ayah Header Metadata Only (Zero Extra Control Bars) */}
         <div className="flex items-center justify-between gap-3 mb-3 text-xs font-ibm select-none">
           <div className="flex items-center gap-2">
-            <span className="font-app font-bold text-sm text-emerald-700 dark:text-emerald-400">
+            <span className="font-app font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab]">
               ۞ {currentAyah.verse_key}
             </span>
             <span className="text-slate-500 dark:text-slate-400 font-ibm text-xs font-medium">
@@ -234,7 +234,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
           )}
           {currentAyah.end_code_v2 ? (
             <span 
-              className="ayah-end-num select-none mr-2 font-qcf inline-block align-middle cursor-pointer text-emerald-700 dark:text-emerald-400"
+              className="ayah-end-num select-none mr-2 font-qcf inline-block align-middle cursor-pointer text-[#0e7490] dark:text-[#2ca4ab]"
               style={{ fontFamily: getQcfFontFamily(currentAyah.page_madani, showTajweed) }}
               dangerouslySetInnerHTML={{ __html: currentAyah.end_code_v2 }}
             />
@@ -271,7 +271,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
       ) : tafsirLayoutMode === 'focus' ? (
         /* Focus Mode: Single Tafsir Stream with Author Tabs */
         <div className="space-y-4">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 border-b border-emerald-950/10 dark:border-white/10 text-xs font-ibm select-none scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 border-b border-slate-200/60 dark:border-white/10 text-xs font-ibm select-none scrollbar-none">
             {displayTafasir.map((entry) => {
               const isSelected = selectedAuthorTab === entry.tafsir_slug;
               return (
@@ -280,7 +280,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                   onClick={() => setSelectedAuthorTab(entry.tafsir_slug)}
                   className={`px-3.5 py-1.5 rounded-xl border transition-all whitespace-nowrap font-medium cursor-pointer flex items-center gap-1.5 ${
                     isSelected
-                      ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                      ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
                       : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -305,7 +305,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
             return (
               <div 
                 key={`stacked-${entry.tafsir_slug}`} 
-                className="pb-3 border-b border-emerald-950/8 dark:border-white/5 space-y-2"
+                className="pb-3 border-b border-slate-200/60 dark:border-white/5 space-y-2"
               >
                 {/* Single Unified Header Row (Tafsir Name, Author, Copy & Expand/Collapse) */}
                 <div 
@@ -313,7 +313,7 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                   className="flex items-center justify-between cursor-pointer py-2 px-2.5 rounded-xl hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors select-none"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-6 h-6 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+                    <div className="w-6 h-6 rounded-lg border border-[#2ca4ab]/40 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center shrink-0">
                       {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                     </div>
                     <span className="font-bold text-base text-slate-900 dark:text-white font-ibm">
@@ -332,10 +332,10 @@ export const TafsirView: React.FC<TafsirViewProps> = ({
                         e.stopPropagation();
                         handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `tafsir-${entry.id}`);
                       }}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-500 hover:text-[#0e7490] dark:hover:text-[#2ca4ab] hover:bg-cyan-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                     >
                       {copiedId === `tafsir-${entry.id}` ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <Check className="w-3.5 h-3.5 text-[#2ca4ab]" />
                       ) : (
                         <Copy className="w-3.5 h-3.5" />
                       )}

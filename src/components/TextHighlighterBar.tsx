@@ -136,7 +136,7 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
       className="fixed z-50 flex items-center gap-1.5 p-1.5 bg-slate-900/95 dark:bg-slate-800/95 text-white rounded-2xl shadow-2xl border border-slate-700/80 backdrop-blur-md animate-in fade-in zoom-in-95 font-ibm select-none"
     >
       <div className="flex items-center gap-1 px-1">
-        <Highlighter className="w-3.5 h-3.5 text-emerald-400" />
+        <Highlighter className="w-3.5 h-3.5 text-[#2ca4ab]" />
       </div>
 
       {/* Colors strictly from Left to Right: Yellow, Sky Blue, Light Green */}
@@ -165,7 +165,7 @@ export const TextHighlighterBar: React.FC<TextHighlighterBarProps> = ({
         onClick={handleCopy}
         className="p-1 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
       >
-        {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+        {copied ? <Check className="w-3.5 h-3.5 text-[#2ca4ab]" /> : <Copy className="w-3.5 h-3.5" />}
       </button>
 
       {/* Close tooltip */}

@@ -133,22 +133,22 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
     return (
       <div key={`intro-commentary-${entry.id}`} className="pt-2 pb-4">
         {showHeader && (
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-emerald-950/8 dark:border-white/5 text-xs font-ibm select-none">
+          <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/60 dark:border-white/5 text-xs font-ibm select-none">
             <div className="flex items-center gap-2">
               <span className="font-bold text-base text-slate-900 dark:text-white">
                 {entry.tafsir_name}
               </span>
-              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold font-mono">
+              <span className="text-[11px] text-[#0e7490] dark:text-[#2ca4ab] font-semibold font-mono">
                 (0-intro • مقدمہ و تعارفِ سورت)
               </span>
             </div>
 
             <button
               onClick={() => handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `tafsir-intro-${entry.id}`)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-500 hover:text-[#0e7490] dark:hover:text-[#2ca4ab] hover:bg-cyan-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               {copiedId === `tafsir-intro-${entry.id}` ? (
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <Check className="w-3.5 h-3.5 text-[#2ca4ab]" />
               ) : (
                 <Copy className="w-3.5 h-3.5" />
               )}
@@ -161,7 +161,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
         <div 
           data-tafsir-slug={entry.tafsir_slug}
           style={{ fontSize: `${fontSize}px` }}
-          className="tafsir-prose font-ibm leading-[2.4] text-slate-800 dark:text-slate-200 max-w-none text-right cursor-text select-text [&>h2]:text-base sm:[&>h2]:text-lg [&>h2]:font-bold [&>h2]:text-emerald-700 dark:[&>h2]:text-emerald-400 [&>h2]:border-b [&>h2]:border-emerald-950/8 dark:[&>h2]:border-white/5 [&>h2]:pb-2 [&>h2]:mt-6 [&>h2]:mb-3 [&>h2:first-child]:mt-0 [&>p]:mb-4 [&>p]:text-justify"
+          className="tafsir-prose font-ibm leading-[2.4] text-slate-800 dark:text-slate-200 max-w-none text-right cursor-text select-text [&>h2]:text-base sm:[&>h2]:text-lg [&>h2]:font-bold [&>h2]:text-[#0e7490] dark:[&>h2]:text-[#2ca4ab] [&>h2]:border-b [&>h2]:border-slate-200/60 dark:[&>h2]:border-white/5 [&>h2]:pb-2 [&>h2]:mt-6 [&>h2]:mb-3 [&>h2:first-child]:mt-0 [&>p]:mb-4 [&>p]:text-justify"
           dangerouslySetInnerHTML={{ __html: enhancedHtml }}
         />
       </div>
@@ -186,23 +186,23 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
       {/* ======================================================== */}
       {/* 1. SACRED SURAH MATN & FRONTISPIECE (Zero Boxed Cards)   */}
       {/* ======================================================== */}
-      <section className="relative pb-6 border-b border-emerald-950/10 dark:border-emerald-500/15 select-none">
+      <section className="relative pb-6 border-b border-slate-200/80 dark:border-cyan-500/15 select-none">
         
         {/* Subtle Surah Progress Line (0% at introduction / frontispiece) */}
         <div className="w-full h-0.5 bg-slate-200/50 dark:bg-slate-800 mb-4 rounded-full overflow-hidden">
-          <div className="h-full bg-emerald-600 transition-all duration-300 w-0" />
+          <div className="h-full bg-[#2ca4ab] transition-all duration-300 w-0" />
         </div>
 
         {/* Metadata Header Row */}
         <div className="flex items-center justify-between gap-3 mb-3 text-xs font-ibm">
           <div className="flex items-center gap-2">
-            <span className="font-app font-bold text-sm text-emerald-700 dark:text-emerald-400">
+            <span className="font-app font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab]">
               ۞ سورة {currentSurah.name_arabic}
             </span>
             <span className="text-slate-500 dark:text-slate-400 font-ibm text-xs font-medium">
               ({currentSurah.name_simple} • {currentSurah.name_urdu})
             </span>
-            <span dir="rtl" className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-mono font-bold text-xs">
+            <span dir="rtl" className="px-2 py-0.5 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] border border-[#2ca4ab]/20 font-mono font-bold text-xs">
               0-intro
             </span>
           </div>
@@ -211,7 +211,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
             <span className={`px-2 py-0.5 rounded-lg text-[11px] font-semibold border ${
               isMakki 
                 ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20' 
-                : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                : 'bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] border-[#2ca4ab]/20'
             }`}>
               {isMakki ? 'مکی سورت' : 'مدنی سورت'}
             </span>
@@ -253,7 +253,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
       ) : tafsirLayoutMode === 'focus' ? (
         /* Focus Mode: Author Tabs Ribbon */
         <div className="space-y-4">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 border-b border-emerald-950/10 dark:border-white/10 text-xs font-ibm select-none scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 border-b border-slate-200/60 dark:border-white/10 text-xs font-ibm select-none scrollbar-none">
             {activeSlugs.map((slug) => {
               const meta = AUTHOR_METADATA[slug] || { name: slug, author: '' };
               const isSelected = selectedAuthorTab === slug;
@@ -265,7 +265,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
                   onClick={() => setSelectedAuthorTab(slug)}
                   className={`px-3.5 py-1.5 rounded-xl border transition-all whitespace-nowrap font-medium cursor-pointer flex items-center gap-1.5 ${
                     isSelected
-                      ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                      ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
                       : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -314,7 +314,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
             return (
               <div 
                 key={`intro-stacked-${slug}`} 
-                className="pb-3 border-b border-emerald-950/8 dark:border-white/5 space-y-2"
+                className="pb-3 border-b border-slate-200/60 dark:border-white/5 space-y-2"
               >
                 {/* Header Row */}
                 <div 
@@ -325,7 +325,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
                     <span className="font-bold text-sm text-slate-900 dark:text-white">
                       {entry.tafsir_name}
                     </span>
-                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold hidden sm:inline">
+                    <span className="text-[11px] text-[#0e7490] dark:text-[#2ca4ab] font-semibold hidden sm:inline">
                       (مقدمہ و تعارف)
                     </span>
                   </div>
@@ -336,10 +336,10 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
                         e.stopPropagation();
                         handleCopy(entry.content_html.replace(/<[^>]+>/g, ''), `intro-stacked-copy-${entry.id}`);
                       }}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg text-slate-500 hover:text-[#0e7490] dark:hover:text-[#2ca4ab] hover:bg-cyan-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                     >
                       {copiedId === `intro-stacked-copy-${entry.id}` ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <Check className="w-3.5 h-3.5 text-[#2ca4ab]" />
                       ) : (
                         <Copy className="w-3.5 h-3.5" />
                       )}
@@ -372,7 +372,7 @@ export const SurahIntroView: React.FC<SurahIntroViewProps> = ({
       )}
 
       {/* Editorial Bottom Divider */}
-      <div className="pt-8 mt-10 border-t border-emerald-950/10 dark:border-emerald-500/10" />
+      <div className="pt-8 mt-10 border-t border-slate-200/60 dark:border-cyan-500/10" />
 
     </div>
   );

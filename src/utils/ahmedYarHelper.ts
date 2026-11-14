@@ -66,7 +66,7 @@ export function enhanceAhmedYarGrammar(textHtml: string): string {
   // Highlight Bab / Verb Form (باب)
   res = res.replace(
     /(باب\s+)(<span class="arabic-marker">[^<]+<\/span>|[ء-ي\u0600-\u06FF\sَُِّْٰٓ]{2,20})(?=\s|،|۔|سے)/gi,
-    '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 font-bold text-xs border border-emerald-500/25 my-0.5"><span class="opacity-75">باب:</span> $2</span>'
+    '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] font-bold text-xs border border-[#2ca4ab]/25 my-0.5"><span class="opacity-75">باب:</span> $2</span>'
   );
 
   // Highlight Core Grammatical Terms
@@ -90,13 +90,13 @@ export function enhanceAhmedYarGrammar(textHtml: string): string {
   // Format Arabic markers nicely
   res = res.replace(
     /<span class="arabic-marker">([^<]+)<\/span>/gi,
-    '<span class="font-ibm text-base text-emerald-900 dark:text-emerald-300 font-bold px-1">$1</span>'
+    '<span class="font-ibm text-base text-[#0e7490] dark:text-[#2ca4ab] font-bold px-1">$1</span>'
   );
 
   // Format Quran markers
   res = res.replace(
     /<span class="quran-marker">([^<]+)<\/span>/gi,
-    '<span class="font-ibm text-[1.1em] text-emerald-800 dark:text-emerald-300 font-bold px-1">$1</span>'
+    '<span class="font-ibm text-[1.1em] text-[#0e7490] dark:text-[#2ca4ab] font-bold px-1">$1</span>'
   );
 
   // Format English markers
@@ -108,7 +108,7 @@ export function enhanceAhmedYarGrammar(textHtml: string): string {
   // Format cross-reference links
   res = res.replace(
     /<a\s+href="([^"]+)"\s*target="_blank"[^>]*>([^<]+)<\/a>/gi,
-    '<a href="$1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 hover:underline text-xs font-mono font-bold">$2 ↗</a>'
+    '<a href="$1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[#0e7490] dark:text-[#2ca4ab] hover:underline text-xs font-mono font-bold">$2 ↗</a>'
   );
 
   return res;

@@ -80,7 +80,7 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
         {/* Header */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/40">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center">
               <FileText className="w-5 h-5" />
             </div>
             <div>
@@ -97,7 +97,7 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
         </div>
 
         {/* Ayah Snippet */}
-        <div className="p-4 bg-emerald-50/40 dark:bg-emerald-950/20 border-b border-emerald-100 dark:border-emerald-900/40 space-y-1">
+        <div className="p-4 bg-cyan-50/30 dark:bg-cyan-950/20 border-b border-cyan-100/60 dark:border-cyan-900/40 space-y-1">
           <div
             className="font-qcf text-xl text-slate-900 dark:text-slate-100 leading-[2.3] text-right"
             style={ayah.page_madani ? { fontFamily: getQcfFontFamily(ayah.page_madani, false) } : undefined}
@@ -114,7 +114,7 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
                 ))}
                 {ayah.end_code_v2 ? (
                   <span
-                    className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle text-emerald-700 dark:text-emerald-400"
+                    className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle text-[#0e7490] dark:text-[#2ca4ab]"
                     style={ayah.page_madani ? { fontFamily: getQcfFontFamily(ayah.page_madani, false) } : undefined}
                     dangerouslySetInnerHTML={{ __html: ayah.end_code_v2 }}
                   />
@@ -138,7 +138,7 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
             placeholder="اس آیت سے حاصل ہونے والا سبق، احادیث کے حوالہ جات یا فقہی فوائد..."
-            className="flex-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-sm text-slate-800 dark:text-slate-100 leading-relaxed focus:outline-none focus:border-emerald-500 resize-none font-ibm"
+            className="flex-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-sm text-slate-800 dark:text-slate-100 leading-relaxed focus:outline-none focus:border-[#2ca4ab] resize-none font-ibm"
           />
         </div>
 
@@ -165,11 +165,11 @@ export const NoteEditorDrawer: React.FC<NoteEditorDrawerProps> = ({
             <button
               onClick={handleSave}
               disabled={saving || !noteText.trim()}
-              className="px-5 py-2 border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-50 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-5 py-2 border border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 hover:bg-[#2ca4ab]/20 disabled:opacity-50 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
             >
               {savedSuccess ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <Check className="w-4 h-4 text-[#2ca4ab]" />
                   <span>محفوظ ہو گیا!</span>
                 </>
               ) : (

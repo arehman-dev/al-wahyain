@@ -30,7 +30,7 @@ export const SurahDispersionHeatmap: React.FC<SurahDispersionHeatmapProps> = ({
           <span className="font-bold text-slate-700 dark:text-slate-300">
             📊 قرآنی انتشار (114 سورتیں):
           </span>
-          <span className="text-emerald-600 dark:text-emerald-400 font-semibold font-app">
+          <span className="text-[#0e7490] dark:text-[#2ca4ab] font-semibold font-app">
             {totalMatches} آیات میں موجود
           </span>
         </div>
@@ -47,7 +47,7 @@ export const SurahDispersionHeatmap: React.FC<SurahDispersionHeatmapProps> = ({
         {hoveredSurah && (
           <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
             سورة {hoveredSurah.name_urdu} ({hoveredSurah.surah_id}):{' '}
-            <span className="text-emerald-600 font-app font-bold">{hoveredSurah.match_count} آیات</span>{' '}
+            <span className="text-[#0e7490] dark:text-[#2ca4ab] font-app font-bold">{hoveredSurah.match_count} آیات</span>{' '}
             <span className="text-[9px] text-slate-400">
               ({hoveredSurah.revelation_place === 'makkah' ? 'مکی' : 'مدنی'})
             </span>
@@ -68,9 +68,9 @@ export const SurahDispersionHeatmap: React.FC<SurahDispersionHeatmapProps> = ({
           // Intensity color classes
           let bgClass = 'bg-slate-300/40 dark:bg-slate-800/40 hover:bg-slate-400 dark:hover:bg-slate-700';
           if (hasMatches) {
-            if (ratio > 0.6) bgClass = 'bg-emerald-600 dark:bg-emerald-400';
-            else if (ratio > 0.3) bgClass = 'bg-emerald-500 dark:bg-emerald-500';
-            else bgClass = 'bg-emerald-400/80 dark:bg-emerald-600/80';
+            if (ratio > 0.6) bgClass = 'bg-[#2ca4ab] dark:bg-[#2ca4ab]';
+            else if (ratio > 0.3) bgClass = 'bg-[#2ca4ab]/80 dark:bg-[#2ca4ab]/80';
+            else bgClass = 'bg-[#2ca4ab]/50 dark:bg-[#2ca4ab]/60';
           }
           if (isSelected) {
             bgClass = 'bg-amber-500 ring-2 ring-amber-400';

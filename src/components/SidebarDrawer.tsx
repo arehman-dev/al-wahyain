@@ -190,7 +190,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
   const referenceCategories = [
     {
       category: '1. Quranic Script, Fonts & Core APIs',
-      icon: <BookOpen className="w-4 h-4 text-emerald-600" />,
+      icon: <BookOpen className="w-4 h-4 text-[#2ca4ab]" />,
       items: [
         {
           title: 'King Fahd Glorious Quran Printing Complex (KFGQPC)',
@@ -217,7 +217,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
     },
     {
       category: '2. Morphology, Grammar & Lexical Concordance',
-      icon: <Sparkles className="w-4 h-4 text-emerald-600" />,
+      icon: <Sparkles className="w-4 h-4 text-[#2ca4ab]" />,
       items: [
         {
           title: 'The Quranic Arabic Corpus — University of Leeds',
@@ -244,7 +244,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
     },
     {
       category: '3. Authorized Scholarly Translations',
-      icon: <Globe className="w-4 h-4 text-emerald-600" />,
+      icon: <Globe className="w-4 h-4 text-[#2ca4ab]" />,
       items: [
         {
           title: 'Easy Quran Translation — Mufti Muhammad Taqi Usmani',
@@ -285,7 +285,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
     },
     {
       category: '4. Classical & Contemporary Commentaries (Tafasir)',
-      icon: <Library className="w-4 h-4 text-emerald-600" />,
+      icon: <Library className="w-4 h-4 text-[#2ca4ab]" />,
       items: [
         {
           title: 'Bayan-ul-Quran — Dr. Israr Ahmad',
@@ -333,7 +333,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
     },
     {
       category: '5. Audio CDN & Scholarly Research Platforms',
-      icon: <Volume2 className="w-4 h-4 text-emerald-600" />,
+      icon: <Volume2 className="w-4 h-4 text-[#2ca4ab]" />,
       items: [
         {
           title: 'EveryAyah & Quran.com Audio CDN',
@@ -374,11 +374,11 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
         {/* Top-Right Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-30 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-30 p-1.5 rounded-md border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 dark:hover:border-slate-600 transition-colors cursor-pointer"
           title="Close (Esc)"
           aria-label="Close Sidebar"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* ======================================================== */}
@@ -388,14 +388,14 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           <div className="space-y-4">
             {/* Brand Header */}
             <div className="flex items-center gap-2.5 pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="w-8 h-8 rounded-xl border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 flex items-center justify-center shadow-xs">
-                <BookOpen className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-md border border-[#2ca4ab]/40 text-[#2ca4ab] bg-[#2ca4ab]/10 flex items-center justify-center">
+                <BookOpen className="w-3.5 h-3.5" />
               </div>
               <div>
                 <h2 className="font-bold text-sm text-slate-900 dark:text-white leading-tight">
                   Al-Wahyain
                 </h2>
-                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">
+                <p className="text-[10px] text-[#2ca4ab] font-mono font-bold">
                   v1.2.5 • Local-First
                 </p>
               </div>
@@ -405,66 +405,66 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
             <nav className="flex md:flex-col gap-1 overflow-x-auto">
               <button
                 onClick={() => onSelectTab('about')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap border ${
                   activeTab === 'about'
-                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
+                    ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <Info className="w-4 h-4 shrink-0" />
+                <Info className="w-3.5 h-3.5 shrink-0" />
                 <span>About</span>
               </button>
 
               <button
                 onClick={() => onSelectTab('verification')}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
+                className={`flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap border ${
                   activeTab === 'verification'
-                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
+                    ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-[#2ca4ab]" />
                   <span>Text Verification</span>
                 </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono font-semibold">
+                <span className="text-[10px] px-1.5 py-0.2 rounded border border-[#2ca4ab]/30 bg-cyan-100 dark:bg-cyan-950/80 text-[#0e7490] dark:text-[#2ca4ab] font-mono font-semibold">
                   Verified
                 </span>
               </button>
 
               <button
                 onClick={() => onSelectTab('preferences')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap border ${
                   activeTab === 'preferences'
-                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
+                    ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <SlidersHorizontal className="w-4 h-4 shrink-0" />
+                <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
                 <span>Preferences</span>
               </button>
 
               <button
                 onClick={() => onSelectTab('references')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap border ${
                   activeTab === 'references'
-                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
+                    ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <Library className="w-4 h-4 shrink-0" />
+                <Library className="w-3.5 h-3.5 shrink-0" />
                 <span>References</span>
               </button>
 
               <button
                 onClick={() => onSelectTab('docs')}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-98 cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap border ${
                   activeTab === 'docs'
-                    ? 'border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs font-bold ring-1 ring-emerald-500/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
+                    ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <Code2 className="w-4 h-4 shrink-0" />
+                <Code2 className="w-3.5 h-3.5 shrink-0" />
                 <span>Documentation</span>
               </button>
             </nav>
@@ -473,7 +473,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {/* Bottom Offline Database Status & Developer Quick Links */}
           <div className="hidden md:block pt-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-2">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold text-xs">
+              <div className="flex items-center gap-1.5 text-[#0e7490] dark:text-[#2ca4ab] font-semibold text-xs">
                 <Database className="w-3.5 h-3.5" />
                 <span>Offline Engine Active</span>
               </div>
@@ -484,14 +484,14 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
             <div className="pt-2 border-t border-slate-200/70 dark:border-slate-800/70 text-[10px]">
               <div className="text-slate-700 dark:text-slate-300 font-semibold">
-                Abdul Rehman (<a href="https://github.com/arehman-dev" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">@arehman-dev</a>)
+                Abdul Rehman (<a href="https://github.com/arehman-dev" target="_blank" rel="noopener noreferrer" className="text-[#0e7490] dark:text-[#2ca4ab] hover:underline">@arehman-dev</a>)
               </div>
               <div className="flex items-center gap-2 text-slate-400 pt-0.5 font-sans" dir="ltr">
-                <a href="https://arehman-dev.github.io/" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600">Portfolio</a>
+                <a href="https://arehman-dev.github.io/" target="_blank" rel="noopener noreferrer" className="hover:text-[#2ca4ab]">Portfolio</a>
                 <span>•</span>
-                <a href="https://github.com/arehman-dev/al-wahyain" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600">Repo</a>
+                <a href="https://github.com/arehman-dev/al-wahyain" target="_blank" rel="noopener noreferrer" className="hover:text-[#2ca4ab]">Repo</a>
                 <span>•</span>
-                <a href="https://x.com/arehman_dev" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600">X</a>
+                <a href="https://x.com/arehman_dev" target="_blank" rel="noopener noreferrer" className="hover:text-[#2ca4ab]">X</a>
               </div>
             </div>
           </div>
@@ -510,8 +510,8 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               {/* Header Banner */}
               <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-2 pr-10">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold font-mono">
-                    v1.2.2 • Academic & Computational Quran Station
+                  <span className="px-2.5 py-0.5 rounded-full border border-[#2ca4ab]/40 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] text-[11px] font-bold font-mono">
+                    v1.2.5 • Academic & Computational Quran Station
                   </span>
                 </div>
                 <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
@@ -529,7 +529,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center shrink-0 mt-0.5">
                       <BookOpen className="w-4 h-4" />
                     </div>
                     <div className="space-y-1">
@@ -543,7 +543,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center shrink-0 mt-0.5">
                       <Globe className="w-4 h-4" />
                     </div>
                     <div className="space-y-1">
@@ -557,7 +557,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center shrink-0 mt-0.5">
                       <Sparkles className="w-4 h-4" />
                     </div>
                     <div className="space-y-1">
@@ -571,7 +571,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center shrink-0 mt-0.5">
                       <Library className="w-4 h-4" />
                     </div>
                     <div className="space-y-1">
@@ -589,14 +589,14 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               {/* Fast Action Row */}
               <div className="p-4 rounded-xl bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <ShieldCheck className="w-4 h-4 text-[#2ca4ab]" />
                   <span className="font-semibold text-slate-800 dark:text-slate-200">
                     Inspect the complete verification audit, font glyph mappings, and scholarly sanad.
                   </span>
                 </div>
                 <button
                   onClick={() => onSelectTab('verification')}
-                  className="px-3 py-1.5 rounded-lg border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-lg border border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 hover:bg-[#2ca4ab]/20 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span>Inspect Text Verification</span>
                   <ShieldCheck className="w-3.5 h-3.5" />
@@ -618,13 +618,13 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               {/* Header */}
               <div className="pb-4 border-b border-slate-200 dark:border-slate-800 space-y-1.5 pr-10">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold font-mono flex items-center gap-1">
+                  <span className="px-2.5 py-0.5 rounded-full border border-[#2ca4ab]/40 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] text-[11px] font-bold font-mono flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>100% Verified Islamic Corpus • Zero Discrepancies</span>
                   </span>
                 </div>
                 <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                  <ShieldCheck className="w-6 h-6 text-[#2ca4ab]" />
                   <span>Text Verification, Orthography & Commentary Provenance</span>
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
@@ -635,25 +635,25 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               {/* Verification Metric Counters */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">114</div>
+                  <div className="text-xl sm:text-2xl font-bold text-[#0e7490] dark:text-[#2ca4ab] font-mono">114</div>
                   <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Surahs</div>
                   <div className="text-[10px] text-slate-400">Standard Madani Sequence</div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">6,236</div>
+                  <div className="text-xl sm:text-2xl font-bold text-[#0e7490] dark:text-[#2ca4ab] font-mono">6,236</div>
                   <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Ayahs</div>
                   <div className="text-[10px] text-slate-400">Tanzil & KFGQPC Verified</div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">77,429</div>
+                  <div className="text-xl sm:text-2xl font-bold text-[#0e7490] dark:text-[#2ca4ab] font-mono">77,429</div>
                   <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Word Tokens</div>
                   <div className="text-[10px] text-slate-400">Morphology & Lexical Concordance</div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">37,623</div>
+                  <div className="text-xl sm:text-2xl font-bold text-[#0e7490] dark:text-[#2ca4ab] font-mono">37,623</div>
                   <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Tafsir Records</div>
                   <div className="text-[10px] text-slate-400">Verse Sharh + 207 Surah Intros</div>
                 </div>
@@ -665,7 +665,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 {/* 1. Uthmani Script & Medina Mushaf */}
                 <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <Check className="w-4 h-4 text-[#2ca4ab] shrink-0" />
                     <span>1. Uthmanic Script & Tanzil v1.0.2 Concordance Audit</span>
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pl-6">
@@ -676,7 +676,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 {/* 2. Fonts & Glyphs Integrity */}
                 <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <Check className="w-4 h-4 text-[#2ca4ab] shrink-0" />
                     <span>2. Calligraphic Glyphs & COLRv1 Tajweed Vector Layering</span>
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pl-6">
@@ -687,7 +687,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 {/* 3. Tafasir Sanitization & Watermark Purge */}
                 <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <Check className="w-4 h-4 text-[#2ca4ab] shrink-0" />
                     <span>3. Commentary Integrity & Scraped Artifact Eradication</span>
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pl-6">
@@ -698,7 +698,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 {/* 4. Morphology & Treebank Sanad */}
                 <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <Check className="w-4 h-4 text-[#2ca4ab] shrink-0" />
                     <span>4. Grammatical Treebank & Morphological Sanad</span>
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pl-6">
@@ -709,7 +709,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 {/* 5. Offline Integrity & Privacy */}
                 <div className="p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/80 dark:border-slate-800 space-y-2">
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <Check className="w-4 h-4 text-[#2ca4ab] shrink-0" />
                     <span>5. Local-First Engine & Cryptographic / Offline Privacy</span>
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pl-6">
@@ -729,7 +729,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               {/* Header */}
               <div className="pb-3 border-b border-slate-200 dark:border-slate-800 pr-10">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <SlidersHorizontal className="w-5 h-5 text-emerald-600" />
+                  <SlidersHorizontal className="w-5 h-5 text-[#2ca4ab]" />
                   <span>Reading & Rendering Preferences</span>
                 </h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -754,14 +754,14 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       { id: 'light', label: 'Day (Light)', icon: <Sun className="w-3.5 h-3.5 text-amber-500" /> },
                       { id: 'sepia', label: 'Sepia (Warm)', icon: <Coffee className="w-3.5 h-3.5 text-amber-700" /> },
                       { id: 'dark', label: 'Night (Dark)', icon: <Moon className="w-3.5 h-3.5 text-indigo-400" /> },
-                      { id: 'oled', label: 'Midnight (OLED)', icon: <Eye className="w-3.5 h-3.5 text-emerald-400" /> },
+                      { id: 'oled', label: 'Midnight (OLED)', icon: <Eye className="w-3.5 h-3.5 text-[#2ca4ab]" /> },
                     ] as const).map((t) => (
                       <button
                         key={t.id}
                         onClick={() => onChangeThemeMode(t.id)}
                         className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border font-bold transition-all cursor-pointer ${
                           themeMode === t.id
-                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 shadow-xs'
+                            ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 shadow-xs'
                             : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-300'
                         }`}
                       >
@@ -776,15 +776,15 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 <div className="space-y-2 pt-1 border-t border-slate-200/40 dark:border-slate-800/40">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                      <MoveHorizontal className="w-3.5 h-3.5 text-emerald-600" />
+                      <MoveHorizontal className="w-3.5 h-3.5 text-[#2ca4ab]" />
                       <span>Content Margins (Horizontal Padding)</span>
                     </span>
-                    <span className="font-bold text-emerald-700 dark:text-emerald-400 font-mono">
+                    <span className="font-bold text-[#0e7490] dark:text-[#2ca4ab] font-mono">
                       {horizontalPadding}%
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-emerald-600 font-bold shrink-0 font-mono">1% (Wide)</span>
+                    <span className="text-[10px] text-[#2ca4ab] font-bold shrink-0 font-mono">1% (Wide)</span>
                     <input
                       type="range"
                       min={1}
@@ -792,7 +792,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       step={1}
                       value={horizontalPadding}
                       onChange={(e) => onChangeHorizontalPadding(Number(e.target.value))}
-                      className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                      className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#2ca4ab]"
                     />
                     <span className="text-[10px] text-slate-400 font-bold shrink-0 font-mono">24% (Column)</span>
                   </div>
@@ -808,7 +808,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         onClick={() => onChangeHorizontalPadding(p.val)}
                         className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
                           horizontalPadding === p.val
-                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                            ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
                             : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
                         }`}
                       >
@@ -822,10 +822,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 <div className="space-y-2 pt-1 border-t border-slate-200/40 dark:border-slate-800/40">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                      <Type className="w-3.5 h-3.5 text-emerald-600" />
+                      <Type className="w-3.5 h-3.5 text-[#2ca4ab]" />
                       <span>Typography Scaling (Prose & Script)</span>
                     </span>
-                    <span className="font-bold text-emerald-700 dark:text-emerald-400 font-mono">
+                    <span className="font-bold text-[#0e7490] dark:text-[#2ca4ab] font-mono">
                       {fontSize}px (Quranic Script: {Math.round(fontSize * 1.65)}px)
                     </span>
                   </div>
@@ -833,7 +833,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <button
                       onClick={() => onFontSizeChange(Math.max(14, fontSize - 1))}
                       disabled={fontSize <= 14}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-[#2ca4ab] disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     >
                       <Minus className="w-3.5 h-3.5" />
                     </button>
@@ -844,12 +844,12 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       step={1}
                       value={fontSize}
                       onChange={(e) => onFontSizeChange(Number(e.target.value))}
-                      className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                      className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#2ca4ab]"
                     />
                     <button
                       onClick={() => onFontSizeChange(Math.min(28, fontSize + 1))}
                       disabled={fontSize >= 28}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500 disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-[#2ca4ab] disabled:opacity-40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     >
                       <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -866,7 +866,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         onClick={() => onFontSizeChange(preset.val)}
                         className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
                           fontSize === preset.val
-                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold'
+                            ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 font-bold'
                             : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
                         }`}
                       >
@@ -880,7 +880,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               {/* Group 2: Mushaf, Tajweed & Translations */}
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-4">
                 <h2 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2 pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
-                  <Palette className="w-4 h-4 text-emerald-600" />
+                  <Palette className="w-4 h-4 text-[#2ca4ab]" />
                   <span>2. Typography & Comparative Translations</span>
                 </h2>
 
@@ -895,7 +895,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       onClick={onToggleTajweed}
                       className={`px-3 py-1 rounded-lg border font-bold transition-colors cursor-pointer ${
                         showTajweed
-                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                          ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10'
                           : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                       }`}
                     >
@@ -913,7 +913,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       onClick={() => onSelectTafsirLayoutMode(tafsirLayoutMode === 'focus' ? 'stacked' : 'focus')}
                       className={`px-3 py-1 rounded-lg border font-bold transition-colors cursor-pointer ${
                         tafsirLayoutMode === 'focus'
-                          ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                          ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10'
                           : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                       }`}
                     >
@@ -967,7 +967,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         onClick={onToggleWordByWord}
                         className={`px-3 h-9 rounded-xl border font-bold cursor-pointer shrink-0 ${
                           showWordByWord
-                            ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                            ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10'
                             : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
                         }`}
                       >
@@ -995,7 +995,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         onClose();
                         onOpenTafsirSettings();
                       }}
-                      className="w-full h-9 rounded-xl border border-emerald-500/60 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                      className="w-full h-9 rounded-xl border border-[#2ca4ab]/60 text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 hover:bg-[#2ca4ab]/20 font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                     >
                       <Layers className="w-3.5 h-3.5" />
                       <span>Configure Active Commentaries & Order</span>
@@ -1008,10 +1008,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <h2 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <Volume2 className="w-4 h-4 text-emerald-600" />
+                    <Volume2 className="w-4 h-4 text-[#2ca4ab]" />
                     <span>3. Offline Recitation Storage (Alafasy Audio)</span>
                   </h2>
-                  <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 font-mono">
+                  <span className="text-[11px] font-bold text-[#0e7490] dark:text-[#2ca4ab] font-mono">
                     {audioCacheStatus?.cachedCount ?? '...'} / 6,236 Verses Cached
                   </span>
                 </div>
@@ -1027,14 +1027,14 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <button
                       onClick={() => handlePrecacheSurah(1)}
                       disabled={cachingSurahLoading}
-                      className="px-3 py-1.5 rounded-lg border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                      className="px-3 py-1.5 rounded-lg border border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] bg-[#2ca4ab]/10 hover:bg-[#2ca4ab]/20 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>{cachingSurahLoading ? 'Caching...' : 'Pre-cache Surah Al-Fatihah'}</span>
                     </button>
                     <button
                       onClick={refreshAudioCache}
-                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-emerald-600 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-[#2ca4ab] transition-colors cursor-pointer"
                       title="Refresh Cache Status"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
@@ -1047,7 +1047,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-5">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
                   <h2 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <Keyboard className="w-4 h-4 text-emerald-600" />
+                    <Keyboard className="w-4 h-4 text-[#2ca4ab]" />
                     <span>4. سمتِ رُخ اور کی بورڈ شارٹ کٹس (Navigation & Shortcuts)</span>
                   </h2>
                   {Object.keys(customShortcuts).length > 0 && (
@@ -1066,7 +1066,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                        <ArrowLeftRight className="w-3.5 h-3.5 text-emerald-600" />
+                        <ArrowLeftRight className="w-3.5 h-3.5 text-[#2ca4ab]" />
                         <span>تیر کی سمت کا رخ (Arrow Navigation Orientation)</span>
                       </div>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -1081,18 +1081,18 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       onClick={() => onChangeNavArrowMode('rtl')}
                       className={`p-3 rounded-xl border transition-all cursor-pointer space-y-2 ${
                         navArrowMode === 'rtl'
-                          ? 'border-emerald-500 bg-emerald-500/10 dark:bg-emerald-950/20 shadow-xs'
+                          ? 'border-[#2ca4ab] bg-[#2ca4ab]/10 dark:bg-cyan-950/20 shadow-xs'
                           : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-slate-300'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                           <span>قرآنی سمت (RTL Reading Flow)</span>
-                          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-bold">
+                          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-cyan-100 dark:bg-cyan-900/60 text-[#0e7490] dark:text-[#2ca4ab] font-bold">
                             تجویز کردہ
                           </span>
                         </span>
-                        {navArrowMode === 'rtl' && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+                        {navArrowMode === 'rtl' && <Check className="w-4 h-4 text-[#2ca4ab] shrink-0" />}
                       </div>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
                         عربی رسم الخط دائیں سے بائیں پڑھا جاتا ہے؛ لہٰذا آگے بڑھنے کے لیے بائیں طرف (←) اور پیچھے لوٹنے کے لیے دائیں طرف (→) ہوگا۔
@@ -1105,10 +1105,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                           → Prev Ayah
                         </span>
                         <span className="text-slate-400">|</span>
-                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-[#0e7490] dark:text-[#2ca4ab]">
                           Shift+← Next Surah
                         </span>
-                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-[#0e7490] dark:text-[#2ca4ab]">
                           Shift+→ Prev Surah
                         </span>
                       </div>
@@ -1119,7 +1119,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       onClick={() => onChangeNavArrowMode('ltr')}
                       className={`p-3 rounded-xl border transition-all cursor-pointer space-y-2 ${
                         navArrowMode === 'ltr'
-                          ? 'border-emerald-500 bg-emerald-500/10 dark:bg-emerald-950/20 shadow-xs'
+                          ? 'border-[#2ca4ab] bg-[#2ca4ab]/10 dark:bg-cyan-950/20 shadow-xs'
                           : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:border-slate-300'
                       }`}
                     >
@@ -1127,7 +1127,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                         <span className="font-bold text-slate-900 dark:text-white">
                           معیاری سمت (LTR Media Flow)
                         </span>
-                        {navArrowMode === 'ltr' && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+                        {navArrowMode === 'ltr' && <Check className="w-4 h-4 text-[#2ca4ab] shrink-0" />}
                       </div>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
                         عمومی میڈیا پلیئرز کے مطابق؛ دائیں تیر (→) اگلی آیت (Next) اور بائیں تیر (←) پچھلی آیت (Prev) پر لے جائے گا۔
@@ -1140,10 +1140,10 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                           → Next Ayah
                         </span>
                         <span className="text-slate-400">|</span>
-                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-[#0e7490] dark:text-[#2ca4ab]">
                           Shift+← Prev Surah
                         </span>
-                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-emerald-700 dark:text-emerald-400">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-bold text-[#0e7490] dark:text-[#2ca4ab]">
                           Shift+→ Next Surah
                         </span>
                       </div>
@@ -1156,7 +1156,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                        <Edit3 className="w-3.5 h-3.5 text-emerald-600" />
+                        <Edit3 className="w-3.5 h-3.5 text-[#2ca4ab]" />
                         <span>شارٹ کٹس میں ترمیم و تخصیص (Custom Shortcuts)</span>
                       </div>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -1185,7 +1185,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                               <span className="font-bold text-slate-900 dark:text-slate-100">{def.nameUrdu}</span>
                               <span className="text-[10px] text-slate-400 font-mono">({def.nameEn})</span>
                               {isCustomized && (
-                                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-bold">
+                                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-cyan-100 dark:bg-cyan-950/80 text-[#0e7490] dark:text-[#2ca4ab] font-bold">
                                   تخصیص شدہ
                                 </span>
                               )}
@@ -1213,7 +1213,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                                 </kbd>
                                 <button
                                   onClick={() => setRecordingShortcutId(def.id)}
-                                  className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-500 hover:text-emerald-600 text-[11px] font-bold transition-colors cursor-pointer"
+                                  className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-[#2ca4ab] hover:text-[#2ca4ab] text-[11px] font-bold transition-colors cursor-pointer"
                                 >
                                   تبدیل کریں
                                 </button>
@@ -1251,7 +1251,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               {/* Header */}
               <div className="pb-3 border-b border-slate-200 dark:border-slate-800 pr-10">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Library className="w-5 h-5 text-emerald-600" />
+                  <Library className="w-5 h-5 text-[#2ca4ab]" />
                   <span>Data Sources & Scholarly Citations</span>
                 </h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -1263,7 +1263,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               <div className="space-y-5">
                 {referenceCategories.map((group, gIdx) => (
                   <div key={gIdx} className="space-y-2.5">
-                    <h2 className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-2 pb-1 border-b border-slate-200/80 dark:border-slate-800">
+                    <h2 className="text-xs font-bold text-[#0e7490] dark:text-[#2ca4ab] flex items-center gap-2 pb-1 border-b border-slate-200/80 dark:border-slate-800">
                       {group.icon}
                       <span>{group.category}</span>
                     </h2>
@@ -1272,7 +1272,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       {group.items.map((item, idx) => (
                         <div
                           key={idx}
-                          className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/60 dark:border-slate-800/60 hover:border-emerald-500/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs"
+                          className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/60 dark:border-slate-800/60 hover:border-[#2ca4ab]/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs"
                         >
                           <div className="space-y-1 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -1283,7 +1283,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                                 {item.org}
                               </span>
                               {item.badge && (
-                                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100/70 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 font-mono">
+                                <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-100/70 dark:bg-cyan-950/70 text-[#0e7490] dark:text-[#2ca4ab] font-mono">
                                   {item.badge}
                                 </span>
                               )}
@@ -1297,7 +1297,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                             href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 text-[11px] font-bold transition-colors shrink-0 font-mono"
+                            className="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg border border-[#2ca4ab]/40 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] hover:bg-[#2ca4ab]/20 text-[11px] font-bold transition-colors shrink-0 font-mono"
                           >
                             <span>Source Link</span>
                             <ExternalLink className="w-3 h-3" />
@@ -1318,11 +1318,11 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
             <div className="space-y-6 animate-fadeIn">
               {/* Header */}
               <div className="pb-3 border-b border-slate-200 dark:border-slate-800 pr-10">
-                <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold font-mono">
+                <span className="px-2.5 py-0.5 rounded-full border border-[#2ca4ab]/40 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] text-[11px] font-bold font-mono">
                   System Architecture • Local-First SQLite • Data Pipelines
                 </span>
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white mt-2 flex items-center gap-2">
-                  <Code2 className="w-5 h-5 text-emerald-600" />
+                  <Code2 className="w-5 h-5 text-[#2ca4ab]" />
                   <span>Technical Architecture & Expansion Guide</span>
                 </h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -1332,7 +1332,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               {/* 1. Dual-Database Model */}
               <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-2.5 text-xs">
-                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                <h2 className="font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab] flex items-center gap-2">
                   <Cpu className="w-4 h-4" />
                   <span>1. Dual-Database Architecture</span>
                 </h2>
@@ -1354,25 +1354,25 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               {/* 2. Pipeline Scripts Reference */}
               <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-2 text-xs">
-                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                <h2 className="font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab] flex items-center gap-2">
                   <Terminal className="w-4 h-4" />
                   <span>2. Data Ingestion & Maintenance Pipelines (scripts/)</span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]" dir="ltr">
                   <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
-                    <strong className="text-emerald-600 font-mono">scripts/seed_all_114_surahs.mjs</strong>
+                    <strong className="text-[#2ca4ab] font-mono">scripts/seed_all_114_surahs.mjs</strong>
                     <div className="text-slate-500 dark:text-slate-400">114 Surahs, 6,236 Ayahs, 77,429 words, lines & QCF codes.</div>
                   </div>
                   <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
-                    <strong className="text-emerald-600 font-mono">scripts/setup_fts5.mjs</strong>
+                    <strong className="text-[#2ca4ab] font-mono">scripts/setup_fts5.mjs</strong>
                     <div className="text-slate-500 dark:text-slate-400">Builds FTS5 virtual tables with unicode61 diacritic-insensitive search.</div>
                   </div>
                   <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
-                    <strong className="text-emerald-600 font-mono">scripts/sanitize_tafasir_watermarks.mjs</strong>
+                    <strong className="text-[#2ca4ab] font-mono">scripts/sanitize_tafasir_watermarks.mjs</strong>
                     <div className="text-slate-500 dark:text-slate-400">Purges 3rd-party scraped artifacts and breadcrumbs across all tafasir.</div>
                   </div>
                   <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70">
-                    <strong className="text-emerald-600 font-mono">scripts/seed_lexical_search.mjs</strong>
+                    <strong className="text-[#2ca4ab] font-mono">scripts/seed_lexical_search.mjs</strong>
                     <div className="text-slate-500 dark:text-slate-400">Generates 14,771-token lexical dictionary & search syntax.</div>
                   </div>
                 </div>
@@ -1380,7 +1380,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               {/* 3. System Expansion */}
               <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/80 dark:border-slate-800 space-y-2 text-xs">
-                <h2 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                <h2 className="font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab] flex items-center gap-2">
                   <FolderGit2 className="w-4 h-4" />
                   <span>3. System Expansion Procedures</span>
                 </h2>

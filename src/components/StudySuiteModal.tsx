@@ -187,7 +187,7 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
             onClick={() => setActiveTab('notes')}
             className={`pb-3 px-3 border-b-2 flex items-center gap-1.5 transition-all ${
               activeTab === 'notes'
-                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'border-[#2ca4ab] text-[#0e7490] dark:text-[#2ca4ab] font-bold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
           >
@@ -229,10 +229,10 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
                 >
                   <div className="space-y-1.5 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-emerald-700 dark:text-emerald-400">
+                      <span className="font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab]">
                         {bm.surah_name_urdu}
                       </span>
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                      <span className="px-2 py-0.5 rounded-lg bg-cyan-100/70 dark:bg-cyan-950/60 text-[#0e7490] dark:text-[#2ca4ab] text-xs font-mono font-bold">
                         {bm.verse_key}
                       </span>
                       <span className="text-[11px] text-slate-400 flex items-center gap-1">
@@ -271,10 +271,10 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
                 >
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-emerald-700 dark:text-emerald-400">
+                      <span className="font-bold text-sm text-[#0e7490] dark:text-[#2ca4ab]">
                         {note.surah_name_urdu}
                       </span>
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                      <span className="px-2 py-0.5 rounded-lg bg-cyan-100/70 dark:bg-cyan-950/60 text-[#0e7490] dark:text-[#2ca4ab] text-xs font-mono font-bold">
                         {note.verse_key}
                       </span>
                       {note.tags && (
@@ -320,10 +320,10 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
                   >
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs text-emerald-700 dark:text-emerald-400">
+                        <span className="font-bold text-xs text-[#0e7490] dark:text-[#2ca4ab]">
                           {hl.surah_name_urdu || `سورہ ${hl.surah_id}`}
                         </span>
-                        <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                        <span className="px-2 py-0.5 rounded-lg bg-cyan-100/70 dark:bg-cyan-950/60 text-[#0e7490] dark:text-[#2ca4ab] text-xs font-mono font-bold">
                           {hl.ayah_number === 0 ? `${hl.surah_id}:0-intro` : hl.verse_key}
                         </span>
                         <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${style.badge}`}>
@@ -361,14 +361,14 @@ export const StudySuiteModal: React.FC<StudySuiteModalProps> = ({
               onClick={exportAsMarkdown}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 shadow-2xs transition-all"
             >
-              <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <Download className="w-3.5 h-3.5 text-[#2ca4ab]" />
               <span>ایکسپورٹ Markdown</span>
             </button>
             <button
               onClick={exportAsJson}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/60 shadow-2xs transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#2ca4ab]/40 dark:border-[#2ca4ab]/40 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] text-xs font-semibold hover:bg-[#2ca4ab]/20 shadow-2xs transition-all"
             >
-              <FileJson className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <FileJson className="w-3.5 h-3.5 text-[#2ca4ab]" />
               <span>ایکسپورٹ JSON</span>
             </button>
           </div>

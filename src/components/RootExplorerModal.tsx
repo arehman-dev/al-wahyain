@@ -55,13 +55,13 @@ export const RootExplorerModal: React.FC<RootExplorerModalProps> = ({
         {/* Header */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/40">
           <div className="flex items-center gap-3.5">
-            <div className="px-3.5 h-11 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold text-lg font-ibm tracking-wide">
+            <div className="px-3.5 h-11 rounded-2xl border border-[#2ca4ab]/40 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] flex items-center justify-center font-bold text-lg font-ibm tracking-wide">
               {root.split('').join(' ')}
             </div>
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2 font-ibm">
                 <span>مادہ و جذر الکلمۃ:</span>
-                <span className="font-ibm text-emerald-600 dark:text-emerald-400 text-lg font-bold">
+                <span className="font-ibm text-[#0e7490] dark:text-[#2ca4ab] text-lg font-bold">
                   {root}
                 </span>
               </h3>
@@ -88,16 +88,16 @@ export const RootExplorerModal: React.FC<RootExplorerModalProps> = ({
           ) : data ? (
             <>
               {/* Summary Stats Card */}
-              <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-500/30 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-cyan-50/50 dark:bg-cyan-950/30 border border-[#2ca4ab]/30 flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 font-ibm">
+                  <div className="text-xs font-semibold text-[#0e7490] dark:text-[#2ca4ab] font-ibm">
                     قرآن پاک میں کل تکرار (Total Occurrences)
                   </div>
-                  <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-1 font-ibm">
+                  <div className="text-2xl font-bold text-[#0e7490] dark:text-[#2ca4ab] mt-1 font-ibm">
                     <span className="font-app">{data.occurrences_count || data.verses?.length || 0}</span> مرتبہ
                   </div>
                 </div>
-                <Layers className="w-8 h-8 text-emerald-600/40" />
+                <Layers className="w-8 h-8 text-[#2ca4ab]/40" />
               </div>
 
               {/* Verses Concordance List */}
@@ -115,11 +115,11 @@ export const RootExplorerModal: React.FC<RootExplorerModalProps> = ({
                       return (
                         <div
                           key={`${v.surah_id}:${v.ayah_number}:${i}`}
-                          className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 hover:border-emerald-500/50 transition-all flex flex-col gap-3"
+                          className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 hover:border-[#2ca4ab]/50 transition-all flex flex-col gap-3"
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-xs font-bold px-2.5 py-1 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 font-ibm">
+                              <span className="text-xs font-bold px-2.5 py-1 rounded-xl border border-[#2ca4ab]/30 bg-[#2ca4ab]/10 text-[#0e7490] dark:text-[#2ca4ab] font-ibm">
                                 سورۃ {v.surah_name_urdu}{' '}
                                 <span className="font-app font-semibold">
                                   ({v.surah_id}:{v.ayah_number})
@@ -128,12 +128,14 @@ export const RootExplorerModal: React.FC<RootExplorerModalProps> = ({
 
                               {v.word_code_v2 && v.page_madani ? (
                                 <span
-                                  className="px-2.5 py-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 text-xl font-qcf"
+                                  className="px-2.5 py-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-[#0e7490] dark:text-[#2ca4ab] text-xl font-qcf"
                                   style={{ fontFamily: pageFont }}
                                   dangerouslySetInnerHTML={{ __html: v.word_code_v2 }}
                                 />
                               ) : v.word_text ? (
-                                <span className="px-2.5 py-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 text-sm font-ibm font-bold">
+                                <span
+                                  className="px-2.5 py-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-[#0e7490] dark:text-[#2ca4ab] text-sm font-ibm font-bold"
+                                >
                                   {v.word_text}
                                 </span>
                               ) : null}
@@ -144,7 +146,7 @@ export const RootExplorerModal: React.FC<RootExplorerModalProps> = ({
                                 onJumpToAyah(v.surah_id, v.ayah_number);
                                 onClose();
                               }}
-                              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer font-ibm shrink-0"
+                              className="text-xs font-bold text-[#0e7490] dark:text-[#2ca4ab] hover:underline flex items-center gap-1 cursor-pointer font-ibm shrink-0"
                             >
                               <span>آیت پر جائیں ←</span>
                             </button>
@@ -155,7 +157,7 @@ export const RootExplorerModal: React.FC<RootExplorerModalProps> = ({
                               onJumpToAyah(v.surah_id, v.ayah_number);
                               onClose();
                             }}
-                            className="text-right text-2xl leading-[2.45] text-slate-900 dark:text-slate-100 font-qcf cursor-pointer hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                            className="text-right text-2xl leading-[2.45] text-slate-900 dark:text-slate-100 font-qcf cursor-pointer hover:text-[#0e7490] dark:hover:text-[#2ca4ab] transition-colors"
                             style={hasQcf ? { fontFamily: pageFont } : undefined}
                           >
                             {hasQcf ? (
@@ -163,7 +165,7 @@ export const RootExplorerModal: React.FC<RootExplorerModalProps> = ({
                                 <span dangerouslySetInnerHTML={{ __html: v.qcf_v2_text! }} />
                                 {v.end_code_v2 ? (
                                   <span
-                                    className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle text-emerald-700 dark:text-emerald-400"
+                                    className="ayah-end-num select-none mr-1.5 font-qcf inline-block align-middle text-[#0e7490] dark:text-[#2ca4ab]"
                                     style={{ fontFamily: pageFont }}
                                     dangerouslySetInnerHTML={{ __html: v.end_code_v2 }}
                                   />

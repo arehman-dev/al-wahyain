@@ -95,7 +95,7 @@ export function enhanceTafsirHtml(
       const surahId = parseInt(sId, 10);
       const ayahNum = parseInt(aNum, 10);
       if (surahId >= 1 && surahId <= 114) {
-        return `<button type="button" class="quran-ref-btn inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded-md bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/70 dark:hover:bg-emerald-900 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-semibold font-ibm cursor-pointer transition-all" ${onNavigateAttr}="${surahId}:${ayahNum}">📖 ${sName.trim()} ${surahId}:${ayahNum}</button>`;
+        return `<button type="button" class="quran-ref-btn inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded-md bg-cyan-100 hover:bg-cyan-200 dark:bg-cyan-950/70 dark:hover:bg-cyan-900 border border-[#2ca4ab]/40 dark:border-[#2ca4ab]/40 text-[#0e7490] dark:text-[#2ca4ab] text-xs font-semibold font-ibm cursor-pointer transition-all" ${onNavigateAttr}="${surahId}:${ayahNum}">📖 ${sName.trim()} ${surahId}:${ayahNum}</button>`;
       }
       return match;
     }
@@ -109,7 +109,7 @@ export function enhanceTafsirHtml(
       const surahId = parseInt(sId, 10);
       const ayahNum = parseInt(aNum, 10);
       if (surahId >= 1 && surahId <= 114 && ayahNum >= 1 && ayahNum <= 286) {
-        return `<button type="button" class="quran-ref-btn inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded-md bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/70 dark:hover:bg-emerald-900 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-semibold font-mono cursor-pointer transition-all" ${onNavigateAttr}="${surahId}:${ayahNum}">📖 ${surahId}:${ayahNum}</button>`;
+        return `<button type="button" class="quran-ref-btn inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded-md bg-cyan-100 hover:bg-cyan-200 dark:bg-cyan-950/70 dark:hover:bg-cyan-900 border border-[#2ca4ab]/40 dark:border-[#2ca4ab]/40 text-[#0e7490] dark:text-[#2ca4ab] text-xs font-semibold font-mono cursor-pointer transition-all" ${onNavigateAttr}="${surahId}:${ayahNum}">📖 ${surahId}:${ayahNum}</button>`;
       }
       return match;
     }
